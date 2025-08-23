@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myapp
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www
+    depends_on:
+      - db
+    environment:
+      DB_HOST: mydb
+      DB_PORT: 3306
+      DB_DATABASE: Capstone2
+      DB_USERNAME: root
+      DB_PASSWORD: kultoniDepaz
+
+  db:
+    image: mysql:8.0
+    container_name: mydb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: kultoniDepaz
+      MYSQL_DATABASE: Capstone2
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: myphpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+
+volumes:
+  dbdata:
