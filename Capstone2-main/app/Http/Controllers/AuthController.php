@@ -103,6 +103,8 @@ class AuthController extends Controller
         }
     }
 
+// App\Http\Controllers\AuthController.php
+
 public function hardwareLogin(Request $request)
 {
     $request->validate([
@@ -110,24 +112,36 @@ public function hardwareLogin(Request $request)
         'password' => 'required|string',
     ]);
 
-    $credentials = $request->only('email', 'password');
-
-    // Attempt login
-    if (!$token = auth()->attempt($credentials)) {
+    // Manually check credentials (no email verification here)
+    $user = \App\Models\Registration::where('email', $request->email)->first();
+    if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
         return response()->json(['error' => 'Unauthorized'], 401);
     }
 
-    $user = auth()->user();
-
-    // Optional: check if this is a hardware account
-    if (!$user->is_hardware) {
+    if (empty($user->is_hardware)) {
         return response()->json(['error' => 'Not a hardware account'], 403);
     }
 
+    // Build a deterministic, effectively "permanent" token WITHOUT saving it to DB.
+    // We pin jti/iat/nbf/exp so the token string is the same every time.
+    // Use 2037-12-31 for 32-bit safe exp.
+    $claims = [
+        'jti'         => 'device-esp32cam-v1',        // any constant ID you like
+        'iat'         => 1704067200,                  // 2024-01-01 00:00:00 UTC
+        'nbf'         => 1704067200,
+        'exp'         => 2145811200,                  // 2037-12-31 00:00:00 UTC
+        'is_hardware' => true,                        // handy in downstream checks
+        'role'        => 'device',
+    ];
+
+    // IMPORTANT: do NOT call auth()->attempt() here (it rotates claims).
+    // Also do NOT save $token to $user->token (avoids the column size issue).
+    $token = \Tymon\JWTAuth\Facades\JWTAuth::claims($claims)->fromUser($user);
+
     return response()->json([
         'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => null, // permanent token, or set TTL if desired
+        'token_type'   => 'bearer',
+        'expires_in'   => null,   // we pinned exp far in the future
     ]);
 }
 

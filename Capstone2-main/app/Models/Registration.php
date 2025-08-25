@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Registration extends Authenticatable implements JWTSubject, MustVerifyEmail
+
 {
     use Notifiable;
 
@@ -39,4 +40,17 @@ class Registration extends Authenticatable implements JWTSubject, MustVerifyEmai
     {
         return [];
     }
+    
+public function hasVerifiedEmail()
+{
+    // Bypass email verification if this is a hardware account
+    if ($this->is_hardware) {
+        return true;
+    }
+
+    // Normal users still require verification
+    return !is_null($this->email_verified_at);
+}
+
+
 }

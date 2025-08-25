@@ -10,7 +10,6 @@ use App\Http\Controllers\WasteLevelController;
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/hardware/login', [AuthController::class, 'hardwareLogin']);
 
 
 // Email verification link handler
@@ -48,8 +47,11 @@ Route::middleware(['jwt.auth', 'verified'])->group(function () {
     Route::get('/waste-logs/total', [WasteLogController::class, 'totalGarbageAllTime']);
 });
 
+// Hardware login (public)
+Route::post('/hardware/login', [AuthController::class, 'hardwareLogin']);
+
+// Hardware-protected endpoints
 Route::middleware(['jwt.auth'])->group(function () {
-    // Hardware updates for waste levels/logs
     Route::post('/hardware/waste-levels', [WasteLevelController::class, 'store']);
     Route::post('/hardware/waste-logs', [WasteLogController::class, 'store']);
 });
