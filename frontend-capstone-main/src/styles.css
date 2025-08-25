@@ -1,0 +1,1180 @@
+/* General styles */
+:root {
+  --primary-color: #043873;
+  --form-bg-color: #4F9CF9;
+  --white: #ffffff;
+  --warning-color: #ffc107;
+  --text-dark: #000000;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--primary-color);
+}
+
+.app-container {
+  min-height: 100vh;
+}
+
+/* Login and Register Page Styles */
+.login-container,
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: linear-gradient(rgba(0, 3, 77, 0.8), rgba(0, 2, 44, 0.8)),
+    url('/src/assets/background.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  padding: 15px;
+}
+
+.login-card,
+.register-card {
+  width: 100%;
+  max-width: 900px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.logo-side {
+  background-color: var(--white);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-side {
+  background-color: var(--form-bg-color);
+  padding: 40px;
+  color: var(--text-dark); /* Changed from white to black */
+}
+
+.logo-content {
+  text-align: center;
+}
+
+.logo-img {
+  max-width: 80%;
+  height: auto;
+}
+
+.login-form,
+.register-form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.form-label {
+  color: var(--text-dark); /* Changed from white to black */
+  font-weight: 500;
+}
+
+.form-control {
+  background-color: #e9ecef;
+  border: none;
+  padding: 12px;
+}
+
+.login-btn,
+.create-btn {
+  background-color: var(--primary-color);
+  border: none;
+  padding: 10px 20px;
+}
+
+.register-btn,
+.cancel-btn {
+  background-color: var(--warning-color);
+  border: none;
+  color: #212529;
+  padding: 10px 20px;
+}
+
+.forgot-password {
+  color: var(--text-dark); /* Changed from white to black */
+  text-decoration: underline;
+}
+
+/* Dashboard Styles */
+.navbar {
+  background-color: var(--primary-color);
+  padding: 15px 20px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 60px;
+  background-color: #ffffff; /* Add explicit white background */
+}
+
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  height: calc(100vh - 130px); /* Account for navbar and footer */
+  overflow: hidden;
+  padding: 12px; /* reduce padding to save vertical space */
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 10px;
+  font-weight: 500;
+}
+
+.nav-link.active {
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* Settings Dropdown */
+#settings-dropdown {
+  background-color: var(--primary-color);
+  border: 1px solid var(--white);
+}
+
+/* Warning Button Styles */
+.warning-btn {
+  background-color: #ffc107; /* Bootstrap warning color */
+  color: #212529;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.warning-btn:hover {
+  background-color: #e0a800;
+}
+
+.warning-btn:focus {
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.5);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.warning-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 250px;
+  background-color: var(--white);
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.warning-header {
+  padding: 10px;
+  background-color: var(--warning-color);
+  color: #212529;
+  font-weight: bold;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.warning-body {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.warning-body .warning-item {
+  padding: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.warning-body .warning-item:last-child {
+  border-bottom: none;
+}
+
+/* Bins Page */
+.page-title {
+  font-weight: bold;
+  margin-bottom: 30px;
+  margin-left: 50px; /* Add left margin to move title to the right */
+  text-align: left;
+}
+
+.bin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.bin-graphic {
+  width: 250px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* Lid/handle on top */
+.bin-lid {
+  height: 30px;
+  width: 120px;
+  border: 4px solid #000;
+  border-bottom: none;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  margin: 0 auto 4px auto;
+}
+
+/* Thin rim line across the bin opening */
+.bin-rim {
+  height: 4px; /* match body stroke */
+  width: calc(100% + 8px); /* 100% content + 4px left + 4px right border of body */
+  background-color: #000;
+  margin: 0; /* remove extra gap */
+  position: relative;
+  left: -4px; /* align with body outer border */
+}
+
+.bin-body {
+  width: 100%;
+  height: 300px;
+  border: 4px solid #000;  /* Increased from 3px */
+  border-top: none;
+  border-bottom-left-radius: 40px;  /* Increased from 30px */
+  border-bottom-right-radius: 40px;  /* Increased from 30px */
+  position: relative;
+  overflow: hidden;
+}
+
+.bin-level {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  transition: height 0.3s ease;
+  border-bottom-left-radius: 36px; /* match inner radius (40 - 4 border) */
+  border-bottom-right-radius: 36px;
+}
+
+.bin-level-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  font-size: 36px;  /* Increased from 28px */
+  z-index: 2; /* ensure above filler */
+}
+
+.bin-label {
+  font-weight: bold;
+  font-size: 24px;  /* Increased from 20px */
+  margin-top: 20px;  /* Increased from 15px */
+}
+
+/* Monitoring Page */
+.summary-card {
+  background-color: #003366;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.summary-title {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.summary-item {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.biodegradable {
+  background-color: #f0e68c;
+  color: #333;
+}
+
+.non-biodegradable {
+  background-color: #add8e6;
+  color: #333;
+}
+
+.chart-container {
+  position: relative;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 450px;
+  margin-bottom: 1rem;
+}
+
+/* Change Password Page Styles */
+.change-password-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.change-password-card {
+  background-color: #003366;
+  color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.change-password-card .form-label {
+  margin-bottom: 5px;
+  color: white; /* Keep this white as it's on dark background */
+}
+
+.change-password-card .form-control {
+  background-color: #e9ecef;
+  border: none;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+/* Ensure input and toggle button are equal height inside input-group */
+.change-password-card .input-group .form-control {
+  margin-bottom: 0; /* avoid extra height compared to button */
+}
+
+/* Square off shared borders and vertically center icon on toggle */
+.input-group.equal-toggle .btn {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.input-group.equal-toggle .form-control {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.cancel-btn {
+  padding: 8px 30px;
+  background-color: #f0e68c;
+  border: none;
+  color: #212529;
+}
+
+.change-btn {
+  padding: 8px 30px;
+  background-color: #4F9CF9;
+  border: none;
+}
+
+/* Confirmation Modal Styles */
+.confirmation-modal-header {
+  background-color: #043873;
+  color: white;
+  border-bottom: none;
+  padding: 1.25rem;
+}
+
+.confirmation-modal-body {
+  padding: 2rem;
+}
+
+.confirmation-icon {
+  font-size: 3rem;
+  color: #28a745;
+}
+
+.confirmation-modal-footer {
+  border-top: none;
+  padding: 1.25rem;
+  justify-content: center;
+}
+
+.confirmation-button {
+  background-color: #4F9CF9;
+  border: none;
+  padding: 0.5rem 1.5rem;
+}
+
+.confirmation-button:hover {
+  background-color: #2c7bd9;
+}
+
+/* Custom DatePicker Styles */
+.custom-calendar {
+  font-family: 'Arial', sans-serif;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.react-datepicker__day--selected {
+  background-color: #043873 !important;
+  color: white !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: rgba(4, 56, 115, 0.1) !important;
+}
+
+.react-datepicker__month-text--selected {
+  background-color: #043873 !important;
+  color: white !important;
+}
+
+/* Remove week highlighting styles */
+.react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
+}
+
+.react-datepicker__day {
+  margin: 0.2rem;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.react-datepicker__day:hover {
+  background-color: #043873 !important;
+  color: white;
+}
+
+.react-datepicker__month-text.react-datepicker__month--selected {
+  background-color: #043873 !important;
+  color: white;
+}
+
+.react-datepicker__navigation {
+  top: 1rem;
+}
+
+.react-datepicker__header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+  padding-top: 0.8rem;
+}
+
+.react-datepicker__current-month {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.react-datepicker__day-name {
+  color: #666;
+  margin: 0.2rem;
+  width: 2rem;
+}
+
+.react-datepicker__week-number {
+  color: #4F9CF9;
+  font-weight: bold;
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  margin: 0.2rem;
+}
+
+/* Custom DatePicker Styles */
+.react-datepicker-wrapper,
+.react-datepicker__input-container {
+  width: 300px !important; /* Standardize width */
+}
+
+.react-datepicker {
+  width: 350px !important; /* Standardize calendar size */
+  font-size: 14px !important;
+}
+
+.react-datepicker__month-container {
+  width: 100% !important;
+}
+
+/* Month view specific styles */
+.react-datepicker__month-text {
+  width: 70px !important;
+  padding: 10px !important;
+  margin: 5px !important;
+}
+
+.react-datepicker__month-text--selected {
+  background-color: #043873 !important;
+  color: white !important;
+}
+
+/* Week selection styles - Updated */
+.react-datepicker__week:hover .react-datepicker__day {
+  background-color: transparent; /* Reset default hover */
+}
+
+/* Only apply week hover when in weekly mode */
+[data-mode="week"] .react-datepicker__week:hover .react-datepicker__day {
+  background-color: #4F9CF9 !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range {
+  background-color: #4F9CF9 !important;
+  color: white !important;
+  border-radius: 0 !important;
+}
+
+.react-datepicker__day--range-start,
+.react-datepicker__day--range-end,
+.react-datepicker__day--selecting-range-start,
+.react-datepicker__day--selecting-range-end {
+  background-color: #043873 !important;
+  border-radius: 0 !important;
+}
+
+/* Remove rounded corners for week selection */
+.react-datepicker__day--range-start,
+.react-datepicker__day--selecting-range-start,
+.react-datepicker__day--range-end,
+.react-datepicker__day--selecting-range-end {
+  border-radius: 0 !important;
+}
+
+/* Keep circular style only for daily selection */
+.react-datepicker__day--selected:not(.react-datepicker__day--in-range) {
+  border-radius: 50% !important;
+  background-color: #043873 !important;
+}
+
+/* Button group styles */
+.datepicker-container .btn-group .btn {
+  min-width: 100px;
+  background-color: #e9ecef;
+  color: #043873;
+  border: 1px solid #043873;
+  transition: all 0.3s ease;
+}
+
+.datepicker-container .btn-group .btn.active {
+  background-color: #043873;
+  color: white;
+}
+
+.datepicker-container .btn-group .btn:hover {
+  background-color: #043873;
+  color: white;
+}
+
+/* Custom DatePicker Styles */
+.datepicker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.datepicker-container .btn-group {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.datepicker-container .btn-light {
+  background-color: #043873;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  min-width: 200px;
+}
+
+.react-datepicker-wrapper {
+  width: auto !important;
+}
+
+.react-datepicker__input-container {
+  display: flex;
+  justify-content: center;
+}
+
+.datepicker-title {
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: #043873;
+}
+
+/* Date Range Picker Styles */
+.date-selector {
+  width: 300px;
+  margin-left: auto;
+  margin-bottom: 2rem;
+}
+
+.date-range-picker {
+  width: 100%;
+  height: 38px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker-popper {
+  z-index: 9999;
+}
+
+.react-datepicker {
+  font-family: inherit;
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+}
+
+.react-datepicker__header {
+  background-color: #043873;
+  border-bottom: none;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: white;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--in-selecting-range,
+.react-datepicker__day--in-range {
+  background-color: #043873;
+  color: white;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #4F9CF9;
+  color: white;
+}
+
+/* Additional Styles */
+.unidentified {
+  background-color: #90EE90;
+  color: #333;
+}
+
+.datepicker-container {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;  /* Added to stack items vertically */
+  justify-content: center;
+  align-items: center;
+  gap: 8px;  /* Added space between title and datepicker */
+}
+
+.datepicker-title {
+  font-weight: 500;
+  color: #043873;
+}
+
+.datepicker-container .btn-group {
+  margin-bottom: 1rem;
+}
+
+.datepicker-container .btn-light {
+  background-color: #043873;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 5px;
+}
+
+.datepicker-container .btn-primary {
+  background-color: #4F9CF9;
+  border: none;
+}
+
+.datepicker-container .btn-light:hover {
+  background-color: #032c5a;
+}
+
+.react-datepicker-wrapper {
+  width: auto;
+}
+
+.react-datepicker-popper {
+  z-index: 1000;
+}
+
+.react-datepicker__week-number {
+  color: #4F9CF9;
+  font-weight: bold;
+}
+
+.react-datepicker__day--selected {
+  background-color: #4F9CF9 !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: #4F9CF9 !important;
+}
+
+.react-datepicker__week-number.react-datepicker__week-number--selected {
+  background-color: #4F9CF9;
+  color: white;
+}
+
+/* Monitoring Page Specific Styles */
+.monitoring-page {
+  padding: 1rem;
+  max-width: 1900px; /* allow wider chart area on large screens */
+  margin: 0 auto;
+  height: 100%;
+}
+
+.monitoring-content {
+  display: flex;
+  gap: 0.75rem; /* give more width to chart */
+  height: 100%;
+}
+
+.main-section {
+  flex: 1;
+  min-width: 0;
+  padding-right: 0.5rem; /* slimmer padding so chart is wider */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chart-container {
+  background: white;
+  padding: 1rem; /* slightly tighter padding */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex: 1;               /* grow to available height */
+  min-height: 240px;     /* keep chart usable but save vertical space */
+  margin-bottom: 0.4rem;
+}
+
+.side-section {
+  width: 260px; /* narrower sidebar to expand chart area */
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+  margin-right: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.waste-info-container {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  min-height: 85px;
+}
+
+.waste-stats {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  gap: 4rem; /* Increased gap between waste stats */
+}
+
+.total-waste-card,
+.legend-card {
+  background: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.total-waste-card {
+  background: white;
+  padding: 0.8rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.total-waste-card h3 {
+  margin-bottom: 0.6rem;
+  font-size: 1.15rem;
+  font-weight: bold;
+}
+
+.waste-item {
+  display: flex;
+  align-items: center;
+  padding: 0.35rem 0;
+  gap: 0.6rem;
+  margin-bottom: 0.35rem;
+}
+
+.waste-item img {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.waste-item span:first-of-type {
+  flex: 1;
+  font-size: 0.98rem;
+  color: #333;
+  margin-left: 0.2rem;
+}
+
+.waste-item .amount {
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: #333;
+  margin-left: auto;
+}
+
+/* Remove margin from last item */
+.waste-item:last-child {
+  margin-bottom: 0;
+}
+
+.waste-stats-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.35rem;
+}
+
+.waste-stat-item {
+  flex: 1;
+  background: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.waste-stat-item img {
+  width: 32px;
+  height: 32px;
+}
+
+.waste-type {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.waste-amount {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
+  margin-left: auto;
+}
+
+/* Remove box shadow since we're using border instead */
+.waste-stat-item {
+  box-shadow: none;
+}
+
+/* Print Button Styles */
+.print-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.2rem 0.2rem 0.4rem 0;
+}
+
+.print-button {
+  padding: 0.5rem 2rem;
+  background: white;
+  border: 1px solid #043873;
+  color: #043873;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.print-button:hover {
+  background: #043873;
+  color: white;
+}
+
+/* Legend Styles */
+.legend-card {
+  background: white;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.45rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.legend-color.biodegradable {
+  background-color: #70AD47;
+}
+
+.legend-color.non-biodegradable {
+  background-color: #FFC000;
+}
+
+.legend-color.unidentified {
+  background-color: #ED7D31;
+}
+
+.legend-item:last-child {
+  margin-bottom: 0;
+}
+
+.legend-item span {
+  font-size: 0.98rem;
+  color: #333;
+}
+
+.legend-card h3 {
+  margin-bottom: 0.6rem;
+  font-size: 1.05rem;
+  font-weight: bold;
+}
+
+/* Monitoring-specific small spacing tweaks */
+.monitoring-page .page-title { margin: 0 0 0.6rem 0; }
+.monitoring-page .date-selector { margin-bottom: 0.6rem; }
+
+/* DatePicker Day Names Alignment */
+.react-datepicker__day-names {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.react-datepicker__day-name {
+  width: 2rem;
+  text-align: center;
+  color: white;
+  margin: 0;
+  line-height: 2rem;
+}
+
+.react-datepicker__week {
+  display: flex;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+}
+
+.react-datepicker__day {
+  margin: 0;
+  width: 2rem;
+  text-align: center;
+  line-height: 2rem;
+}
+
+/* Ensure calendar has consistent width */
+.react-datepicker__month {
+  margin: 0;
+  padding: 0 0.5rem;
+}
+
+.react-datepicker__month-container {
+  width: 280px;
+}
+
+/* Footer Styles */
+.footer {
+  text-align: left;
+  padding: 20px;
+  margin-top: auto;
+  font-size: 14px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: transparent;
+}
+
+/* Dashboard, Bins, and Monitoring pages footer */
+.footer.white {
+  background-color: #ffffff;
+  color: #333;
+  padding: 1rem;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #e0e0e0;
+  z-index: 1;
+}
+
+/* Login and Register pages footer */
+.login-container .footer,
+.register-container .footer {
+  background-color: transparent;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Ensure full height containers for proper footer positioning */
+.login-container,
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 60px; /* Add space for footer */
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: 40px; /* slightly less space for footer to reduce scroll */
+}
+
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  height: calc(100vh - 130px); /* Account for navbar and footer */
+  overflow: hidden;
+  padding: 20px;
+}
+
+.monitoring-page {
+  position: relative;
+  height: 100%;
+  padding-bottom: 0;
+  overflow: hidden; /* prevent page scroll */
+}
+
+/* Update Bins Page styles */
+.bins-page {
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-top: 50px; /* Add top padding to move bins down */
+}
+
+.bins-page .row {
+  flex: 1;
+  margin: 0;
+  display: flex;
+  align-items: flex-start; /* Change from center to flex-start */
+  justify-content: center;
+}
+
+/* Monitoring final layout tweaks: wider chart, no vertical scroll */
+.monitoring-page { display: flex; flex-direction: column; height: 100%; padding-left: 1rem; padding-right: 1rem; max-width: 100%; width: 100%; margin: 0; }
+.monitoring-content { flex: 1; overflow: hidden; gap: 0.75rem; }
+.monitoring-page .page-title { margin: 0.5rem 0 0.6rem; text-align: center; }
+.monitoring-page .date-selector { margin-bottom: 0.5rem; }
+.monitoring-page .side-section { width: 200px; margin-right: 0.25rem; }
+.monitoring-page .main-section { display: flex; flex-direction: column; height: 100%; padding-right: 0.5rem; }
+.monitoring-page .chart-container { flex: 0 0 320px; height: 320px; min-height: 320px; padding: 0.7rem; margin: 0 0.75rem 0.3rem; }
+.monitoring-page .waste-info-container { padding: 0.6rem 0.8rem; margin-bottom: 0.35rem; }
+.monitoring-page .waste-stats-card { gap: 0.6rem; margin-top: 0.35rem; }
+.monitoring-page .print-button-container { margin: 0.2rem 0.2rem 0.4rem 0; }
+
+/* Monitoring compact overrides to remove page scroll */
+.monitoring-page .page-title {
+  margin-bottom: 0.5rem;
+}
+.monitoring-content { gap: 0.75rem; }
+.monitoring-page .main-section { padding-right: 0.5rem; }
+.monitoring-page .date-selector { margin-bottom: 0.5rem; }
+.monitoring-page .chart-container { padding: 0.7rem; min-height: 160px; }
+.monitoring-page .monitoring-content { height: auto; }
+.monitoring-page .chart-container {
+  flex: 0 0 320px; /* shorter chart to prevent scroll */
+  height: 320px;
+  min-height: 320px;
+  margin: 0 0.75rem 0.3rem; /* ensure some side space like image 2 */
+}
+
+/* Extra compact tweaks to fully avoid vertical scroll on Monitoring */
+.monitoring-page .waste-info-container { padding: 0.5rem 0.75rem; margin-bottom: 0.25rem; }
+.monitoring-page .waste-stats-card { margin-top: 0.25rem; }
+.monitoring-page .waste-stat-item { padding: 0.45rem 0.6rem; }
+.monitoring-page .waste-stat-item img { width: 28px; height: 28px; }
+.monitoring-page .print-button-container { margin: 0.15rem 0.15rem 0.25rem 0; }
+.monitoring-page .page-title { margin: 0.35rem 0 0.5rem; }
+
+/* Final compact overrides to prevent scroll on Monitoring */
+.monitoring-page .chart-container { flex: 0 0 300px; height: 300px; min-height: 300px; }
+.monitoring-page .date-selector { margin-bottom: 0.35rem; }
+.monitoring-page .waste-stats-card { gap: 0.5rem; }
+.monitoring-page .waste-stat-item { padding: 0.4rem 0.55rem; }
+.monitoring-page .side-section { height: auto; }
+.monitoring-page .side-section { width: 200px; margin-right: 0.25rem; }
+.monitoring-page .total-waste-card,
+.monitoring-page .legend-card { padding: 0.5rem 0.75rem; margin-bottom: 0.4rem; }
+.monitoring-page .total-waste-card h3,
+.monitoring-page .legend-card h3 { margin-bottom: 0.5rem; font-size: 1.1rem; }
+.monitoring-page .waste-item { padding: 0.35rem 0; gap: 0.5rem; margin-bottom: 0.35rem; }
+.monitoring-page .waste-item img { width: 22px; height: 22px; }
+.monitoring-page .waste-item span:first-of-type { font-size: 0.95rem; margin-left: 0.2rem; }
+.monitoring-page .waste-item .amount { font-size: 1rem; }
+.monitoring-page .legend-item { gap: 0.5rem; margin-bottom: 0.35rem; }
+.monitoring-page .legend-color { width: 20px; height: 20px; }
+.monitoring-page .legend-item span { font-size: 0.95rem; }
+.monitoring-page .print-button-container { margin: 0.2rem 0.2rem 0.3rem 0; }

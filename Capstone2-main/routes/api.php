@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\WasteLogController;
+use App\Models\Registration;
 use App\Http\Controllers\WasteLevelController;
 
 // Public routes
@@ -13,21 +14,46 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 // Email verification link handler
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return response()->json(['message' => 'Email verified successfully!']);
-})->middleware(['jwt.auth', 'signed'])->name('verification.verify');
+Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $user = Registration::find($id);
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+        return response()->json(['error' => 'Invalid verification link'], 403);
+    }
+
+    if ($user->hasVerifiedEmail()) {
+        return response()->json(['message' => 'Email already verified']);
+    }
+
+    $user->markEmailAsVerified();
+
+    return response()->json(['message' => 'Email verified successfully']);
+})->middleware(['signed'])->name('verification.verify');
+
+
 
 // Resend email verification
 Route::post('/email/resend', function (Request $request) {
-    $user = auth()->user();
+    $request->validate(['email' => 'required|email']);
+    $user = \App\Models\Registration::where('email', $request->email)->first();
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
     if ($user->hasVerifiedEmail()) {
-        return response()->json(['message' => 'Email already verified.'], 400);
+        return response()->json(['message' => 'Email already verified.']);
     }
 
     $user->sendEmailVerificationNotification();
-    return response()->json(['message' => 'Verification link sent!']);
-})->middleware(['jwt.auth'])->name('verification.send');
+
+    return response()->json(['message' => 'Verification link resent.']);
+})->name('verification.send');
+
 
 // Protected routes using JWT authentication & email verified
 Route::middleware(['jwt.auth', 'verified'])->group(function () {
