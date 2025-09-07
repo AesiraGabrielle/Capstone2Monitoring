@@ -38,6 +38,10 @@ function App() {
   };
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch {}
     setUser(null);
     setIsAuthenticated(false);
   };
