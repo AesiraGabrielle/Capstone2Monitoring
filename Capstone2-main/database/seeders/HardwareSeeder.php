@@ -20,6 +20,8 @@ class HardwareSeeder extends Seeder
                 'password' => Hash::make('kultoniDepaz'),
                 'is_hardware' => 1,
                 'token' => null, // permanent JWT will be generated on login
+                'email_verified_at' => now(), 
+
             ]
         );
 

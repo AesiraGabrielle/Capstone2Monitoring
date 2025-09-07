@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard';
 import BinsPage from './components/BinsPage';
 import MonitoringPage from './components/MonitoringPage';
 import ChangePasswordPage from './components/ChangePasswordPage';
+import ResetPasswordPage from './components/ResetPasswordPage';
 // import TestConnection from './components/TestConnection';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
             <Navigate to="/dashboard/bins" /> : 
             <LoginPage onLogin={handleLogin} />
           } />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/register" element={
             isAuthenticated ? 
             <Navigate to="/dashboard/bins" /> : 

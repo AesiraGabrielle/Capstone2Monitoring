@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use App\Models\Registration;
 use Illuminate\Support\Facades\Hash;
@@ -26,11 +28,12 @@ class AuthController extends Controller
 
         // Create user
         $user = Registration::create([
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'token' => $token = Str::random(60), // optional, if needed for email verification
-        ]);
+        'full_name' => $request->full_name,
+        'email' => $request->email,
+        'password' => $request->password, // plain here, model mutator hashes it
+        'token' => Str::random(60),
+    ]);
+
 
         // Fire email verification event
         event(new Registered($user));
@@ -92,6 +95,49 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password changed successfully!']);
     }
 
+    
+    public function forgotPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:registrations,email',
+        ]);
+
+        $status = Password::broker('registrations')->sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Password reset link sent to your email.'])
+            : response()->json(['error' => 'Unable to send reset link.'], 500);
+    }
+
+    /**
+     * Reset the password using the token sent by email
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email|exists:registrations,email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = \Illuminate\Support\Facades\Password::broker('registrations')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->password = \Illuminate\Support\Facades\Hash::make($password);
+                $user->setRememberToken(\Illuminate\Support\Str::random(60));
+                $user->save();
+
+                event(new \Illuminate\Auth\Events\PasswordReset($user));
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Password reset successful. You can now log in with your new password.'])
+            : response()->json(['error' => 'Invalid or expired token.'], 400);
+    }
+
     // Optional: Logout user by invalidating token
     public function logout()
     {
@@ -103,7 +149,6 @@ class AuthController extends Controller
         }
     }
 
-// App\Http\Controllers\AuthController.php
 
 public function hardwareLogin(Request $request)
 {
@@ -122,9 +167,7 @@ public function hardwareLogin(Request $request)
         return response()->json(['error' => 'Not a hardware account'], 403);
     }
 
-    // Build a deterministic, effectively "permanent" token WITHOUT saving it to DB.
-    // We pin jti/iat/nbf/exp so the token string is the same every time.
-    // Use 2037-12-31 for 32-bit safe exp.
+
     $claims = [
         'jti'         => 'device-esp32cam-v1',        // any constant ID you like
         'iat'         => 1704067200,                  // 2024-01-01 00:00:00 UTC
@@ -134,8 +177,6 @@ public function hardwareLogin(Request $request)
         'role'        => 'device',
     ];
 
-    // IMPORTANT: do NOT call auth()->attempt() here (it rotates claims).
-    // Also do NOT save $token to $user->token (avoids the column size issue).
     $token = \Tymon\JWTAuth\Facades\JWTAuth::claims($claims)->fromUser($user);
 
     return response()->json([

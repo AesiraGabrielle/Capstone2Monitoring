@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import * as XLSX from 'xlsx';
 import { Line } from 'react-chartjs-2';
 import biodegradableIcon from '../assets/biodegradable.png';
 import nonBiodegradableIcon from '../assets/non-biodegradable.png';
@@ -46,15 +47,15 @@ const MonitoringPage = () => {
   const [startDate, endDate] = dateRange;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [daily, setDaily] = useState([]);
-  const [totals, setTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
+  const [totals, setTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 }); // range totals
+  const [allTotals, setAllTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 }); // overall totals
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [initialDaily, setInitialDaily] = useState([]); // store initial (auto) dataset for printing when no range chosen
+  const [exporting, setExporting] = useState(false);
 
   const handleDateChange = (update) => {
     setDateRange(update);
-    if (update[0] && update[1]) {
-      setShowConfirmation(true);
-    }
   };
 
   const formatDateRange = () => {
@@ -64,20 +65,36 @@ const MonitoringPage = () => {
     return "Select Date Range";
   };
 
-  // Fetch initial daily breakdown and totals
+  // Fetch daily breakdown for current week initially and overall totals
   useEffect(() => {
     let mounted = true;
-    const load = async () => {
+    const loadInitial = async () => {
       setLoading(true);
       setError('');
       try {
-        const [dailyRes, totalsRes] = await Promise.all([
+        const [dailyRes, allTotalsRes] = await Promise.all([
           monitoringAPI.getDailyBreakdown(),
           monitoringAPI.getTotals(),
         ]);
         if (!mounted) return;
-        setDaily(Array.isArray(dailyRes.data) ? dailyRes.data : []);
-        setTotals(totalsRes.data || { bio: 0, non_bio: 0, unclassified: 0 });
+        const arr = Array.isArray(dailyRes.data) ? dailyRes.data : [];
+  setDaily(arr);
+  setInitialDaily(arr); // capture initial load
+        // compute totals for the returned period
+        const totalsRange = arr.reduce((acc, d) => {
+          acc.bio += Number(d.bio ?? 0) || 0;
+          acc.non_bio += Number(d.non_bio ?? 0) || 0;
+          acc.unclassified += Number(d.unclassified ?? 0) || 0;
+          return acc;
+        }, { bio: 0, non_bio: 0, unclassified: 0 });
+        setTotals(totalsRange);
+
+        const overall = allTotalsRes?.data || { bio: 0, non_bio: 0, unclassified: 0 };
+        setAllTotals({
+          bio: Number(overall.bio ?? 0) || 0,
+          non_bio: Number(overall.non_bio ?? 0) || 0,
+          unclassified: Number(overall.unclassified ?? 0) || 0,
+        });
       } catch (err) {
         if (!mounted) return;
         setError(err?.response?.data?.message || 'Failed to load monitoring data');
@@ -85,11 +102,43 @@ const MonitoringPage = () => {
         mounted && setLoading(false);
       }
     };
-    load();
-    return () => {
-      mounted = false;
-    };
+    loadInitial();
+    return () => { mounted = false; };
   }, []);
+
+  // Fetch when both start and end are selected
+  useEffect(() => {
+    if (!startDate || !endDate) return;
+    let mounted = true;
+    const loadRange = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const params = {
+          start: startDate.toISOString().slice(0, 10),
+          end: endDate.toISOString().slice(0, 10),
+        };
+        const dailyRes = await monitoringAPI.getDailyBreakdown(params);
+        if (!mounted) return;
+        const arr = Array.isArray(dailyRes.data) ? dailyRes.data : [];
+        setDaily(arr);
+        const totalsRange = arr.reduce((acc, d) => {
+          acc.bio += Number(d.bio ?? 0) || 0;
+          acc.non_bio += Number(d.non_bio ?? 0) || 0;
+          acc.unclassified += Number(d.unclassified ?? 0) || 0;
+          return acc;
+        }, { bio: 0, non_bio: 0, unclassified: 0 });
+        setTotals(totalsRange);
+      } catch (err) {
+        if (!mounted) return;
+        setError(err?.response?.data?.message || 'Failed to load monitoring data');
+      } finally {
+        mounted && setLoading(false);
+      }
+    };
+    loadRange();
+    return () => { mounted = false; };
+  }, [startDate, endDate]);
 
   const lineChartData = useMemo(() => {
     if (!daily || daily.length === 0) {
@@ -107,7 +156,7 @@ const MonitoringPage = () => {
       datasets: [
         {
           label: 'Biodegradable',
-          data: daily.map((d) => d.bio ?? 0),
+          data: daily.map((d) => Number(d.bio ?? 0) || 0),
           borderColor: 'rgb(102, 176, 50)',
           backgroundColor: 'rgb(102, 176, 50)',
           tension: 0.4,
@@ -115,7 +164,7 @@ const MonitoringPage = () => {
         },
         {
           label: 'Non-Biodegradable',
-          data: daily.map((d) => d.non_bio ?? 0),
+          data: daily.map((d) => Number(d.non_bio ?? 0) || 0),
           borderColor: 'rgb(255, 192, 0)',
           backgroundColor: 'rgb(255, 192, 0)',
           tension: 0.4,
@@ -123,7 +172,7 @@ const MonitoringPage = () => {
         },
         {
           label: 'Unidentified Waste',
-          data: daily.map((d) => d.unclassified ?? 0),
+          data: daily.map((d) => Number(d.unclassified ?? 0) || 0),
           borderColor: 'rgb(237, 125, 49)',
           backgroundColor: 'rgb(237, 125, 49)',
           tension: 0.4,
@@ -138,7 +187,7 @@ const MonitoringPage = () => {
   // “nice” integer step so ticks remain readable (autoskip handled by maxTicksLimit).
   const maxYValue = useMemo(() => {
     if (!daily || daily.length === 0) return 10;
-    const allValues = daily.flatMap(d => [d.bio ?? 0, d.non_bio ?? 0, d.unclassified ?? 0]);
+  const allValues = daily.flatMap(d => [Number(d.bio ?? 0) || 0, Number(d.non_bio ?? 0) || 0, Number(d.unclassified ?? 0) || 0]);
     const maxVal = Math.max(0, ...allValues);
     if (maxVal <= 10) return 10;
     // Round up to a nice number (nearest 5)
@@ -202,6 +251,60 @@ const MonitoringPage = () => {
     </div>
   );
 
+  // (CSV export removed as per request)
+
+  const buildWorkbook = () => {
+    const source = (startDate && endDate) ? daily : initialDaily;
+    if (!source || source.length === 0) return null;
+    const now = new Date();
+    const timestamp = now.toISOString();
+    // Header metadata rows
+    const meta = [
+      ['Waste Monitoring Report'],
+      [(startDate && endDate) ? `Range: ${startDate.toISOString().slice(0,10)} to ${endDate.toISOString().slice(0,10)}` : 'Range: Initial (current week)'],
+      [`Generated At: ${timestamp}`],
+      [],
+    ];
+    const header = ['Date', 'Biodegradable', 'Non Biodegradable', 'Unidentified'];
+    // Data rows
+    const dataRows = source.map(d => [
+      d.date,
+      Number(d.bio ?? 0),
+      Number(d.non_bio ?? 0),
+      Number(d.unclassified ?? 0)
+    ]);
+    // Totals row
+    const totalsRow = [
+      'TOTAL',
+      dataRows.reduce((a,r)=>a + (r[1]||0),0),
+      dataRows.reduce((a,r)=>a + (r[2]||0),0),
+      dataRows.reduce((a,r)=>a + (r[3]||0),0),
+    ];
+    const sheetData = [...meta, header, ...dataRows, totalsRow];
+    const ws = XLSX.utils.aoa_to_sheet(sheetData);
+    // Bold styling via cell comments not directly supported in plain SheetJS free version; minimal formatting
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Monitoring');
+    return wb;
+  };
+
+  const handleExportXlsx = () => {
+    const wb = buildWorkbook();
+    if (!wb) {
+      alert('No data available to export.');
+      return;
+    }
+    setExporting(true);
+    try {
+      const filenameBase = (startDate && endDate)
+        ? `waste-monitoring_${startDate.toISOString().slice(0,10)}_to_${endDate.toISOString().slice(0,10)}`
+        : 'waste-monitoring_initial';
+      XLSX.writeFile(wb, `${filenameBase}.xlsx`);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   // Update the Legend component
   const Legend = () => (
     <div className="legend-card">
@@ -258,8 +361,10 @@ const MonitoringPage = () => {
               <div className="text-center text-muted mt-2">No data available for the selected period.</div>
             )}
           </div>
-          <div className="print-button-container">
-            <button className="print-button">Print</button>
+          <div className="print-button-container d-flex gap-2">
+            <button type="button" onClick={handleExportXlsx} className="print-button" disabled={exporting}>
+              {exporting ? 'Exporting...' : 'Download Excel'}
+            </button>
           </div>
 
           <div className="waste-info-container">
@@ -297,17 +402,17 @@ const MonitoringPage = () => {
             <div className="waste-item">
               <img src={biodegradableIcon} alt="Biodegradable" />
               <span>Biodegradable:</span>
-              <span className="amount">{totals.bio ?? 0}</span>
+              <span className="amount">{allTotals.bio ?? 0}</span>
             </div>
             <div className="waste-item">
               <img src={nonBiodegradableIcon} alt="Non-Biodegradable" />
               <span>Non-Biodegradable:</span>
-              <span className="amount">{totals.non_bio ?? 0}</span>
+              <span className="amount">{allTotals.non_bio ?? 0}</span>
             </div>
             <div className="waste-item">
               <img src={unidentifiedIcon} alt="Unidentified" />
               <span>Unidentified Waste:</span>
-              <span className="amount">{totals.unclassified ?? 0}</span>
+              <span className="amount">{allTotals.unclassified ?? 0}</span>
             </div>
           </div>
 
@@ -329,27 +434,7 @@ const MonitoringPage = () => {
         </div>
       </div>
 
-      {/* Add confirmation modal */}
-      <Modal show={showConfirmation} onHide={() => setShowConfirmation(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Date Range</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Do you want to view data for the period: {formatDateRange()}?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowConfirmation(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={() => {
-            // Handle confirmed date range here
-            setShowConfirmation(false);
-            // Update your chart data based on the selected range
-          }}>
-            Confirm
-          </Button>
-        </Modal.Footer>
-      </Modal>
+  {/* Confirmation modal no longer required for filtering; kept for future use if needed */}
     </div>
   );
 };

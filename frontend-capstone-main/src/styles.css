@@ -391,6 +391,31 @@ body {
   border-bottom-right-radius: 0;
 }
 
+/* Toggle button color scheme (unclicked = navy, clicked = bright blue) */
+.input-group.equal-toggle .btn.btn-outline-secondary {
+  background-color: #043873; /* navy */
+  border-color: #043873;
+  color: #ffffff;
+}
+.input-group.equal-toggle .btn.btn-outline-secondary:hover,
+.input-group.equal-toggle .btn.btn-outline-secondary:focus {
+  background-color: #043873;
+  border-color: #043873;
+  color: #ffffff;
+}
+
+.input-group.equal-toggle .btn.btn-primary {
+  background-color: #4F9CF9; /* clicked bright blue */
+  border-color: #4F9CF9;
+  color: #ffffff;
+}
+.input-group.equal-toggle .btn.btn-primary:hover,
+.input-group.equal-toggle .btn.btn-primary:focus {
+  background-color: #2c7bd9; /* slight darken on hover */
+  border-color: #2c7bd9;
+  color: #ffffff;
+}
+
 .cancel-btn {
   padding: 8px 30px;
   background-color: #f0e68c;

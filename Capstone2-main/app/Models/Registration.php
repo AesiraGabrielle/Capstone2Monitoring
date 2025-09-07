@@ -2,35 +2,64 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use App\Notifications\ResetPassword as CustomResetPassword;
 
 class Registration extends Authenticatable implements JWTSubject, MustVerifyEmail
-
 {
     use Notifiable;
 
     protected $table = 'registrations';
 
     protected $fillable = [
-        'full_name',
-        'email',
-        'password',
-        'token', // optional: used for verification/email tracking
-    ];
+    'full_name',
+    'email',
+    'password',
+    'token',
+    'is_hardware', // add this
+    'email_verified_at', // also add this
+];
+
 
     protected $hidden = [
         'password',
-        'remember_token', // optional: hide remember_token if you plan to use it
+        // 'remember_token', // 🔹 removed since we don’t use it
     ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime', // ensures email verification works
-    ];
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
 
-    // JWT Methods
+    ];
+    
+
+    /**
+     * 🔹 Override: send custom reset password notification
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $url = config('app.frontend_url') . '/reset-password?token=' . $token . '&email=' . urlencode($this->email);
+        $this->notify(new CustomResetPassword($token, $url));
+    }
+    //    protected function setPasswordAttribute($value)
+    // {
+    //     $this->attributes['password'] = Hash::make($value);
+    // }
+
+    /**
+     * 🔹 Override: disable remember_token entirely
+     */
+    public function setRememberToken($value) {}
+    public function getRememberTokenName() { return null; }
+    public function getRememberToken() { return null; }
+
+    /**
+     * JWT methods
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -40,17 +69,16 @@ class Registration extends Authenticatable implements JWTSubject, MustVerifyEmai
     {
         return [];
     }
-    
-public function hasVerifiedEmail()
+
+    /**
+     * 🔹 Email verification override
+     */
+    public function hasVerifiedEmail()
 {
-    // Bypass email verification if this is a hardware account
-    if ($this->is_hardware) {
+    if (!empty($this->is_hardware)) { // ✅ check the DB column, not PHP property
         return true;
     }
-
-    // Normal users still require verification
     return !is_null($this->email_verified_at);
 }
-
 
 }

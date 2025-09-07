@@ -8,12 +8,10 @@ use App\Http\Controllers\WasteLogController;
 use App\Models\Registration;
 use App\Http\Controllers\WasteLevelController;
 
-// Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
-// Email verification link handler
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
     $user = Registration::find($id);
 
@@ -36,7 +34,6 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
 
 
 
-// Resend email verification
 Route::post('/email/resend', function (Request $request) {
     $request->validate(['email' => 'required|email']);
     $user = \App\Models\Registration::where('email', $request->email)->first();
@@ -55,17 +52,13 @@ Route::post('/email/resend', function (Request $request) {
 })->name('verification.send');
 
 
-// Protected routes using JWT authentication & email verified
 Route::middleware(['jwt.auth', 'verified'])->group(function () {
-    // Auth-related
     Route::post('/change-password', [AuthController::class, 'changePassword']);
-    Route::post('/logout', [AuthController::class, 'logout']); // optional logout route
+    Route::post('/logout', [AuthController::class, 'logout']); 
 
-    // Waste levels (ultrasonic sensors)
     Route::post('/waste-levels', [WasteLevelController::class, 'store']);
     Route::get('/waste-levels/latest', [WasteLevelController::class, 'latestLevels']);
 
-    // Waste logs (camera object detection)
     Route::post('/waste-logs', [WasteLogController::class, 'store']); 
     Route::get('/waste-logs/daily-breakdown', [WasteLogController::class, 'dailyBreakdown']);
     Route::get('/waste-logs/weekly-summary', [WasteLogController::class, 'weeklySummary']);
@@ -73,10 +66,10 @@ Route::middleware(['jwt.auth', 'verified'])->group(function () {
     Route::get('/waste-logs/total', [WasteLogController::class, 'totalGarbageAllTime']);
 });
 
-// Hardware login (public)
 Route::post('/hardware/login', [AuthController::class, 'hardwareLogin']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-// Hardware-protected endpoints
 Route::middleware(['jwt.auth'])->group(function () {
     Route::post('/hardware/waste-levels', [WasteLevelController::class, 'store']);
     Route::post('/hardware/waste-logs', [WasteLogController::class, 'store']);

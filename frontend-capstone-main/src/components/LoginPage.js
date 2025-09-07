@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
+import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
 
 const LoginPage = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -9,6 +10,10 @@ const LoginPage = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotStatus, setForgotStatus] = useState({ type: '', message: '' });
+  const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const navigate = useNavigate();
   
   const handleSubmit = async (e) => {
@@ -30,6 +35,28 @@ const LoginPage = ({ onLogin }) => {
       setError(msg);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openForgot = () => {
+    setForgotEmail(email || '');
+    setForgotStatus({ type: '', message: '' });
+    setShowForgot(true);
+  };
+
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setForgotStatus({ type: '', message: '' });
+    setForgotSubmitting(true);
+    try {
+      const res = await authAPI.forgotPassword(forgotEmail);
+      const msg = res?.data?.message || 'If that email exists, a reset link has been sent.';
+      setForgotStatus({ type: 'success', message: msg });
+    } catch (err) {
+      const msg = err?.response?.data?.error || err?.response?.data?.message || 'Unable to send reset link.';
+      setForgotStatus({ type: 'danger', message: msg });
+    } finally {
+      setForgotSubmitting(false);
     }
   };
 
@@ -108,7 +135,7 @@ const LoginPage = ({ onLogin }) => {
                 </div>
                 
                 <div className="mt-3 text-center">
-                  <Link to="/forgot-password" className="forgot-password">Forgot Password?</Link>
+                  <button type="button" className="btn btn-link p-0 forgot-password" onClick={openForgot}>Forgot Password?</button>
                 </div>
               </form>
             </div>
@@ -120,6 +147,37 @@ const LoginPage = ({ onLogin }) => {
       <div className="footer white">
         © 2025 Leyte Normal University, All rights reserved.
       </div>
+
+      {/* Forgot Password Modal */}
+      <Modal show={showForgot} onHide={() => setShowForgot(false)} centered>
+        <Form onSubmit={handleForgotSubmit}>
+          <Modal.Header closeButton>
+            <Modal.Title>Forgot Password</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p className="mb-3">Enter your account email. We'll send a password reset link and PIN to that address.</p>
+            {forgotStatus.message && (
+              <Alert variant={forgotStatus.type}>{forgotStatus.message}</Alert>
+            )}
+            <Form.Group controlId="forgotEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="name@example.com"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowForgot(false)} disabled={forgotSubmitting}>Close</Button>
+            <Button variant="primary" type="submit" disabled={forgotSubmitting || !forgotEmail}>
+              {forgotSubmitting ? (<><Spinner animation="border" size="sm" className="me-2" /> Sending...</>) : 'Send Reset Link'}
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
     </div>
   );
 };

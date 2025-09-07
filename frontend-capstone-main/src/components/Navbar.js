@@ -1,29 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Dropdown, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import binLogo from '../assets/bin-logo.png';
-import { authAPI } from '../services/api';
+import { wasteLevelAPI } from '../services/api';
 
 const Navbar = ({ user, onLogout }) => {
   const location = useLocation();
   const [showWarnings, setShowWarnings] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [warnings, setWarnings] = useState([
-    "Biodegradable Bin is Almost Full",
-    "Non-Biodegradable Bin is Almost Full",
-    "Biodegradable Bin Malfunctioned"
-  ]);
+  const [warnings, setWarnings] = useState([]);
+
+  // Fetch latest bin levels and compute warnings
+  useEffect(() => {
+    let mounted = true;
+
+    const computeWarnings = (levels) => {
+      if (!levels || typeof levels !== 'object') return [];
+      const msgs = [];
+
+      const entries = [
+        { key: 'bio', label: 'Biodegradable' },
+        { key: 'non_bio', label: 'Non Biodegradable' },
+        { key: 'unclassified', label: 'Unidentified Waste' },
+      ];
+
+      entries.forEach(({ key, label }) => {
+        const valRaw = levels[key];
+        const level = typeof valRaw === 'number' ? Math.round(valRaw) : null;
+        if (level === null) return;
+        if (level >= 100) {
+          msgs.push(`${label} Bin is Full! Please Clean Up the bin!`);
+        } else if (level >= 85) {
+          msgs.push(`${label} Bin is Almost Full! Clean up the Bin!`);
+        }
+      });
+
+      return msgs;
+    };
+
+    const load = async () => {
+      try {
+        const res = await wasteLevelAPI.getLatestLevels();
+        if (!mounted) return;
+        const newWarnings = computeWarnings(res?.data);
+        setWarnings(newWarnings);
+      } catch (e) {
+        // Silent fail: keep existing warnings
+      }
+    };
+
+    load();
+    const id = setInterval(load, 30000); // refresh every 30s
+    return () => {
+      mounted = false;
+      clearInterval(id);
+    };
+  }, []);
 
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
 
-  const confirmLogout = async () => {
+  const confirmLogout = () => {
     setShowLogoutModal(false);
-    try { await authAPI.logout(); } catch (_) {}
-    localStorage.removeItem('token');
     onLogout();
   };
 
@@ -37,18 +78,13 @@ const Navbar = ({ user, onLogout }) => {
       <nav className="navbar navbar-expand navbar-dark">
         <div className="container-fluid">
           <div className="navbar-brand d-flex align-items-center">
-            <img src={binLogo} alt="Logo" className="avatar me-2" />
-            <span>
-              {(() => {
-                const email = user?.email || '';
-                const base = email.includes('@') ? email.split('@')[0] : 'User';
-                const niceBase = base
-                  .replace(/[._-]+/g, ' ')
-                  .replace(/\b\w/g, (c) => c.toUpperCase());
-                const name = user?.full_name || user?.name || niceBase || 'User';
-                return `Welcome ${name}!`;
-              })()}
-            </span>
+            <Link to="/dashboard/bins" className="d-flex align-items-center text-decoration-none">
+              <img src={binLogo} alt="Logo" className="avatar me-2" style={{ cursor: 'pointer' }} />
+            </Link>
+            {(() => {
+              const displayName = (user && (user.full_name || user.name || user.email)) || 'User';
+              return <span>Welcome {displayName}!</span>;
+            })()}
           </div>
           
           <div className="navbar-nav mx-auto">
@@ -79,11 +115,15 @@ const Navbar = ({ user, onLogout }) => {
                 <div className="warning-dropdown">
                   <div className="warning-header">Warnings</div>
                   <div className="warning-body">
-                    {warnings.map((warning, index) => (
-                      <div key={index} className="warning-item">
-                        {warning}
-                      </div>
-                    ))}
+                    {warnings.length === 0 ? (
+                      <div className="warning-item text-muted">No warnings</div>
+                    ) : (
+                      warnings.map((warning, index) => (
+                        <div key={index} className="warning-item">
+                          {warning}
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               )}

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -15,7 +14,7 @@ return [
 
    'defaults' => [
     'guard' => 'api',
-    'passwords' => 'users',
+    'passwords' => 'registrations',
 ],
 
     /*
@@ -35,12 +34,15 @@ return [
     |
     */
 
-   'guards' => [
+'guards' => [
     'api' => [
         'driver' => 'jwt',
-        'provider' => 'users',
+        'provider' => 'registrations',
     ],
 ],
+
+
+
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -58,13 +60,12 @@ return [
     |
     */
 
-    'providers' => [
-    'users' => [ // still keep the name 'users' because that's what Laravel expects by default
+  'providers' => [
+    'registrations' => [
         'driver' => 'eloquent',
-        'model' => App\Models\Registration::class, // <- point this to your custom model
+        'model' => App\Models\Registration::class,
     ],
 ],
-
 
     /*
     |--------------------------------------------------------------------------
@@ -86,14 +87,16 @@ return [
     */
 
     'passwords' => [
-        'users' => [
-            'provider' => 'users',
+        'registrations' => [
+            'provider' => 'registrations',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],
     ],
 
+
+    
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout

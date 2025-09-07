@@ -18,11 +18,13 @@ export const authAPI = {
   changePassword: (data) => api.post('/change-password', data),
   logout: () => api.post('/logout'),
   resendVerification: () => api.post('/email/resend'),
+  forgotPassword: (email) => api.post('/forgot-password', { email }),
+  resetPassword: (data) => api.post('/reset-password', data),
 };
 
 // Waste logs/monitoring
 export const monitoringAPI = {
-  getDailyBreakdown: () => api.get('/waste-logs/daily-breakdown'),
+  getDailyBreakdown: (params) => api.get('/waste-logs/daily-breakdown', { params }),
   getWeeklySummary: () => api.get('/waste-logs/weekly-summary'),
   getMonthlySummary: (month) => api.get('/waste-logs/monthly-summary', { params: { month } }),
   getTotals: () => api.get('/waste-logs/total'),

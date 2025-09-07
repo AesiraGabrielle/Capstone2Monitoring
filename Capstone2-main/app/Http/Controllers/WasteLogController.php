@@ -37,12 +37,25 @@ class WasteLogController extends Controller
         return response()->json(['message' => 'Waste log stored successfully.']);
     }
 
-    // Daily breakdown for the week
-    public function dailyBreakdown()
+    // Daily breakdown for a range; defaults to current week if no range provided
+    public function dailyBreakdown(Request $request)
     {
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
-        $days = CarbonPeriod::create($startOfWeek, $endOfWeek);
+        $startParam = $request->query('start');
+        $endParam = $request->query('end');
+
+        if ($startParam && $endParam) {
+            try {
+                $start = Carbon::parse($startParam)->startOfDay();
+                $end = Carbon::parse($endParam)->endOfDay();
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Invalid date range. Use YYYY-MM-DD.'], 422);
+            }
+        } else {
+            $start = Carbon::now()->startOfWeek();
+            $end = Carbon::now()->endOfWeek();
+        }
+
+        $days = CarbonPeriod::create($start, '1 day', $end);
         $result = [];
 
         foreach ($days as $day) {
@@ -61,7 +74,7 @@ class WasteLogController extends Controller
             ];
         }
 
-        return response()->json($result);
+    return response()->json($result);
     }
 
     // Weekly summary per week number
