@@ -45,7 +45,7 @@ const RegisterPage = () => {
     try {
       // Strong password: letter + number + allowed symbol (explicit set), min 8
   // Frontend simplified allowed symbols subset to avoid JSX escaping pitfalls
-  const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;,.?]).{8,}$/;
+  const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>.,?\/`~]).{8,}$/;
       if (!strongPattern.test(password)) {
         setErrorMessage('Password must have letter, number, allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~), 8+ chars');
         return;
@@ -121,8 +121,8 @@ const RegisterPage = () => {
                       placeholder="Password (8+ chars: letter, number, symbol)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;,.?]).{8,}$"
-                      title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;,.?), min 8 chars"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;<>.,?\\/`~]).{8,}$"
+                      title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;<>.,?/`~), min 8 chars"
                       minLength={8}
                       required
                     />
@@ -156,8 +156,8 @@ const RegisterPage = () => {
                       placeholder="Repeat Password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;,.?]).{8,}$"
-                      title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;,.?), min 8 chars"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;<>.,?\\/`~]).{8,}$"
+                      title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;<>.,?/`~), min 8 chars"
                       minLength={8}
                       required
                     />

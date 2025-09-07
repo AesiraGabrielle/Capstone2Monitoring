@@ -32,11 +32,13 @@ const ResetPasswordPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;<>.,?\/`~]).{8,}$/;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ type: '', message: '' });
-    if (password.length < 8) {
-      setStatus({ type: 'danger', message: 'Password must be at least 8 characters.' });
+    if (!strongPattern.test(password)) {
+      setStatus({ type: 'danger', message: 'Password must be 8+ chars and include letter, number & symbol (!@#$%^&*()_+-={}[]|:;,.?).' });
       return;
     }
     if (password !== password2) {
@@ -47,8 +49,8 @@ const ResetPasswordPage = () => {
     try {
       const res = await authAPI.resetPassword({ token, email, password, password_confirmation: password2 });
       const msg = res?.data?.message || 'Password reset successful. You can now log in.';
-      setStatus({ type: 'success', message: msg });
-      setTimeout(() => navigate('/login'), 1500);
+  setStatus({ type: 'success', message: msg });
+  navigate('/login');
     } catch (err) {
       const msg = err?.response?.data?.error || err?.response?.data?.message || 'Password reset failed.';
       setStatus({ type: 'danger', message: msg });
@@ -91,13 +93,15 @@ const ResetPasswordPage = () => {
                       </button>
                     </div>
                   </Form.Group>
-                <Form.Group className="mb-3" controlId="password">
+        <Form.Group className="mb-3" controlId="password">
                   <Form.Label>New Password</Form.Label>
                   <div className="input-group equal-toggle">
                     <Form.Control
                       type={showNew ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+          pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;<>.,?\\/`~]).{8,}$"
+          title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;<>.,?/`~), min 8 chars"
                       required
                     />
                     <button
@@ -111,13 +115,15 @@ const ResetPasswordPage = () => {
                     </button>
                   </div>
                 </Form.Group>
-                <Form.Group className="mb-4" controlId="password2">
+        <Form.Group className="mb-4" controlId="password2">
                   <Form.Label>Confirm Password</Form.Label>
                   <div className="input-group equal-toggle">
                     <Form.Control
                       type={showRe ? 'text' : 'password'}
                       value={password2}
                       onChange={(e) => setPassword2(e.target.value)}
+          pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;<>.,?\\/`~]).{8,}$"
+          title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;<>.,?/`~), min 8 chars"
                       required
                     />
                     <button
