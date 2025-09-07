@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
 import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
@@ -13,6 +13,27 @@ const LoginPage = ({ onLogin }) => {
   const [showForgot, setShowForgot] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotStatus, setForgotStatus] = useState({ type: '', message: '' });
+  const [verifiedMsg, setVerifiedMsg] = useState('');
+  const location = useLocation();
+
+  // Show success message when redirected after email verification
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const verified = params.get('verified');
+    if (verified === '1') {
+      setVerifiedMsg('Email successfully verified. Please login.');
+      // Clean the URL (remove query params)
+      window.history.replaceState({}, document.title, '/login');
+    } else if (verified === '0') {
+      const reason = params.get('reason');
+      if (reason === 'hash') {
+        setVerifiedMsg('Verification link is invalid or expired.');
+      } else if (reason === 'not_found') {
+        setVerifiedMsg('User for verification link was not found.');
+      }
+      window.history.replaceState({}, document.title, '/login');
+    }
+  }, [location.search]);
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const navigate = useNavigate();
   
@@ -83,6 +104,9 @@ const LoginPage = ({ onLogin }) => {
             <div className="login-form">
               <h2 className="mb-4 text-center">Login</h2>
               <form onSubmit={handleSubmit}>
+                {verifiedMsg && (
+                  <div className="alert alert-success" role="alert">{verifiedMsg}</div>
+                )}
                 {error && (
                   <div className="alert alert-danger" role="alert">{error}</div>
                 )}
