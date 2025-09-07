@@ -22,8 +22,8 @@
           var p = window.location.pathname.replace(/\/+/g,'/');
           var qs = new URLSearchParams(window.location.search || '');
           var hasResetParams = qs.get('token') && qs.get('email');
-          // Handle both /index.html? and /? forms before React mounts
-          if (hasResetParams && (p === '/index.html' || p === '/')) {
+          // If token+email exist on ANY path that is not already /reset-password, rewrite before React mounts
+          if (hasResetParams && p !== '/reset-password') {
             var target = '/reset-password?token=' + encodeURIComponent(qs.get('token')) + '&email=' + encodeURIComponent(qs.get('email'));
             window.history.replaceState({}, '', target);
           }

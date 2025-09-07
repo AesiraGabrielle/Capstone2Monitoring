@@ -75,6 +75,15 @@ function App() {
     useEffect(() => {
       console.log('[Router] location changed:', location.pathname + location.search, 'auth=', isAuthenticated, 'forceShowLogin=', forceShowLogin);
     }, [location.pathname, location.search, isAuthenticated, forceShowLogin]);
+
+    // If token+email present on any non-reset path, redirect internally to reset-password.
+    useEffect(() => {
+      const t = params.get('token');
+      const e = params.get('email');
+      if (t && e && location.pathname !== '/reset-password') {
+        window.history.replaceState({}, '', `/reset-password?token=${encodeURIComponent(t)}&email=${encodeURIComponent(e)}`);
+      }
+    }, [location.pathname, location.search]);
     // Persist verification params briefly in sessionStorage for reliable retrieval after redirects
     useEffect(() => {
       if (verified === '1' || verified === '0') {
