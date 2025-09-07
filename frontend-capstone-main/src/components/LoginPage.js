@@ -32,6 +32,11 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
       else if (reason === 'not_found') setVerifiedMsg('User for verification link was not found.');
       else setVerifiedMsg('Email verification failed.');
     }
+    // Clear session flags immediately so message only shows once (prevents showing after logout later)
+    try {
+      sessionStorage.removeItem('verified_status');
+      sessionStorage.removeItem('verified_reason');
+    } catch {}
     // Focus email field
     setTimeout(() => { emailInputRef.current && emailInputRef.current.focus(); }, 50);
     // Persistent message: remove countdown auto-hide
@@ -58,6 +63,8 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
       }
   const user = res.data?.user || { email };
   try { localStorage.setItem('user', JSON.stringify(user)); } catch {}
+  // Ensure any stale verification flags are cleared on successful login
+  try { sessionStorage.removeItem('verified_status'); sessionStorage.removeItem('verified_reason'); } catch {}
   onLogin(user);
       navigate('/dashboard/bins');
     } catch (err) {
