@@ -17,19 +17,17 @@
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <!-- ... rest of head content -->
     <script>
-      // If the hosting platform rewrites to /index.html preserving query params for reset links,
-      // detect token+email and push proper SPA route before React mounts.
       (function() {
         try {
           var p = window.location.pathname.replace(/\/+/g,'/');
-          if (p === '/index.html') {
-            var qs = new URLSearchParams(window.location.search);
-            if (qs.get('token') && qs.get('email')) {
-              var target = '/reset-password?token=' + encodeURIComponent(qs.get('token')) + '&email=' + encodeURIComponent(qs.get('email'));
-              window.history.replaceState({}, '', target);
-            }
+          var qs = new URLSearchParams(window.location.search || '');
+          var hasResetParams = qs.get('token') && qs.get('email');
+          // Handle both /index.html? and /? forms before React mounts
+          if (hasResetParams && (p === '/index.html' || p === '/')) {
+            var target = '/reset-password?token=' + encodeURIComponent(qs.get('token')) + '&email=' + encodeURIComponent(qs.get('email'));
+            window.history.replaceState({}, '', target);
           }
-        } catch(e) { /* silent */ }
+        } catch(e) {}
       })();
     </script>
 </head>

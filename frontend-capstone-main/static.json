@@ -1,0 +1,8 @@
+{
+  "routes": {
+    "/reset-password": "index.html",
+    "/login": "index.html",
+    "/register": "index.html",
+    "/dashboard/*": "index.html"
+  }
+}
