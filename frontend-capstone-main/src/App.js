@@ -50,7 +50,7 @@ function App() {
     const location = useLocation();
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
-    const forceShowLogin = verified === '1' || verified === '0';
+  const forceShowLogin = verified === '1' || verified === '0';
     return (
       <Routes>
         <Route path="/login" element={
@@ -65,9 +65,14 @@ function App() {
             <RegisterPage />
           } />
           <Route path="/dashboard" element={
-            isAuthenticated ? 
-            <Dashboard user={user} onLogout={handleLogout} /> : 
-            <Navigate to="/login" />
+            forceShowLogin ? (
+              // Always bounce to login with same query so message appears there
+              <Navigate to={`/login${location.search}`} replace />
+            ) : isAuthenticated ? (
+              <Dashboard user={user} onLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
           }>
             <Route path="bins" element={<BinsPage />} />
             <Route path="monitoring" element={<MonitoringPage />} />
