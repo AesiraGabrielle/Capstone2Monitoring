@@ -20,17 +20,38 @@ function App() {
     document.title = "LNU Trash Monitoring System";
   }, []);
 
-  // Pick up existing JWT token to persist session
+  // Pick up existing JWT token + user to persist session (only if both exist)
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
+    const userRaw = localStorage.getItem('user');
+    if (token && userRaw) {
       try {
-        const u = JSON.parse(localStorage.getItem('user'));
-        if (u) setUser(u);
-      } catch {}
+        const u = JSON.parse(userRaw);
+        if (u) {
+          setUser(u);
+          setIsAuthenticated(true);
+        }
+      } catch {
+        // Corrupt user data -> clear
+        localStorage.removeItem('user');
+      }
     }
   }, []);
+
+  // Optional: validate token once (silent) by hitting a protected endpoint; if fails 401 interceptor will redirect
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return; // nothing to validate
+    (async () => {
+      try {
+        await fetch((process.env.REACT_APP_API_URL || 'http://localhost:8000/api') + '/waste-levels/latest', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch {
+        // Ignore; interceptor in axios handles 401; if network error keep current state
+      }
+    })();
+  }, [isAuthenticated]);
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -61,6 +82,7 @@ function App() {
     }, [forceShowLogin]);
     return (
       <Routes>
+        <Route path="/" element={ isAuthenticated ? <Navigate to="/dashboard/bins" /> : <Navigate to="/login" /> } />
         <Route path="/login" element={
           (isAuthenticated && !forceShowLogin) ?
             <Navigate to="/dashboard/bins" /> :
