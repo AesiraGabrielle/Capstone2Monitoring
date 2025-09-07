@@ -15,7 +15,7 @@ return [
     | any other location as required by the application or its packages.
     |
     */
-    'frontend_url' => env('APP_FRONTEND_URL', 'http://localhost:3000'),
+    'frontend_url' => env('APP_FRONTEND_URL', 'https://lnuwastemonitoring.onrender.com'),
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
