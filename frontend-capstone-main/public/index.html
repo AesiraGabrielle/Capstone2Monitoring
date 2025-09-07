@@ -16,6 +16,22 @@
   <link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon-16x16.png">
   <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
   <!-- ... rest of head content -->
+    <script>
+      // If the hosting platform rewrites to /index.html preserving query params for reset links,
+      // detect token+email and push proper SPA route before React mounts.
+      (function() {
+        try {
+          var p = window.location.pathname.replace(/\/+/g,'/');
+          if (p === '/index.html') {
+            var qs = new URLSearchParams(window.location.search);
+            if (qs.get('token') && qs.get('email')) {
+              var target = '/reset-password?token=' + encodeURIComponent(qs.get('token')) + '&email=' + encodeURIComponent(qs.get('email'));
+              window.history.replaceState({}, '', target);
+            }
+          }
+        } catch(e) { /* silent */ }
+      })();
+    </script>
 </head>
     <title>LNU Trash Monitoring System</title>
   </head>
