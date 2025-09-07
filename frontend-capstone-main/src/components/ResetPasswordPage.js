@@ -24,6 +24,7 @@ const ResetPasswordPage = () => {
 
   // Remove token from URL after capturing it for better security
   useEffect(() => {
+  console.log('[ResetPasswordPage] mounted with query token/email:', query.get('token'), query.get('email'));
     const q = new URLSearchParams(location.search);
     if (q.get('token')) {
       q.delete('token');

@@ -33,3 +33,15 @@ Route::get('/verify-email/{id}/{hash}', function (Request $request, $id, $hash) 
     }
     return redirect(config('app.frontend_url') . '/login?verified=1');
 })->name('frontend.verification.redirect');
+
+// Fallback redirect for legacy Laravel password reset links (if any)
+Route::get('/password/reset/{token}', function ($token, \Illuminate\Http\Request $request) {
+    $frontend = rtrim(config('app.frontend_url'), '/');
+    $email = $request->query('email');
+    // Build SPA reset-password URL with token & optional email
+    $url = $frontend . '/reset-password?token=' . urlencode($token);
+    if ($email) {
+        $url .= '&email=' . urlencode($email);
+    }
+    return redirect($url);
+})->name('password.reset.fallback');
