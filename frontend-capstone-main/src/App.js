@@ -72,6 +72,9 @@ function App() {
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
   const forceShowLogin = verified === '1' || verified === '0';
+    useEffect(() => {
+      console.log('[Router] location changed:', location.pathname + location.search, 'auth=', isAuthenticated, 'forceShowLogin=', forceShowLogin);
+    }, [location.pathname, location.search, isAuthenticated, forceShowLogin]);
     // Persist verification params briefly in sessionStorage for reliable retrieval after redirects
     useEffect(() => {
       if (verified === '1' || verified === '0') {
