@@ -29,7 +29,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
 
     $user->markEmailAsVerified();
 
-    return response()->json(['message' => 'Email verified successfully']);
+    return response()->json(['message' => 'Email verified successfully.']);
 })->middleware(['signed'])->name('verification.verify');
 
 
