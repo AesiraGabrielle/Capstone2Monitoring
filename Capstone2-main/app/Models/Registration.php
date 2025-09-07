@@ -42,7 +42,14 @@ class Registration extends Authenticatable implements JWTSubject, MustVerifyEmai
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.frontend_url') . '/reset-password?token=' . $token . '&email=' . urlencode($this->email);
+        $base = config('app.frontend_url');
+        if (!$base || !preg_match('/^https?:\/\//i', $base)) {
+            // Fallback to env or sensible default
+            $base = rtrim(env('APP_FRONTEND_URL', 'http://localhost:3000'), '/');
+        } else {
+            $base = rtrim($base, '/');
+        }
+        $url = $base . '/reset-password?token=' . urlencode($token) . '&email=' . urlencode($this->email);
         $this->notify(new CustomResetPassword($token, $url));
     }
     //    protected function setPasswordAttribute($value)
