@@ -9,6 +9,7 @@ const ChangePasswordPage = ({ user, onLogout }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -40,6 +41,7 @@ const ChangePasswordPage = ({ user, onLogout }) => {
     setErrorMessage('');
     
     try {
+      setSubmitting(true);
       await authAPI.changePassword({
         current_password: oldPassword,
         new_password: newPassword,
@@ -49,6 +51,8 @@ const ChangePasswordPage = ({ user, onLogout }) => {
     } catch (err) {
       const msg = err?.response?.data?.message || 'Failed to change password';
       setErrorMessage(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
   
@@ -168,8 +172,9 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                 <button 
                   type="submit" 
                   className="btn btn-primary change-btn"
+                  disabled={submitting}
                 >
-                  Change
+                  {submitting ? (<><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Changing...</>) : 'Change'}
                 </button>
               </div>
             </form>
