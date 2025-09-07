@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
@@ -14,14 +14,32 @@ const LoginPage = ({ onLogin }) => {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotStatus, setForgotStatus] = useState({ type: '', message: '' });
   const [verifiedMsg, setVerifiedMsg] = useState('');
+  const [redirectCountdown, setRedirectCountdown] = useState(null);
   const location = useLocation();
+  const emailInputRef = useRef(null);
 
   // Show success message when redirected after email verification
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
     if (verified === '1') {
+      // Remove any stale auth so user must log in again after verification
+      try { localStorage.removeItem('token'); localStorage.removeItem('user'); } catch {}
       setVerifiedMsg('Email successfully verified. Please login.');
+      // Focus email field shortly after render
+      setTimeout(() => { if (emailInputRef.current) emailInputRef.current.focus(); }, 50);
+      // Start countdown to hide message (15s)
+      let seconds = 15;
+      setRedirectCountdown(seconds);
+      const interval = setInterval(() => {
+        seconds -= 1;
+        setRedirectCountdown(seconds);
+        if (seconds <= 0) {
+          clearInterval(interval);
+          setRedirectCountdown(null);
+          setVerifiedMsg('');
+        }
+      }, 1000);
       // Clean the URL (remove query params)
       window.history.replaceState({}, document.title, '/login');
     } else if (verified === '0') {
@@ -105,7 +123,12 @@ const LoginPage = ({ onLogin }) => {
               <h2 className="mb-4 text-center">Login</h2>
               <form onSubmit={handleSubmit}>
                 {verifiedMsg && (
-                  <div className="alert alert-success" role="alert">{verifiedMsg}</div>
+                  <div className="alert alert-success" role="alert">
+                    {verifiedMsg}
+                    {redirectCountdown !== null && redirectCountdown > 0 && (
+                      <span className="ms-2 small text-muted">(Hides in {redirectCountdown}s)</span>
+                    )}
+                  </div>
                 )}
                 {error && (
                   <div className="alert alert-danger" role="alert">{error}</div>
@@ -119,6 +142,7 @@ const LoginPage = ({ onLogin }) => {
                     placeholder="Input Email" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    ref={emailInputRef}
                     required
                   />
                 </div>

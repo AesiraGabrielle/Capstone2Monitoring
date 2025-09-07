@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import LoginPage from './components/LoginPage';
@@ -42,16 +42,18 @@ function App() {
     setIsAuthenticated(false);
   };
 
-  return (
-    <Router>
-      <div className="app-container">
-  {/* <TestConnection /> */}
-        <Routes>
-          <Route path="/login" element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard/bins" /> : 
+  const AppRoutes = () => {
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const verified = params.get('verified');
+    const forceShowLogin = verified === '1' || verified === '0';
+    return (
+      <Routes>
+        <Route path="/login" element={
+          (isAuthenticated && !forceShowLogin) ?
+            <Navigate to="/dashboard/bins" /> :
             <LoginPage onLogin={handleLogin} />
-          } />
+        } />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/register" element={
             isAuthenticated ? 
@@ -72,7 +74,14 @@ function App() {
             <Navigate to="/login" />
           } />
           <Route path="*" element={<Navigate to="/login" />} />
-        </Routes>
+      </Routes>
+    );
+  };
+
+  return (
+    <Router>
+      <div className="app-container">
+        <AppRoutes />
       </div>
     </Router>
   );
