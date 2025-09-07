@@ -22,11 +22,11 @@ class AuthController extends Controller
             'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@lnu\.edu\.ph$/i|unique:registrations,email',
             // Alphanumeric only, at least 8 chars
             // Must contain at least one letter, one digit, and one symbol
-            'password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/'],
+            'password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'],
         ], [
             'email.regex' => 'Only emails ending in @lnu.edu.ph are allowed.',
             'password.confirmed' => 'Passwords do not match.',
-            'password.regex' => 'Password must be at least 8 characters and include a letter, a number, and a symbol.',
+            'password.regex' => 'Password must be at least 8 chars with a letter, a number, and an allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~).',
             // regex message removed
         ]);
 
@@ -84,7 +84,7 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/'],
+            'new_password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'],
     ]);
 
         $user = auth()->user();
@@ -105,7 +105,7 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email|exists:registrations,email',
         ], [
-            'new_password.regex' => 'New password must be at least 8 characters and include a letter, a number, and a symbol.',
+            'new_password.regex' => 'New password must be at least 8 chars with a letter, a number, and an allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~).',
         ]);
 
         $status = Password::broker('registrations')->sendResetLink(
@@ -125,9 +125,9 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:registrations,email',
-            'password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/'],
+            'password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'],
         ], [
-            'password.regex' => 'Password must be at least 8 characters and include a letter, a number, and a symbol.',
+            'password.regex' => 'Password must be at least 8 chars with a letter, a number, and an allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~).',
         ]);
 
         $status = \Illuminate\Support\Facades\Password::broker('registrations')->reset(

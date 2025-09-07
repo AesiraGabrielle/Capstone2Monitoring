@@ -29,10 +29,10 @@ const ChangePasswordPage = ({ user, onLogout }) => {
       return;
     }
 
-    // Strong password requirement: letter + number + symbol
-    const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+    // Strong password requirement: letter + number + allowed symbol subset
+    const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;,.?]).{8,}$/;
     if (!strongPattern.test(newPassword)) {
-      setErrorMessage('New password must have a letter, a number, a symbol and be 8+ chars');
+      setErrorMessage('New password must include letter, number, symbol (!@#$%^&*()_+-={}[]|:;,.?) and be 8+ chars');
       return;
     }
 
@@ -109,8 +109,8 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                     placeholder="New Password (letter, number, symbol)"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
-                    title="Must contain a letter, a number, and a symbol (min 8 chars)"
+                    pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;,.?]).{8,}$"
+                    title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;,.?), min 8 chars"
                     minLength={8}
                     required
                   />
@@ -136,8 +136,8 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                     placeholder="Repeat New Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
-                    title="Must contain a letter, a number, and a symbol (min 8 chars)"
+                    pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;,.?]).{8,}$"
+                    title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;,.?), min 8 chars"
                     minLength={8}
                     required
                   />
