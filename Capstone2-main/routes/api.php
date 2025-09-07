@@ -13,23 +13,18 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
+    $frontend = config('app.frontend_url') ?: 'http://localhost:3000';
     $user = Registration::find($id);
-
     if (!$user) {
-        return response()->json(['error' => 'User not found'], 404);
+        return redirect($frontend . '/login?verified=0&reason=not_found');
     }
-
     if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
-        return response()->json(['error' => 'Invalid verification link'], 403);
+        return redirect($frontend . '/login?verified=0&reason=hash');
     }
-
-    if ($user->hasVerifiedEmail()) {
-        return response()->json(['message' => 'Email already verified']);
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
     }
-
-    $user->markEmailAsVerified();
-
-    return response()->json(['message' => 'Email verified successfully.']);
+    return redirect($frontend . '/login?verified=1');
 })->middleware(['signed'])->name('verification.verify');
 
 
