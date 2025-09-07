@@ -20,35 +20,28 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
 
   // Show success message when redirected after email verification
   useEffect(() => {
-    if (!verifiedStatus) return;
-    if (verifiedStatus === '1') {
+    // Derive final status from props or sessionStorage fallback
+    const status = verifiedStatus || sessionStorage.getItem('verified_status');
+    const reason = verifiedReason || sessionStorage.getItem('verified_reason');
+    if (!status) return;
+    if (status === '1') {
       try { localStorage.removeItem('token'); localStorage.removeItem('user'); } catch {}
       setVerifiedMsg('Email successfully verified. Please login.');
-    } else if (verifiedStatus === '0') {
-      if (verifiedReason === 'hash') setVerifiedMsg('Verification link is invalid or expired.');
-      else if (verifiedReason === 'not_found') setVerifiedMsg('User for verification link was not found.');
+    } else if (status === '0') {
+      if (reason === 'hash') setVerifiedMsg('Verification link is invalid or expired.');
+      else if (reason === 'not_found') setVerifiedMsg('User for verification link was not found.');
       else setVerifiedMsg('Email verification failed.');
     }
     // Focus email field
     setTimeout(() => { emailInputRef.current && emailInputRef.current.focus(); }, 50);
-    // Start countdown to hide message (15s)
-    let seconds = 15;
-    setRedirectCountdown(seconds);
-    const interval = setInterval(() => {
-      seconds -= 1;
-      setRedirectCountdown(seconds);
-      if (seconds <= 0) {
-        clearInterval(interval);
-        setRedirectCountdown(null);
-        setVerifiedMsg('');
-      }
-    }, 1000);
-    // Clean URL but only after we processed props
+    // Persistent message: remove countdown auto-hide
+    setRedirectCountdown(null);
+    // Clean URL if needed
     setTimeout(() => {
       if (window.location.search.includes('verified=')) {
         window.history.replaceState({}, document.title, '/login');
       }
-    }, 200);
+    }, 300);
   }, [verifiedStatus, verifiedReason]);
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const navigate = useNavigate();

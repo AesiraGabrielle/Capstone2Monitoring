@@ -72,6 +72,14 @@ function App() {
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
   const forceShowLogin = verified === '1' || verified === '0';
+    // Persist verification params briefly in sessionStorage for reliable retrieval after redirects
+    useEffect(() => {
+      if (verified === '1' || verified === '0') {
+        sessionStorage.setItem('verified_status', verified);
+        const reason = params.get('reason');
+        if (reason) sessionStorage.setItem('verified_reason', reason); else sessionStorage.removeItem('verified_reason');
+      }
+    }, [verified]);
     // If a verification param is present, force a logout in memory so we don't redirect away
     useEffect(() => {
       if (forceShowLogin && isAuthenticated) {
