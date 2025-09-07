@@ -22,14 +22,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally
+// Handle 401 globally (but don't forcibly redirect if already on /login so message can persist)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401) {
+      const currentPath = window.location.pathname;
+      // Clear stored auth
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/login"; // 🔥 auto redirect if unauthorized
+      // Only redirect if not already on login page
+      if (currentPath !== "/login") {
+        window.location.href = "/login";
+      }
     }
     return Promise.reject(error);
   }

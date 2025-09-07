@@ -68,7 +68,15 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   onLogin(user);
       navigate('/dashboard/bins');
     } catch (err) {
-      const msg = err?.response?.data?.error || err?.response?.data?.message || 'Login failed';
+      let msg = err?.response?.data?.error || err?.response?.data?.message || 'Login failed';
+      // Normalize invalid credential responses
+      if (/invalid credentials/i.test(msg)) {
+        msg = 'Incorrect Email or Password. Please Try Again.';
+      }
+      // Already using new backend message - just ensure consistency
+      if (/incorrect email or password/i.test(msg)) {
+        msg = 'Incorrect Email or Password. Please Try Again.';
+      }
       setError(msg);
     } finally {
       setLoading(false);
