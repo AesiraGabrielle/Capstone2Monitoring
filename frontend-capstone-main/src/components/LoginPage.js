@@ -4,7 +4,7 @@ import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
 import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,17 +20,13 @@ const LoginPage = ({ onLogin }) => {
 
   // Show success message when redirected after email verification
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const verified = params.get('verified');
-    if (!verified) return; // nothing to do
-    // We'll delay cleaning the URL until after first paint so message shows.
-    if (verified === '1') {
+    if (!verifiedStatus) return;
+    if (verifiedStatus === '1') {
       try { localStorage.removeItem('token'); localStorage.removeItem('user'); } catch {}
       setVerifiedMsg('Email successfully verified. Please login.');
-    } else if (verified === '0') {
-      const reason = params.get('reason');
-      if (reason === 'hash') setVerifiedMsg('Verification link is invalid or expired.');
-      else if (reason === 'not_found') setVerifiedMsg('User for verification link was not found.');
+    } else if (verifiedStatus === '0') {
+      if (verifiedReason === 'hash') setVerifiedMsg('Verification link is invalid or expired.');
+      else if (verifiedReason === 'not_found') setVerifiedMsg('User for verification link was not found.');
       else setVerifiedMsg('Email verification failed.');
     }
     // Focus email field
@@ -47,11 +43,13 @@ const LoginPage = ({ onLogin }) => {
         setVerifiedMsg('');
       }
     }, 1000);
-    // Clean URL after a short delay (next tick) to allow effect to run with original search
+    // Clean URL but only after we processed props
     setTimeout(() => {
-      window.history.replaceState({}, document.title, '/login');
-    }, 100);
-  }, [location.search]);
+      if (window.location.search.includes('verified=')) {
+        window.history.replaceState({}, document.title, '/login');
+      }
+    }, 200);
+  }, [verifiedStatus, verifiedReason]);
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const navigate = useNavigate();
   

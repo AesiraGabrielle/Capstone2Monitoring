@@ -86,7 +86,7 @@ function App() {
         <Route path="/login" element={
           (isAuthenticated && !forceShowLogin) ?
             <Navigate to="/dashboard/bins" /> :
-            <LoginPage onLogin={handleLogin} />
+            <LoginPage onLogin={handleLogin} verifiedStatus={verified} verifiedReason={params.get('reason')} />
         } />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/register" element={
