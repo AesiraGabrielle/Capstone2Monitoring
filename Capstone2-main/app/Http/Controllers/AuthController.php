@@ -20,10 +20,12 @@ class AuthController extends Controller
         $request->validate([
             'full_name' => 'required|string|max:255',
             'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@lnu\.edu\.ph$/i|unique:registrations,email',
-            'password' => 'required|min:8|confirmed',
+            // Alphanumeric only, at least 8 chars
+            'password' => ['required','min:8','confirmed'],
         ], [
             'email.regex' => 'Only emails ending in @lnu.edu.ph are allowed.',
             'password.confirmed' => 'Passwords do not match.',
+            // regex message removed
         ]);
 
         // Create user
@@ -80,8 +82,8 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
-        ]);
+            'new_password' => ['required','min:8','confirmed'],
+    ]);
 
         $user = auth()->user();
 
@@ -119,8 +121,8 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:registrations,email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+            'password' => ['required','min:8','confirmed'],
+    ]);
 
         $status = \Illuminate\Support\Facades\Password::broker('registrations')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),

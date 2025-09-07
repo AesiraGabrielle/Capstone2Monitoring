@@ -19,7 +19,7 @@ const ChangePasswordPage = ({ user, onLogout }) => {
     e.preventDefault();
     
     // Validate passwords
-    if (!oldPassword || !newPassword || !confirmPassword) {
+  if (!oldPassword || !newPassword || !confirmPassword) {
       setErrorMessage('All fields are required');
       return;
     }
@@ -28,6 +28,7 @@ const ChangePasswordPage = ({ user, onLogout }) => {
       setErrorMessage('New passwords do not match');
       return;
     }
+
     
     // Clear any error messages
     setErrorMessage('');
@@ -99,9 +100,10 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                     type={showNew ? 'text' : 'password'}
                     className="form-control"
                     id="newPassword"
-                    placeholder="Input New Password"
+                    placeholder="New Password (min 8 chars)"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    minLength={8}
                     required
                   />
                   <button
@@ -123,9 +125,10 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                     type={showRe ? 'text' : 'password'}
                     className="form-control"
                     id="confirmPassword"
-                    placeholder="Input New Password Again"
+                    placeholder="Repeat New Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    minLength={8}
                     required
                   />
                   <button

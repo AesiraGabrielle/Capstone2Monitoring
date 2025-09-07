@@ -25,6 +25,14 @@ const RegisterPage = () => {
       setErrorMessage('All fields are required');
       return;
     }
+
+    // Email domain validation
+    const domainPattern = /^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$/i;
+    if (!domainPattern.test(email)) {
+      setErrorMessage('Email must end with @lnu.edu.ph');
+      return;
+    }
+
     
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match');
@@ -86,9 +94,11 @@ const RegisterPage = () => {
                     type="email" 
                     className="form-control" 
                     id="email" 
-                    placeholder="Input Email" 
+                    placeholder="name@lnu.edu.ph" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    pattern="^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$"
+                    title="Only institutional emails ending with @lnu.edu.ph are allowed"
                     required
                   />
                 </div>
@@ -100,9 +110,10 @@ const RegisterPage = () => {
                       type={showPassword ? 'text' : 'password'}
                       className="form-control"
                       id="password"
-                      placeholder="Input Password"
+                      placeholder="Password (min 8 chars)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      minLength={8}
                       required
                     />
                     <button
@@ -132,9 +143,10 @@ const RegisterPage = () => {
                       type={showConfirmPassword ? 'text' : 'password'}
                       className="form-control"
                       id="confirmPassword"
-                      placeholder="Input Password Again"
+                      placeholder="Repeat Password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
+                      minLength={8}
                       required
                     />
                     <button
