@@ -51,6 +51,14 @@ function App() {
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
   const forceShowLogin = verified === '1' || verified === '0';
+    // If a verification param is present, force a logout in memory so we don't redirect away
+    useEffect(() => {
+      if (forceShowLogin && isAuthenticated) {
+        // Clear in-memory session (token already cleared later in LoginPage if present)
+        setIsAuthenticated(false);
+        setUser(null);
+      }
+    }, [forceShowLogin]);
     return (
       <Routes>
         <Route path="/login" element={
