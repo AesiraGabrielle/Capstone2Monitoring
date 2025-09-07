@@ -22,35 +22,35 @@ const LoginPage = ({ onLogin }) => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
+    if (!verified) return; // nothing to do
+    // We'll delay cleaning the URL until after first paint so message shows.
     if (verified === '1') {
-      // Remove any stale auth so user must log in again after verification
       try { localStorage.removeItem('token'); localStorage.removeItem('user'); } catch {}
       setVerifiedMsg('Email successfully verified. Please login.');
-      // Focus email field shortly after render
-      setTimeout(() => { if (emailInputRef.current) emailInputRef.current.focus(); }, 50);
-      // Start countdown to hide message (15s)
-      let seconds = 15;
-      setRedirectCountdown(seconds);
-      const interval = setInterval(() => {
-        seconds -= 1;
-        setRedirectCountdown(seconds);
-        if (seconds <= 0) {
-          clearInterval(interval);
-          setRedirectCountdown(null);
-          setVerifiedMsg('');
-        }
-      }, 1000);
-      // Clean the URL (remove query params)
-      window.history.replaceState({}, document.title, '/login');
     } else if (verified === '0') {
       const reason = params.get('reason');
-      if (reason === 'hash') {
-        setVerifiedMsg('Verification link is invalid or expired.');
-      } else if (reason === 'not_found') {
-        setVerifiedMsg('User for verification link was not found.');
-      }
-      window.history.replaceState({}, document.title, '/login');
+      if (reason === 'hash') setVerifiedMsg('Verification link is invalid or expired.');
+      else if (reason === 'not_found') setVerifiedMsg('User for verification link was not found.');
+      else setVerifiedMsg('Email verification failed.');
     }
+    // Focus email field
+    setTimeout(() => { emailInputRef.current && emailInputRef.current.focus(); }, 50);
+    // Start countdown to hide message (15s)
+    let seconds = 15;
+    setRedirectCountdown(seconds);
+    const interval = setInterval(() => {
+      seconds -= 1;
+      setRedirectCountdown(seconds);
+      if (seconds <= 0) {
+        clearInterval(interval);
+        setRedirectCountdown(null);
+        setVerifiedMsg('');
+      }
+    }, 1000);
+    // Clean URL after a short delay (next tick) to allow effect to run with original search
+    setTimeout(() => {
+      window.history.replaceState({}, document.title, '/login');
+    }, 100);
   }, [location.search]);
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const navigate = useNavigate();
