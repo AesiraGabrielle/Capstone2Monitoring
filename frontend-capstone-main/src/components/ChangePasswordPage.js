@@ -29,7 +29,13 @@ const ChangePasswordPage = ({ user, onLogout }) => {
       return;
     }
 
-    
+    // Strong password requirement: letter + number + symbol
+    const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+    if (!strongPattern.test(newPassword)) {
+      setErrorMessage('New password must have a letter, a number, a symbol and be 8+ chars');
+      return;
+    }
+
     // Clear any error messages
     setErrorMessage('');
     
@@ -100,9 +106,11 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                     type={showNew ? 'text' : 'password'}
                     className="form-control"
                     id="newPassword"
-                    placeholder="New Password (min 8 chars)"
+                    placeholder="New Password (letter, number, symbol)"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
+                    pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
+                    title="Must contain a letter, a number, and a symbol (min 8 chars)"
                     minLength={8}
                     required
                   />
@@ -128,6 +136,8 @@ const ChangePasswordPage = ({ user, onLogout }) => {
                     placeholder="Repeat New Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
+                    title="Must contain a letter, a number, and a symbol (min 8 chars)"
                     minLength={8}
                     required
                   />

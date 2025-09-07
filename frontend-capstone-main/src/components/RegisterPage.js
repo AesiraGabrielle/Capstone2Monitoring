@@ -20,14 +20,14 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Form validation
+  // Form validation
     if (!fullName || !email || !password || !confirmPassword) {
       setErrorMessage('All fields are required');
       return;
     }
 
     // Email domain validation
-    const domainPattern = /^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$/i;
+  const domainPattern = /^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$/i;
     if (!domainPattern.test(email)) {
       setErrorMessage('Email must end with @lnu.edu.ph');
       return;
@@ -43,6 +43,13 @@ const RegisterPage = () => {
     setErrorMessage('');
     
     try {
+      // Strong password: letter + number + symbol, min 8
+      const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+      if (!strongPattern.test(password)) {
+        setErrorMessage('Password must have a letter, a number, a symbol and be 8+ chars');
+        return;
+      }
+
       const payload = {
         full_name: fullName,
         email,
@@ -110,9 +117,11 @@ const RegisterPage = () => {
                       type={showPassword ? 'text' : 'password'}
                       className="form-control"
                       id="password"
-                      placeholder="Password (min 8 chars)"
+                      placeholder="Password (8+ chars: letter, number, symbol)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
+                      title="Must contain a letter, a number, and a symbol (min 8 chars)"
                       minLength={8}
                       required
                     />
@@ -146,6 +155,8 @@ const RegisterPage = () => {
                       placeholder="Repeat Password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{8,}$"
+                      title="Must contain a letter, a number, and a symbol (min 8 chars)"
                       minLength={8}
                       required
                     />
