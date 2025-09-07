@@ -15,6 +15,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   const [forgotStatus, setForgotStatus] = useState({ type: '', message: '' });
   const [verifiedMsg, setVerifiedMsg] = useState('');
   const [redirectCountdown, setRedirectCountdown] = useState(null);
+  const [passwordResetMsg, setPasswordResetMsg] = useState('');
   const location = useLocation();
   const emailInputRef = useRef(null);
 
@@ -50,6 +51,16 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   }, [verifiedStatus, verifiedReason]);
   const [forgotSubmitting, setForgotSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  // One-time password reset success message
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem('password_reset_success') === '1') {
+        setPasswordResetMsg('Password Successfully Changed! Enter your Credentials Again.');
+        sessionStorage.removeItem('password_reset_success');
+      }
+    } catch {}
+  }, []);
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,6 +139,9 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
             <div className="login-form">
               <h2 className="mb-4 text-center">Login</h2>
               <form onSubmit={handleSubmit}>
+                {passwordResetMsg && (
+                  <div className="alert alert-success" role="alert">{passwordResetMsg}</div>
+                )}
                 {verifiedMsg && (
                   <div className="alert alert-success" role="alert">
                     {verifiedMsg}
@@ -184,7 +198,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                 <div className="d-flex justify-content-between mt-4">
                   <Link to="/register" className="btn btn-warning register-btn">REGISTER</Link>
                   <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
-                    {loading ? 'Logging in...' : 'LOG IN'}
+                    {loading ? (<><Spinner animation="border" size="sm" className="me-2" /> Logging in...</>) : 'LOG IN'}
                   </button>
                 </div>
                 

@@ -51,6 +51,7 @@ const ResetPasswordPage = () => {
       const res = await authAPI.resetPassword({ token, email, password, password_confirmation: password2 });
       const msg = res?.data?.message || 'Password reset successful. You can now log in.';
   setStatus({ type: 'success', message: msg });
+  try { sessionStorage.setItem('password_reset_success','1'); } catch {}
   navigate('/login');
     } catch (err) {
       const msg = err?.response?.data?.error || err?.response?.data?.message || 'Password reset failed.';

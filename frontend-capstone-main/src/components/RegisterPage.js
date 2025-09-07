@@ -17,6 +17,8 @@ const RegisterPage = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
   
+  const [submitting, setSubmitting] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -43,6 +45,7 @@ const RegisterPage = () => {
     setErrorMessage('');
     
     try {
+      setSubmitting(true);
       // Strong password: letter + number + allowed symbol (explicit set), min 8
   // Frontend simplified allowed symbols subset to avoid JSX escaping pitfalls
   const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>.,?\/`~]).{8,}$/;
@@ -62,10 +65,10 @@ const RegisterPage = () => {
       const token = res.data?.token || res.data?.access_token;
       if (token) localStorage.setItem('token', token);
   setShowConfirmation(true);
-    } catch (err) {
+  } catch (err) {
       const msg = err?.response?.data?.message || err?.response?.data?.error || 'Registration failed';
       setErrorMessage(msg);
-    }
+  } finally { setSubmitting(false); }
   };
   
   const handleConfirmation = () => {
@@ -187,7 +190,9 @@ const RegisterPage = () => {
                 
                 <div className="d-flex justify-content-between mt-4">
                   <Link to="/login" className="btn btn-secondary cancel-btn">CANCEL</Link>
-                  <button type="submit" className="btn btn-primary create-btn">CREATE ACCOUNT</button>
+                  <button type="submit" className="btn btn-primary create-btn" disabled={submitting}>
+                    {submitting ? (<><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating...</>) : 'CREATE ACCOUNT'}
+                  </button>
                 </div>
               </form>
             </div>
