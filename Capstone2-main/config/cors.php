@@ -2,7 +2,7 @@
 
 return [
 
-    /*
+    /* 
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
@@ -15,11 +15,15 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*', 'login', 'register'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://lnuwastemonitoring.onrender.com'],
+    'allowed_origins' => [
+    'http://localhost:3000',
+    'https://lnuwastemonitoring.onrender.com',
+],
+
 
     'allowed_origins_patterns' => [],
 
