@@ -9,7 +9,9 @@ const api = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
+  withCredentials: true, // crucial for CORS
 });
+
 
 // --- Interceptors ---
 // Attach JWT automatically
