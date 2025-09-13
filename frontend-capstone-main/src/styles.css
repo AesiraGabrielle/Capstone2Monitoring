@@ -1132,6 +1132,23 @@ body {
     font-size: 1.05rem;
   }
   .mobile-offcanvas .offcanvas-header { border-bottom: 1px solid #e5e7eb; }
+
+  /* Custom hamburger button */
+  .mobile-menu-btn { border: none; padding: 6px 4px; }
+  .mobile-menu-btn .bar {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: #fff;
+    margin: 5px 0;
+    border-radius: 1px;
+  }
+
+  /* Mobile menu modal styles */
+  .mobile-menu-modal .modal-content { border-radius: 12px; }
+  .mobile-menu-modal .mobile-menu-list { display: flex; flex-direction: column; gap: 16px; }
+  .mobile-menu-modal .menu-item { color: #043873; text-decoration: none; font-size: 1.1rem; }
+  .mobile-menu-modal .menu-item:hover { text-decoration: underline; }
 }
 
 @media (max-width: 480px) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Dropdown, Modal, Button, Offcanvas } from 'react-bootstrap';
+import { Dropdown, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import binLogo from '../assets/bin-logo.png';
@@ -12,7 +12,7 @@ const Navbar = ({ user, onLogout }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [warnings, setWarnings] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false); // desktop collapse (md+)
-  const [drawerOpen, setDrawerOpen] = useState(false); // mobile side panel
+  const [menuModalOpen, setMenuModalOpen] = useState(false); // mobile menu modal
 
   // Fetch latest bin levels and compute warnings
   useEffect(() => {
@@ -88,16 +88,18 @@ const Navbar = ({ user, onLogout }) => {
               return <span>Welcome {displayName}!</span>;
             })()}
           </div>
-          {/* Mobile toggler -> opens side panel */}
+          {/* Mobile toggler -> opens modal */}
           <button
-            className="navbar-toggler"
+            className="navbar-toggler mobile-menu-btn"
             type="button"
             aria-controls="mobileMenu"
-            aria-expanded={drawerOpen}
+            aria-expanded={menuModalOpen}
             aria-label="Open menu"
-            onClick={() => setDrawerOpen(true)}
+            onClick={() => setMenuModalOpen(true)}
           >
-            <span className="navbar-toggler-icon"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
+            <span className="bar"></span>
           </button>
 
           {/* Desktop navigation (hidden on mobile) */}
@@ -145,7 +147,7 @@ const Navbar = ({ user, onLogout }) => {
               </div>
               
               {/* Settings dropdown */}
-              <Dropdown align="end">
+              <Dropdown align="end" className="d-none d-md-inline">
                 <Dropdown.Toggle variant="primary" id="settings-dropdown">
                   Settings
                 </Dropdown.Toggle>
@@ -160,22 +162,28 @@ const Navbar = ({ user, onLogout }) => {
         </div>
       </nav>
 
-      {/* Mobile side panel menu */}
-      <Offcanvas show={drawerOpen} onHide={() => setDrawerOpen(false)} placement="start" id="mobileMenu" className="mobile-offcanvas">
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Menu</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          <div className="list-group">
-            <Link to="/dashboard/bins" className="list-group-item list-group-item-action" onClick={() => setDrawerOpen(false)}>
+      {/* Mobile menu modal */}
+      <Modal show={menuModalOpen} onHide={() => setMenuModalOpen(false)} centered className="mobile-menu-modal">
+        <Modal.Header closeButton>
+          <Modal.Title>Menu</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="mobile-menu-list">
+            <Link to="/dashboard/bins" className="menu-item" onClick={() => setMenuModalOpen(false)}>
               Bins
             </Link>
-            <Link to="/dashboard/monitoring" className="list-group-item list-group-item-action" onClick={() => setDrawerOpen(false)}>
+            <Link to="/dashboard/monitoring" className="menu-item" onClick={() => setMenuModalOpen(false)}>
               Monitoring
             </Link>
+            <Link to="/dashboard/change-password" className="menu-item" onClick={() => setMenuModalOpen(false)}>
+              Change Password
+            </Link>
+            <button className="menu-item text-start btn btn-link p-0" onClick={() => { setMenuModalOpen(false); handleLogout(); }}>
+              Logout
+            </button>
           </div>
-        </Offcanvas.Body>
-      </Offcanvas>
+        </Modal.Body>
+      </Modal>
 
       {/* Logout Confirmation Modal */}
       <Modal show={showLogoutModal} onHide={() => setShowLogoutModal(false)} centered>
