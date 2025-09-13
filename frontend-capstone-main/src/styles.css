@@ -1122,6 +1122,16 @@ body {
   .print-button-container {
     justify-content: center;
   }
+  /* Hide center nav on small screens; use side panel instead */
+  #navbarContent .navbar-nav { display: none !important; }
+
+  /* Offcanvas tweaks */
+  .mobile-offcanvas .offcanvas-body .list-group-item {
+    border: none;
+    padding: 14px 8px;
+    font-size: 1.05rem;
+  }
+  .mobile-offcanvas .offcanvas-header { border-bottom: 1px solid #e5e7eb; }
 }
 
 @media (max-width: 480px) {

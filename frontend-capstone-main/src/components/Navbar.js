@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Dropdown, Modal, Button } from 'react-bootstrap';
+import { Dropdown, Modal, Button, Offcanvas } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import binLogo from '../assets/bin-logo.png';
@@ -11,7 +11,8 @@ const Navbar = ({ user, onLogout }) => {
   const [showWarnings, setShowWarnings] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [warnings, setWarnings] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // desktop collapse (md+)
+  const [drawerOpen, setDrawerOpen] = useState(false); // mobile side panel
 
   // Fetch latest bin levels and compute warnings
   useEffect(() => {
@@ -87,18 +88,19 @@ const Navbar = ({ user, onLogout }) => {
               return <span>Welcome {displayName}!</span>;
             })()}
           </div>
-          {/* Mobile toggler */}
+          {/* Mobile toggler -> opens side panel */}
           <button
             className="navbar-toggler"
             type="button"
-            aria-controls="navbarContent"
-            aria-expanded={menuOpen}
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen(v => !v)}
+            aria-controls="mobileMenu"
+            aria-expanded={drawerOpen}
+            aria-label="Open menu"
+            onClick={() => setDrawerOpen(true)}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
 
+          {/* Desktop navigation (hidden on mobile) */}
           <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="navbarContent">
             <div className="navbar-nav mx-auto">
               <Link to="/dashboard/bins" className={`nav-link ${isActive('bins') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
@@ -157,6 +159,23 @@ const Navbar = ({ user, onLogout }) => {
           </div>
         </div>
       </nav>
+
+      {/* Mobile side panel menu */}
+      <Offcanvas show={drawerOpen} onHide={() => setDrawerOpen(false)} placement="start" id="mobileMenu" className="mobile-offcanvas">
+        <Offcanvas.Header closeButton>
+          <Offcanvas.Title>Menu</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <div className="list-group">
+            <Link to="/dashboard/bins" className="list-group-item list-group-item-action" onClick={() => setDrawerOpen(false)}>
+              Bins
+            </Link>
+            <Link to="/dashboard/monitoring" className="list-group-item list-group-item-action" onClick={() => setDrawerOpen(false)}>
+              Monitoring
+            </Link>
+          </div>
+        </Offcanvas.Body>
+      </Offcanvas>
 
       {/* Logout Confirmation Modal */}
       <Modal show={showLogoutModal} onHide={() => setShowLogoutModal(false)} centered>
