@@ -2,7 +2,7 @@
 
 return [
 
-    /* 
+    /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
@@ -15,20 +15,13 @@ return [
     |
     */
 
-    // Apply CORS to all paths so preflight gets headers everywhere (API, auth, etc.)
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:3000',
-        'https://lnuwastemonitoring.onrender.com',
-    ],
+    'allowed_origins' => ['https://lnuwastemonitoring.onrender.com'],
 
-    // Allow any onrender.com subdomain if you spin up new envs
-    'allowed_origins_patterns' => [
-        '/^https:\/\/.+\.onrender\.com$/',
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
@@ -36,6 +29,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true,
+    'supports_credentials' => false,
 
 ];
