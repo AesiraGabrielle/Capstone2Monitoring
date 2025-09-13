@@ -1,0 +1,67 @@
+services:
+  - type: web
+    name: capstone-backend
+    env: php
+    plan: free
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan config:clear
+      php artisan cache:clear
+      php artisan route:clear
+      php artisan migrate --force
+    startCommand: |
+      php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        value: base64:ApL28UG9hIWA92FYTlYTLjwTqVo8E1tj6Jdnu+1sZk4=
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        value: https://capstone2-2-y4t6.onrender.com
+      - key: APP_FRONTEND_URL
+        value: https://lnuwastemonitoring.onrender.com
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        fromDatabase:
+          name: capstone-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: capstone-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: capstone-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: capstone-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: capstone-db
+          property: password
+      - key: JWT_SECRET
+        value: R7W135T0TqaCECwULTIPre7kePp2RD6zSuOt8MN2HjzS18wEeEgan2c6Aj9CripC
+
+  - type: web
+    name: capstone-frontend
+    env: static
+    buildCommand: |
+      cd frontend-capstone-main
+      npm install
+      npm run build
+    staticPublishPath: frontend-capstone-main/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://capstone2-2-y4t6.onrender.com/api
+
+databases:
+  - name: capstone-db
+    plan: free
+    databaseName: Capstone2
+    user: root
+    password: kultoniDepaz
