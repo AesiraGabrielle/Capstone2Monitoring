@@ -36,7 +36,7 @@ const BinsPage = () => {
       {loading && <div>Loading bins...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       
-      <div className="row justify-content-center">
+  <div className="row justify-content-center gx-3 gy-4">
         {bins.map((bin) => {
           const level = levels?.[bin.key];
           const displayLevel = typeof level === 'number' ? Math.round(level) : null;
@@ -47,7 +47,7 @@ const BinsPage = () => {
               ? { color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.6)' }
               : { color: bin.color, textShadow: '0 1px 1px rgba(0,0,0,0.15)' };
           return (
-          <div key={bin.id} className="col-md-4 text-center mb-5">
+          <div key={bin.id} className="col-12 col-sm-10 col-md-4 text-center mb-4">
             <div className="bin-container">
               {/* Bin graphic */}
               <div className="bin-graphic">

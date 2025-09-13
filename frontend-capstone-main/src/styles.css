@@ -999,6 +999,118 @@ body {
   background-color: #ED7D31;
 }
 
+/* --------------------- */
+/* Responsive adjustments */
+/* --------------------- */
+
+@media (max-width: 768px) {
+  /* Layout base */
+  .app-container,
+  .dashboard-container,
+  .dashboard-content {
+    height: auto;
+  }
+
+  .dashboard-content {
+    padding: 10px;
+  }
+
+  /* Navbar spacing */
+  .navbar .navbar-brand span {
+    font-size: 0.95rem;
+  }
+  .navbar .avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .warning-dropdown {
+    right: auto;
+    left: 0;
+    width: 90vw;
+    max-width: 320px;
+  }
+
+  /* Auth pages stack */
+  .login-card, .register-card {
+    max-width: 95vw;
+  }
+  .login-container, .register-container {
+    padding: 10px;
+    background-attachment: scroll;
+  }
+  .logo-side, .form-side {
+    padding: 20px;
+  }
+  .logo-img { max-width: 70%; }
+
+  /* Bins page */
+  .page-title {
+    margin-left: 0;
+    text-align: center;
+  }
+  .bin-graphic { width: 220px; }
+  .bin-body { height: 260px; }
+  .bin-level-text { font-size: 28px; }
+  .bin-label { font-size: 20px; }
+  .bins-page .row > [class^="col-"],
+  .bins-page .row > [class*=" col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* Monitoring layout becomes vertical */
+  .monitoring-content {
+    flex-direction: column;
+  }
+  .side-section {
+    width: 100%;
+    margin: 0;
+  }
+  .chart-container {
+    min-height: 260px;
+    height: 320px;
+  }
+  .date-selector {
+    width: 100%;
+    margin-left: 0;
+  }
+  .react-datepicker-wrapper,
+  .react-datepicker__input-container {
+    width: 100% !important;
+  }
+  .react-datepicker {
+    width: 100% !important;
+  }
+  .react-datepicker__month-container { width: 100% !important; }
+  .react-datepicker__day { margin: 0.15rem; width: 2rem; height: 2rem; line-height: 2rem; }
+
+  /* Inputs */
+  .form-control { padding: 10px; }
+
+  /* Waste stats cards */
+  .waste-stats-card {
+    flex-direction: column;
+  }
+  .waste-stat-item { width: 100%; }
+
+  /* Buttons */
+  .print-button-container {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-img { max-width: 65%; }
+  .bin-graphic { width: 200px; }
+  .bin-body { height: 230px; }
+  .bin-level-text { font-size: 24px; }
+  .bin-label { font-size: 18px; }
+  .chart-container { height: 280px; }
+  .legend-item { gap: 0.5rem; }
+  .legend-color { width: 16px; height: 16px; }
+  .total-waste-card h3 { font-size: 1rem; }
+}
+
 .legend-item:last-child {
   margin-bottom: 0;
 }

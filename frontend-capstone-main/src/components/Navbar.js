@@ -11,6 +11,7 @@ const Navbar = ({ user, onLogout }) => {
   const [showWarnings, setShowWarnings] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [warnings, setWarnings] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Fetch latest bin levels and compute warnings
   useEffect(() => {
@@ -75,7 +76,7 @@ const Navbar = ({ user, onLogout }) => {
 
   return (
     <>
-      <nav className="navbar navbar-expand navbar-dark">
+      <nav className="navbar navbar-expand-md navbar-dark">
         <div className="container-fluid">
           <div className="navbar-brand d-flex align-items-center">
             <Link to="/dashboard/bins" className="d-flex align-items-center text-decoration-none">
@@ -86,60 +87,73 @@ const Navbar = ({ user, onLogout }) => {
               return <span>Welcome {displayName}!</span>;
             })()}
           </div>
-          
-          <div className="navbar-nav mx-auto">
-            <Link to="/dashboard/bins" className={`nav-link ${isActive('bins') ? 'active' : ''}`}>
-              Bins
-            </Link>
-            <Link to="/dashboard/monitoring" className={`nav-link ${isActive('monitoring') ? 'active' : ''}`}>
-              Monitoring
-            </Link>
-          </div>
-          
-          <div className="d-flex align-items-center">
-            {/* Warning button */}
-            <div className="me-3 position-relative">
-              <button 
-                className="btn btn-warning warning-btn"
-                onClick={() => setShowWarnings(!showWarnings)}
-                aria-label="Warnings"
-              >
-                <FontAwesomeIcon icon={faExclamationTriangle} />
-                {warnings.length > 0 && (
-                  <span className="notification-badge">{warnings.length}</span>
-                )}
-              </button>
-              
-              {/* Warning dropdown */}
-              {showWarnings && (
-                <div className="warning-dropdown">
-                  <div className="warning-header">Warnings</div>
-                  <div className="warning-body">
-                    {warnings.length === 0 ? (
-                      <div className="warning-item text-muted">No warnings</div>
-                    ) : (
-                      warnings.map((warning, index) => (
-                        <div key={index} className="warning-item">
-                          {warning}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Settings dropdown */}
-            <Dropdown>
-              <Dropdown.Toggle variant="primary" id="settings-dropdown">
-                Settings
-              </Dropdown.Toggle>
+          {/* Mobile toggler */}
+          <button
+            className="navbar-toggler"
+            type="button"
+            aria-controls="navbarContent"
+            aria-expanded={menuOpen}
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen(v => !v)}
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
 
-              <Dropdown.Menu>
-                <Dropdown.Item as={Link} to="/dashboard/change-password">Change Password</Dropdown.Item>
-                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+          <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="navbarContent">
+            <div className="navbar-nav mx-auto">
+              <Link to="/dashboard/bins" className={`nav-link ${isActive('bins') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
+                Bins
+              </Link>
+              <Link to="/dashboard/monitoring" className={`nav-link ${isActive('monitoring') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
+                Monitoring
+              </Link>
+            </div>
+
+            <div className="d-flex align-items-center ms-md-auto mt-2 mt-md-0">
+              {/* Warning button */}
+              <div className="me-3 position-relative">
+                <button 
+                  className="btn btn-warning warning-btn"
+                  onClick={() => setShowWarnings(!showWarnings)}
+                  aria-label="Warnings"
+                >
+                  <FontAwesomeIcon icon={faExclamationTriangle} />
+                  {warnings.length > 0 && (
+                    <span className="notification-badge">{warnings.length}</span>
+                  )}
+                </button>
+                
+                {/* Warning dropdown */}
+                {showWarnings && (
+                  <div className="warning-dropdown">
+                    <div className="warning-header">Warnings</div>
+                    <div className="warning-body">
+                      {warnings.length === 0 ? (
+                        <div className="warning-item text-muted">No warnings</div>
+                      ) : (
+                        warnings.map((warning, index) => (
+                          <div key={index} className="warning-item">
+                            {warning}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Settings dropdown */}
+              <Dropdown align="end">
+                <Dropdown.Toggle variant="primary" id="settings-dropdown">
+                  Settings
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  <Dropdown.Item as={Link} to="/dashboard/change-password" onClick={() => setMenuOpen(false)}>Change Password</Dropdown.Item>
+                  <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
         </div>
       </nav>
