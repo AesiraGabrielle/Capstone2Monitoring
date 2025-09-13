@@ -9,7 +9,7 @@ const api = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true, // crucial for CORS
+  withCredentials: false, // we use Bearer tokens, not cookies
 });
 
 

@@ -15,16 +15,20 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'login', 'register'],
+    // Apply CORS to all paths so preflight gets headers everywhere (API, auth, etc.)
+    'paths' => ['*'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-    'http://localhost:3000',
-    'https://lnuwastemonitoring.onrender.com',
-],
+        'http://localhost:3000',
+        'https://lnuwastemonitoring.onrender.com',
+    ],
 
-    'allowed_origins_patterns' => [],
+    // Allow any onrender.com subdomain if you spin up new envs
+    'allowed_origins_patterns' => [
+        '/^https:\/\/.+\.onrender\.com$/',
+    ],
 
     'allowed_headers' => ['*'],
 

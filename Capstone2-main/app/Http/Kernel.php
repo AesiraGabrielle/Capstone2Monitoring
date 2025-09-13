@@ -39,7 +39,6 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            \Fruitcake\Cors\HandleCors::class, // Laravel 10 default
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
