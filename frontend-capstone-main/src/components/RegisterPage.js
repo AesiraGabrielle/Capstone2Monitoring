@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import { authAPI } from '../services/api';
-import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
+import binLogo from '../assets/bin-logo.png';
 
 const RegisterPage = () => {
   const [fullName, setFullName] = useState('');
@@ -16,44 +16,43 @@ const RegisterPage = () => {
   const navigate = useNavigate();
   const [resendLoading, setResendLoading] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
-  
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-  // Form validation
+
+    // Required fields
     if (!fullName || !email || !password || !confirmPassword) {
       setErrorMessage('All fields are required');
       return;
     }
 
     // Email domain validation
-  const domainPattern = /^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$/i;
+    const domainPattern = /^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$/i;
     if (!domainPattern.test(email)) {
       setErrorMessage('Email must end with @lnu.edu.ph');
       return;
     }
 
-    
+    // Password match
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match');
       return;
     }
-    
-    // Clear any previous error messages
+
+    // Strong password: letter, number, symbol, min 8 chars
+    const strongPattern =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|:;"'<>.,?/~`]).{8,}$/;
+    if (!strongPattern.test(password)) {
+      setErrorMessage(
+        'Password must have letter, number, symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~), min 8 chars'
+      );
+      return;
+    }
+
     setErrorMessage('');
-    
     try {
       setSubmitting(true);
-      // Strong password: letter + number + allowed symbol (explicit set), min 8
-  // Frontend simplified allowed symbols subset to avoid JSX escaping pitfalls
-  const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>.,?\/`~]).{8,}$/;
-      if (!strongPattern.test(password)) {
-        setErrorMessage('Password must have letter, number, allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~), 8+ chars');
-        return;
-      }
-
       const payload = {
         full_name: fullName,
         email,
@@ -61,18 +60,21 @@ const RegisterPage = () => {
         password_confirmation: confirmPassword,
       };
       const res = await authAPI.register(payload);
-      // store token for immediate login, though email verification might be required
       const token = res.data?.token || res.data?.access_token;
       if (token) localStorage.setItem('token', token);
-  setShowConfirmation(true);
-  } catch (err) {
-      const msg = err?.response?.data?.message || err?.response?.data?.error || 'Registration failed';
+      setShowConfirmation(true);
+    } catch (err) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        'Registration failed';
       setErrorMessage(msg);
-  } finally { setSubmitting(false); }
+    } finally {
+      setSubmitting(false);
+    }
   };
-  
+
   const handleConfirmation = () => {
-    // Close the modal and redirect to login page
     setShowConfirmation(false);
     navigate('/login');
   };
@@ -81,41 +83,48 @@ const RegisterPage = () => {
     <div className="register-container">
       <div className="register-card">
         <div className="row g-0">
-          {/* Left Side - Form */}
+          {/* Left Side */}
           <div className="col-md-6 form-side">
             <div className="register-form">
               <h2 className="mb-4 text-center">Register</h2>
               <form onSubmit={handleSubmit}>
+                {/* Full Name */}
                 <div className="mb-3">
-                  <label htmlFor="fullName" className="form-label">Full Name</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    id="fullName" 
-                    placeholder="Input Full Name" 
+                  <label htmlFor="fullName" className="form-label">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="fullName"
+                    placeholder="Input Full Name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
                   />
                 </div>
-                
+
+                {/* Email */}
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Email</label>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    id="email" 
-                    placeholder="name@lnu.edu.ph" 
+                  <label htmlFor="email" className="form-label">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    placeholder="name@lnu.edu.ph"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    pattern="^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$"
-                    title="Only institutional emails ending with @lnu.edu.ph are allowed"
                     required
                   />
                 </div>
-                
+
+                {/* Password */}
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Password</label>
+                  <label htmlFor="password" className="form-label">
+                    Password
+                  </label>
                   <div className="input-group">
                     <input
                       type={showPassword ? 'text' : 'password'}
@@ -124,33 +133,23 @@ const RegisterPage = () => {
                       placeholder="Password (8+ chars: letter, number, symbol)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;<>.,?\\/`~]).{8,}$"
-                      title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;<>.,?/`~), min 8 chars"
-                      minLength={8}
                       required
                     />
                     <button
                       type="button"
                       className={`btn ${showPassword ? 'btn-primary' : 'btn-outline-secondary'}`}
-                      title={showPassword ? 'Hide password' : 'Show password'}
                       onClick={() => setShowPassword((v) => !v)}
-                      style={{ display: 'flex', alignItems: 'center' }}
                     >
-                      <img
-                        src={`${process.env.PUBLIC_URL}/show-password.png`}
-                        alt="Show password"
-                        style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
-                        }}
-                      />
+                      👁
                     </button>
                   </div>
                 </div>
-                
+
+                {/* Confirm Password */}
                 <div className="mb-3">
-                  <label htmlFor="confirmPassword" className="form-label">Re-Enter Password</label>
+                  <label htmlFor="confirmPassword" className="form-label">
+                    Re-Enter Password
+                  </label>
                   <div className="input-group">
                     <input
                       type={showConfirmPassword ? 'text' : 'password'}
@@ -159,52 +158,45 @@ const RegisterPage = () => {
                       placeholder="Repeat Password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-={}\\[\\]|:;<>.,?\\/`~]).{8,}$"
-                      title="Letter, number & symbol (!@#$%^&*()_+-={}[]|:;<>.,?/`~), min 8 chars"
-                      minLength={8}
                       required
                     />
                     <button
                       type="button"
                       className={`btn ${showConfirmPassword ? 'btn-primary' : 'btn-outline-secondary'}`}
-                      title={showConfirmPassword ? 'Hide password' : 'Show password'}
                       onClick={() => setShowConfirmPassword((v) => !v)}
-                      style={{ display: 'flex', alignItems: 'center' }}
                     >
-                      <img
-                        src={`${process.env.PUBLIC_URL}/show-password.png`}
-                        alt="Show password"
-                        style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
-                        }}
-                      />
+                      👁
                     </button>
                   </div>
                 </div>
-                
+
                 {errorMessage && (
                   <div className="alert alert-danger mb-3">{errorMessage}</div>
                 )}
-                
+
                 <div className="d-flex justify-content-between mt-4">
-                  <Link to="/login" className="btn btn-secondary cancel-btn">CANCEL</Link>
-                  <button type="submit" className="btn btn-primary create-btn" disabled={submitting}>
-                    {submitting ? (<><span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating...</>) : 'CREATE ACCOUNT'}
+                  <Link to="/login" className="btn btn-secondary">
+                    CANCEL
+                  </Link>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Creating…' : 'CREATE ACCOUNT'}
                   </button>
                 </div>
               </form>
             </div>
           </div>
-          
-          {/* Right Side - Logo and welcome text */}
+
+          {/* Right Side */}
           <div className="col-md-6 logo-side">
             <div className="logo-content">
               <h2 className="mb-4">Welcome to Our Webpage!</h2>
               <p className="text-center mb-4">
-                This is a Webpage for monitoring the waste throwout in 
-                Leyte Normal University
+                This is a Webpage for monitoring the waste throwout in Leyte
+                Normal University
               </p>
               <div className="text-center">
                 <img src={binLogo} alt="Recycling Logo" className="logo-img" />
@@ -213,30 +205,25 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
-      
-      {/* Add footer */}
+
+      {/* Footer */}
       <div className="footer white">
         © 2025 Leyte Normal University, All rights reserved.
       </div>
-      
-      {/* Verify Email Confirmation Modal */}
+
+      {/* Confirmation Modal */}
       <Modal show={showConfirmation} onHide={() => setShowConfirmation(false)} centered>
-        <Modal.Header className="confirmation-modal-header">
+        <Modal.Header>
           <Modal.Title>Verify Your Email</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="confirmation-modal-body">
-          <div className="text-center mb-3">
-            <i className="fas fa-envelope confirmation-icon"></i>
-          </div>
-          <p className="text-center">
-            We sent a verification link to:
-          </p>
+        <Modal.Body>
+          <p className="text-center">We sent a verification link to:</p>
           <p className="text-center fw-bold">{email}</p>
           <p className="text-center mb-0">
-            Please verify your email to activate your account. You can proceed to login after verification.
+            Please verify your email to activate your account.
           </p>
         </Modal.Body>
-        <Modal.Footer className="confirmation-modal-footer">
+        <Modal.Footer>
           {resendMessage && (
             <div className="me-auto text-success small">{resendMessage}</div>
           )}
@@ -247,9 +234,9 @@ const RegisterPage = () => {
                 setResendMessage('');
                 setResendLoading(true);
                 await authAPI.resendVerification();
-                setResendMessage('Verification email resent. Please check your inbox.');
-              } catch (e) {
-                setResendMessage('Failed to resend email. Try again later.');
+                setResendMessage('Verification email resent.');
+              } catch {
+                setResendMessage('Failed to resend email.');
               } finally {
                 setResendLoading(false);
               }
@@ -258,11 +245,7 @@ const RegisterPage = () => {
           >
             {resendLoading ? 'Resending…' : 'Resend Email'}
           </Button>
-          <Button 
-            variant="primary" 
-            onClick={handleConfirmation}
-            className="confirmation-button"
-          >
+          <Button variant="primary" onClick={handleConfirmation}>
             Go to Login
           </Button>
         </Modal.Footer>

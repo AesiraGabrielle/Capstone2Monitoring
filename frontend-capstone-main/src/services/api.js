@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// Backend API base URL (Laravel). Override with REACT_APP_API_URL in .env
+// Use .env variable, fallback to localhost
 const API_BASE_URL =
   process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
@@ -22,16 +22,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally (but don't forcibly redirect if already on /login so message can persist)
+// Handle 401 globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error?.response?.status === 401) {
       const currentPath = window.location.pathname;
-      // Clear stored auth
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      // Only redirect if not already on login page
       if (currentPath !== "/login") {
         window.location.href = "/login";
       }
@@ -41,7 +39,6 @@ api.interceptors.response.use(
 );
 
 // --- API Services ---
-// Authentication (JWT)
 export const authAPI = {
   login: async (credentials) => {
     const res = await api.post("/login", credentials);
