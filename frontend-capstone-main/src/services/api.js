@@ -1,16 +1,10 @@
 import axios from "axios";
 
 // Use .env variable, fallback to localhost
-const API_URL = process.env.REACT_APP_API_URL;
-
-fetch(`${API_URL}/register`, {
-  method: "POST",
-  body: JSON.stringify(data),
-  headers: { "Content-Type": "application/json" },
-});
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
