@@ -19,7 +19,7 @@ class WasteLog extends Model
         'confidence_score' => 'float',
     ];
 
-        public function setWasteTypeAttribute($value)
+    public function setWasteTypeAttribute($value)
     {
         $this->attributes['waste_type'] = Crypt::encryptString($value);
     }
