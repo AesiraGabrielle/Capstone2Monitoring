@@ -18,24 +18,29 @@ class WasteLogController extends Controller
 
     // Store log from ESP32-CAM
     public function store(Request $request)
-    {
-        $request->validate([
-            'bin_type' => 'required|in:bio,non_bio,unclassified',
-            'label' => 'required|string',
-            'confidence_score' => 'required|numeric|between:0,1',
-            'logged_at' => 'required|date',
-        ]);
+{
+    // Validate and sanitize input
+    $validated = $request->validate([
+        'bin_type' => 'required|in:bio,non_bio,unclassified',
+        'label' => 'required|string|max:255',
+        'confidence_score' => 'required|numeric|between:0,1',
+        'logged_at' => 'required|date',
+    ]);
 
-        WasteLog::create([
-            'bin_type' => $request->bin_type,
-            'label' => $request->label,
-            'confidence_score' => $request->confidence_score,
-            'count' => 1,
-            'logged_at' => Carbon::parse($request->logged_at),
-        ]);
+    // Encrypt sensitive fields before saving
+    $encryptedData = [
+        'bin_type' => \Illuminate\Support\Facades\Crypt::encryptString($validated['bin_type']),
+        'label' => \Illuminate\Support\Facades\Crypt::encryptString($validated['label']),
+        'confidence_score' => $validated['confidence_score'], // numeric, no encryption needed unless very sensitive
+        'count' => 1,
+        'logged_at' => \Carbon\Carbon::parse($validated['logged_at']),
+    ];
 
-        return response()->json(['message' => 'Waste log stored successfully.']);
-    }
+    WasteLog::create($encryptedData);
+
+    return response()->json(['message' => 'Waste log stored securely.']);
+}
+
 
     // Daily breakdown for a range; defaults to current week if no range provided
     public function dailyBreakdown(Request $request)
