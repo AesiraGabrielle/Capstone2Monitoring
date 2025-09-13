@@ -326,6 +326,7 @@ const MonitoringPage = () => {
 
   return (
     <div className="monitoring-page">
+      <div className="container">
       <h2 className="page-title">Monitoring</h2>
   {loading && <div>Loading monitoring data...</div>}
   {error && <div className="alert alert-danger">{error}</div>}
@@ -396,7 +397,7 @@ const MonitoringPage = () => {
           </div>
         </div>
 
-        <div className="side-section">
+  <div className="side-section">
           <div className="total-waste-card">
             <h3>Total Waste Collected</h3>
             <div className="waste-item">
@@ -435,6 +436,7 @@ const MonitoringPage = () => {
       </div>
 
   {/* Confirmation modal no longer required for filtering; kept for future use if needed */}
+    </div>
     </div>
   );
 };

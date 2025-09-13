@@ -7,11 +7,17 @@
   --text-dark: #000000;
 }
 
+/* Prevent any element from causing horizontal overflow */
+*, *::before, *::after { box-sizing: border-box; }
+img, canvas, svg, video { max-width: 100%; height: auto; }
+body, .app-container { width: 100%; }
+
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--primary-color);
+  overflow-x: hidden; /* prevent accidental horizontal scroll */
 }
 
 .app-container {
@@ -134,6 +140,15 @@ body {
   height: calc(100vh - 130px); /* Account for navbar and footer */
   overflow: hidden;
   padding: 12px; /* reduce padding to save vertical space */
+}
+
+/* Footer safety */
+.footer.white {
+  background: #ffffff;
+  padding: 12px 16px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nav-link {
@@ -1004,6 +1019,10 @@ body {
 /* --------------------- */
 
 @media (max-width: 768px) {
+  html, body, #root { width: 100%; overflow-x: hidden; }
+  .container, .container-fluid { max-width: 100%; }
+  .row { margin-right: 0; margin-left: 0; }
+  [class^="col-"], [class*=" col-"] { padding-right: 10px; padding-left: 10px; }
   /* Layout base */
   .app-container,
   .dashboard-container,
@@ -1022,6 +1041,12 @@ body {
   .navbar .avatar {
     width: 32px;
     height: 32px;
+  }
+  .navbar .navbar-brand span {
+    max-width: 50vw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .warning-dropdown {
     right: auto;
@@ -1100,6 +1125,7 @@ body {
 }
 
 @media (max-width: 480px) {
+  .navbar .navbar-brand span { display: none; } /* hide welcome text; keep avatar */
   .logo-img { max-width: 65%; }
   .bin-graphic { width: 200px; }
   .bin-body { height: 230px; }

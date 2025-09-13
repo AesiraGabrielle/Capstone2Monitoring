@@ -31,8 +31,9 @@ const BinsPage = () => {
   ];
 
   return (
-    <div className="bins-page">
-      <h2 className="page-title mb-5">Bins</h2>
+      <div className="bins-page">
+        <div className="container">
+          <h2 className="page-title mb-5">Bins</h2>
       {loading && <div>Loading bins...</div>}
       {error && <div className="alert alert-danger">{error}</div>}
       
@@ -80,8 +81,9 @@ const BinsPage = () => {
       {/* Add footer */}
       <div className="footer white">
         © 2025 Leyte Normal University, All rights reserved.
-      </div>
     </div>
+  </div>
+  </div>
   );
 };
 
