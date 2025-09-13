@@ -10,6 +10,8 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "symfony/http-client": "^7.3",
+        "symfony/postmark-mailer": "^7.1",
         "tymon/jwt-auth": "^2.2"
     },
     "require-dev": {

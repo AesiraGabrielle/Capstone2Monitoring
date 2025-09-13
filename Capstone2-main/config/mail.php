@@ -42,6 +42,10 @@ return [
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
+            'postmark' => [
+                'transport' => 'postmark',
+                'token' => env('POSTMARK_TOKEN'),
+            ],
             'timeout' => null,
             'local_domain' => env('MAIL_EHLO_DOMAIN'),
         ],
