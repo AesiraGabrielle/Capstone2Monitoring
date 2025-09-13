@@ -24,7 +24,6 @@ return [
     'https://lnuwastemonitoring.onrender.com',
 ],
 
-
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
