@@ -384,7 +384,7 @@ const MonitoringPage = () => {
                 <div className="waste-amount">{totals.non_bio ?? 0}</div>
               </div>
               <div className="waste-stat-item">
-                <img src={unidentifiedIcon} alt="Unclassified Waste" />
+                <img src={unidentifiedIcon} alt="Unidentified Waste" />
                 <div className="waste-type">Unclassified Waste:</div>
                 <div className="waste-amount">{totals.unclassified ?? 0}</div>
               </div>
