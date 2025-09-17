@@ -10,13 +10,11 @@ use Illuminate\Support\Facades\DB;
 
 class WasteLogController extends Controller
 {
-    // Apply JWT middleware to all routes
     public function __construct()
     {
         $this->middleware('jwt.auth');
     }
 
-    // Store log from ESP32-CAM
     public function store(Request $request)
     {
         $request->validate([
@@ -37,7 +35,6 @@ class WasteLogController extends Controller
         return response()->json(['message' => 'Waste log stored successfully.']);
     }
 
-    // Daily breakdown for a range; defaults to current week if no range provided
     public function dailyBreakdown(Request $request)
     {
         $startParam = $request->query('start');
@@ -77,7 +74,6 @@ class WasteLogController extends Controller
     return response()->json($result);
     }
 
-    // Weekly summary per week number
     public function weeklySummary()
     {
         $logs = WasteLog::select(
@@ -109,7 +105,6 @@ class WasteLogController extends Controller
         return response()->json($grouped);
     }
 
-    // Monthly summary
     public function monthlySummary(Request $request)
     {
         $monthParam = $request->query('month') ?? now()->format('Y-m');
@@ -135,7 +130,6 @@ class WasteLogController extends Controller
         ]);
     }
 
-    // Total all-time per bin
     public function totalGarbageAllTime()
     {
         $bins = ['bio', 'non_bio', 'unclassified'];

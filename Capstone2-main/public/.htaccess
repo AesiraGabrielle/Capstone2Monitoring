@@ -1,11 +1,12 @@
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
+        # Disable MultiViews and directory indexes
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
 
-    # Handle Authorization Header
+    # Forward Authorization header for JWT / API Auth
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
@@ -14,8 +15,24 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Send Requests To Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
+    # Deny access to sensitive file types
+    <FilesMatch "\.(env|ini|yml|yaml|log|sql|sqlite|twig|lock|json|phar|md|sh|bat|xml|config)$">
+        Require all denied
+    </FilesMatch>
+
+    # Deny access to hidden files (.git, .env, etc.)
+    <FilesMatch "^\.">
+        Require all denied
+    </FilesMatch>
+
+    # Block direct access to specific folders
+    RedirectMatch 403 (?i)/(?:vendor|storage|bootstrap|tests|node_modules)(/|$)
+
+    # Send Requests To Front Controller (Laravel index.php)
     RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Extra: disable directory listing globally (safety)
+Options -Indexes

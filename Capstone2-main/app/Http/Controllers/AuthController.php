@@ -177,7 +177,7 @@ public function hardwareLogin(Request $request)
 
 
     $claims = [
-        'jti'         => 'device-esp32cam-v1',        // any constant ID you like
+        'jti'         => 'device-esp32cam-v1',        
         'iat'         => 1704067200,                  // 2024-01-01 00:00:00 UTC
         'nbf'         => 1704067200,
         'exp'         => 2145811200,                  // 2037-12-31 00:00:00 UTC
@@ -190,7 +190,7 @@ public function hardwareLogin(Request $request)
     return response()->json([
         'access_token' => $token,
         'token_type'   => 'bearer',
-        'expires_in'   => null,   // we pinned exp far in the future
+        'expires_in'   => null,   
     ]);
 }
 
