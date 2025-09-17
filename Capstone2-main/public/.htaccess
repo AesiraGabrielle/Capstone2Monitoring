@@ -10,29 +10,48 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-    # Redirect Trailing Slashes If Not A Folder...
+    # Redirect Trailing Slashes If Not A Folder
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Deny access to sensitive file types
+    # Deny access to sensitive file extensions
     <FilesMatch "\.(env|ini|yml|yaml|log|sql|sqlite|twig|lock|json|phar|md|sh|bat|xml|config)$">
         Require all denied
     </FilesMatch>
 
-    # Deny access to hidden files (.git, .env, etc.)
+    # Deny access to hidden files and folders (.git, .env, etc.)
     <FilesMatch "^\.">
         Require all denied
     </FilesMatch>
 
-    # Block direct access to specific folders
-    RedirectMatch 403 (?i)/(?:vendor|storage|bootstrap|tests|node_modules)(/|$)
+    # Block access to internal Laravel folders
+    RedirectMatch 403 ^/(vendor|storage|bootstrap|tests|node_modules)(/|$)
 
-    # Send Requests To Front Controller (Laravel index.php)
+    # Block access to Composer files
+    <FilesMatch "(composer\.(json|lock))">
+        Require all denied
+    </FilesMatch>
+
+    # Send all requests to index.php (Laravel front controller)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^ index.php [L]
 </IfModule>
 
-# Extra: disable directory listing globally (safety)
+# Extra hardening
+# Disable directory listing globally
 Options -Indexes
+
+# Prevent MIME sniffing
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Prevent old browsers from interpreting files as scripts/styles
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Content-Security-Policy "default-src 'self' 'unsafe-inline' data: https:"
+</IfModule>
