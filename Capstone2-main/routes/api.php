@@ -9,7 +9,7 @@ use App\Models\Registration;
 use App\Http\Controllers\WasteLevelController;
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
 
 
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
@@ -61,7 +61,7 @@ Route::middleware(['jwt.auth', 'verified'])->group(function () {
     Route::get('/waste-logs/total', [WasteLogController::class, 'totalGarbageAllTime']);
 });
 
-Route::post('/hardware/login', [AuthController::class, 'hardwareLogin']);
+Route::post('/hardware/login', [AuthController::class, 'hardwareLogin'])->middleware('throttle:5,1');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
