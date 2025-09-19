@@ -20,7 +20,8 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
-        '*',
+        'https://frontend-testing-euvj.onrender.com',
+        'https://lnuwastemonitoring.onrender.com',
 ],
     'allowed_origins_patterns' => [],
 
