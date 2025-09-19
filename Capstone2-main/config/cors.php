@@ -19,8 +19,10 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://lnuwastemonitoring.onrender.com', 'https://frontend-testing-euvj.onrender.com'],
-
+    'allowed_origins' => [
+        'https://lnuwastemonitoring.onrender.com',
+        'https://frontend-testing-euvj.onrender.com',
+],
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
