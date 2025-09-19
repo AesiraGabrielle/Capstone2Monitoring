@@ -4,6 +4,11 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    <Files ".htaccess">
+    Require all denied
+    </Files>
+
+
     RewriteEngine On
 
     # Forward Authorization header for JWT / API Auth
@@ -55,3 +60,4 @@ Options -Indexes
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set Content-Security-Policy "default-src 'self' 'unsafe-inline' data: https:"
 </IfModule>
+
