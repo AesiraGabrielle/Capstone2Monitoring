@@ -1401,36 +1401,36 @@ body {
 
 /* ==== Expanded Monitoring Layout with Outer Cards (Overrides) ==== */
 /* Outer wrapper cards (top: chart + side cards, bottom: range stats) */
-.outer-monitoring-card { background:#ffffff; border:1px solid #dbe1e8; border-radius:12px; padding:1rem 1.25rem 1.25rem; margin-bottom:0.9rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+.outer-monitoring-card { background:#ffffff; border:1px solid #dbe1e8; border-radius:12px; padding:0.9rem 1.1rem 1.1rem; margin-bottom:0.85rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
 .outer-monitoring-card.bottom { padding-top:0.6rem; }
 
 /* Reduce horizontal interior whitespace so content stretches */
 .monitoring-page { padding-left:0.6rem; padding-right:0.6rem; }
 .monitoring-content { align-items:stretch; }
 
-/* Main chart container grows more; increase height for better readability */
-.monitoring-page .chart-container.expanded { flex:1 1 auto; height:340px; min-height:340px; margin:0 0 0.45rem 0; padding:0.85rem 1.05rem; border-radius:10px; }
+/* Main chart container (compressed to avoid scroll) */
+.monitoring-page .chart-container.expanded { flex:1 1 auto; height:300px; min-height:300px; margin:0 0 0.4rem 0; padding:0.7rem 0.9rem; border-radius:10px; }
 
 /* Side section slightly wider for breathing room */
 .monitoring-page .side-section { width:240px; }
 .monitoring-page .total-waste-card, .monitoring-page .legend-card { border:1px solid #d5dbe2; border-radius:10px; }
 
 /* Bottom stats row full-width appearance */
-.outer-monitoring-card.bottom .waste-stats-card { gap:0.75rem; }
-.outer-monitoring-card.bottom .waste-stat-item { padding:0.65rem 0.85rem; border-radius:8px; }
-.outer-monitoring-card.bottom { padding-bottom:0.6rem; }
+.outer-monitoring-card.bottom .waste-stats-card { gap:0.6rem; }
+.outer-monitoring-card.bottom .waste-stat-item { padding:0.55rem 0.7rem; border-radius:8px; }
+.outer-monitoring-card.bottom { padding-bottom:0.5rem; }
 
 /* Waste date label spacing */
-.outer-monitoring-card.bottom .waste-date { font-weight:600; margin-bottom:0.4rem; }
+.outer-monitoring-card.bottom .waste-date { font-weight:600; margin-bottom:0.3rem; }
 
 @media (min-width:1500px){
-  .monitoring-page .chart-container.expanded { height:360px; min-height:360px; }
+  .monitoring-page .chart-container.expanded { height:320px; min-height:320px; }
   .monitoring-page .side-section { width:260px; }
 }
 
 @media (max-width: 900px){
-  .outer-monitoring-card { padding:0.85rem 0.9rem 1rem; }
-  .monitoring-page .chart-container.expanded { height:300px; min-height:300px; }
+  .outer-monitoring-card { padding:0.75rem 0.85rem 0.85rem; }
+  .monitoring-page .chart-container.expanded { height:260px; min-height:260px; }
   .monitoring-page .side-section { width:100%; }
 }
 .monitoring-page .waste-item img { width: 22px; height: 22px; }
