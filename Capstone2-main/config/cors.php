@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
@@ -19,17 +18,12 @@ return [
 
     'allowed_methods' => ['*'],
 
-//     'allowed_origins' => [
-//         'https://frontend-testing-euvj.onrender.com',
-//         'https://lnuwastemonitoring.onrender.com',
-// ],
-//     'allowed_origins_patterns' => [],
-
-    'allowed_origins' => [],
-
-    'allowed_origins_patterns' => [
-        '^https://.*\.onrender\.com$',
+    'allowed_origins' => [
+        'https://frontend-testing-euvj.onrender.com',
+        'https://lnuwastemonitoring.onrender.com',
     ],
+
+    'allowed_origins_patterns' => [],   // disable pattern since we list explicit origins
 
     'allowed_headers' => ['*'],
 
@@ -37,6 +31,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
-
+    'supports_credentials' => false,   // set true only if you will use cookies/session
+];
 ];
