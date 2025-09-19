@@ -31,6 +31,11 @@
         Require all denied
     </FilesMatch>
 
+    <IfModule mod_alias.c>
+    RedirectMatch 404 /\.htaccess$
+    </IfModule>
+
+
     # Block access to internal Laravel folders
     RedirectMatch 403 ^/(vendor|storage|bootstrap|tests|node_modules)(/|$)
 
