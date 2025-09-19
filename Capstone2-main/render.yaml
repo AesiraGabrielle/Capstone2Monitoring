@@ -27,7 +27,7 @@ services:
       - key: APP_URL
         value: https://capstone2-2-y4t6.onrender.com
       - key: APP_FRONTEND_URL
-        value: https://lnuwastemonitoring.onrender.com
+        value: https://frontend-testing-euvj.onrender.com
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
