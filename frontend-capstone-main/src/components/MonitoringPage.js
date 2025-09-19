@@ -58,7 +58,8 @@ const MonitoringPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [initialDaily, setInitialDaily] = useState([]); // store initial (auto) dataset for printing when no range chosen
-  const [exporting, setExporting] = useState(false);
+  // Tracks whether a PDF is currently being generated to disable the button & show status
+  const [pdfGenerating, setPdfGenerating] = useState(false);
 
   const handleDateChange = (update) => {
     setDateRange(update);
@@ -269,7 +270,7 @@ const MonitoringPage = () => {
       alert('No data available to export.');
       return;
     }
-    setExporting(true);
+  setPdfGenerating(true);
     try {
       const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -365,7 +366,7 @@ const MonitoringPage = () => {
         : 'waste-monitoring_initial';
       doc.save(`${filenameBase}.pdf`);
     } finally {
-      setExporting(false);
+      setPdfGenerating(false);
     }
   };
 
@@ -427,8 +428,8 @@ const MonitoringPage = () => {
             )}
           </div>
           <div className="print-button-container d-flex gap-2">
-            <button type="button" onClick={handleExportPdf} className="print-button" disabled={exporting}>
-              {exporting ? 'Generating PDF...' : 'Download PDF'}
+            <button type="button" onClick={handleExportPdf} className="print-button" disabled={pdfGenerating}>
+              {pdfGenerating ? 'Generating PDF...' : 'Download PDF'}
             </button>
           </div>
 
