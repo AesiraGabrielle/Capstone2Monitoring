@@ -72,6 +72,15 @@ const MonitoringPage = () => {
     return "Select Date Range";
   };
 
+  // Format date as YYYY-MM-DD in LOCAL time (avoids UTC shift from toISOString())
+  const formatDateLocal = (date) => {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  };
+
   // Fetch daily breakdown for current week initially and overall totals
   useEffect(() => {
     let mounted = true;
@@ -122,8 +131,8 @@ const MonitoringPage = () => {
       setError('');
       try {
         const params = {
-          start: startDate.toISOString().slice(0, 10),
-          end: endDate.toISOString().slice(0, 10),
+          start: formatDateLocal(startDate),
+          end: formatDateLocal(endDate),
         };
         const dailyRes = await monitoringAPI.getDailyBreakdown(params);
         if (!mounted) return;
@@ -285,7 +294,7 @@ const MonitoringPage = () => {
       doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');
       const rangeLine = (startDate && endDate)
-        ? `Range: ${startDate.toISOString().slice(0,10)} to ${endDate.toISOString().slice(0,10)}`
+        ? `Range: ${formatDateLocal(startDate)} to ${formatDateLocal(endDate)}`
         : 'Range: Initial (current week)';
       const generatedAt = `Generated At: ${new Date().toLocaleString()}`;
       doc.text(rangeLine, 40, cursorY); cursorY += 16;
@@ -362,7 +371,7 @@ const MonitoringPage = () => {
       });
 
       const filenameBase = (startDate && endDate)
-        ? `waste-monitoring_${startDate.toISOString().slice(0,10)}_to_${endDate.toISOString().slice(0,10)}`
+        ? `waste-monitoring_${formatDateLocal(startDate)}_to_${formatDateLocal(endDate)}`
         : 'waste-monitoring_initial';
       doc.save(`${filenameBase}.pdf`);
     } finally {
