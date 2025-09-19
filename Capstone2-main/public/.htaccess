@@ -4,6 +4,7 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+
     RewriteEngine On
 
     # Forward Authorization header for JWT / API Auth
@@ -15,8 +16,13 @@
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Deny access to sensitive file extensions
-    <FilesMatch "\.(env|ini|yml|yaml|log|sql|sqlite|twig|lock|json|phar|md|sh|bat|xml|config|.htaccess)$">
+   # Block .htaccess directly
+    <Files ".htaccess">
+        Require all denied
+    </Files>
+
+    # Block sensitive extensions
+    <FilesMatch "\.(env|ini|yml|yaml|log|sql|sqlite|twig|lock|json|phar|md|sh|bat|xml|config)$">
         Require all denied
     </FilesMatch>
 
