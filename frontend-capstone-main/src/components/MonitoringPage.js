@@ -400,117 +400,116 @@ const MonitoringPage = () => {
 
   return (
     <div className="monitoring-page">
-      <div className="container">
-      <h2 className="page-title">Monitoring</h2>
-  {loading && <div>Loading monitoring data...</div>}
-  {error && <div className="alert alert-danger">{error}</div>}
-      
-      <div className="monitoring-content">
-        <div className="main-section">
-          <div className="date-selector">
-            <DatePicker
-              selectsRange={true}
-              startDate={startDate}
-              endDate={endDate}
-              onChange={handleDateChange}
-              isClearable={true}
-              showMonthDropdown
-              showYearDropdown
-              dropdownMode="select"
-              placeholderText="Select Date Range"
-              className="form-control date-range-picker"
-              dateFormat="MMM d, yyyy"
-              customInput={
-                <input
-                  type="text"
-                  className="form-control"
-                  style={{ backgroundColor: 'white', cursor: 'pointer' }}
-                />
-              }
-            />
-          </div>
+      <div className="outer-monitoring-card top">
+        <h2 className="page-title text-center">Monitoring</h2>
+        {loading && <div>Loading monitoring data...</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-          <div className="chart-container">
-            <Line data={lineChartData} options={chartOptions} />
-            {daily.length === 0 && (
-              <div className="text-center text-muted mt-2">No data available for the selected period.</div>
-            )}
-          </div>
-          <div className="print-button-container d-flex gap-2">
-            <button type="button" onClick={handleExportPdf} className="print-button" disabled={pdfGenerating}>
-              {pdfGenerating ? 'Generating PDF...' : 'Download PDF'}
-            </button>
-          </div>
-
-          <div className="waste-info-container">
-            <div className="waste-date">
-              Waste Collected: {formatDateRange()}
+        <div className="monitoring-content">
+          <div className="main-section">
+            <div className="date-selector">
+              <DatePicker
+                selectsRange={true}
+                startDate={startDate}
+                endDate={endDate}
+                onChange={handleDateChange}
+                isClearable={true}
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                placeholderText="Select Date Range"
+                className="form-control date-range-picker"
+                dateFormat="MMM d, yyyy"
+                customInput={
+                  <input
+                    type="text"
+                    className="form-control"
+                    style={{ backgroundColor: 'white', cursor: 'pointer' }}
+                  />
+                }
+              />
             </div>
-            <div className="waste-stats-card">
-              <div className="waste-stat-item">
+
+            <div className="chart-container expanded">
+              <Line data={lineChartData} options={chartOptions} />
+              {daily.length === 0 && (
+                <div className="text-center text-muted mt-2">No data available for the selected period.</div>
+              )}
+            </div>
+            <div className="print-button-container d-flex gap-2">
+              <button type="button" onClick={handleExportPdf} className="print-button" disabled={pdfGenerating}>
+                {pdfGenerating ? 'Generating PDF...' : 'Download PDF'}
+              </button>
+            </div>
+          </div>
+
+          <div className="side-section">
+            <div className="total-waste-card">
+              <h3>Total Waste Collected</h3>
+              <div className="waste-item">
                 <img src={biodegradableIcon} alt="Biodegradable" />
-                <div className="waste-type">Biodegradable:</div>
-                <div className="waste-amount">{totals.bio ?? 0}</div>
+                <span>Biodegradable:</span>
+                <span className="amount">{allTotals.bio ?? 0}</span>
               </div>
-              <div className="waste-stat-item">
+              <div className="waste-item">
                 <img src={nonBiodegradableIcon} alt="Non-Biodegradable" />
-                <div className="waste-type">Non-Biodegradable:</div>
-                <div className="waste-amount">{totals.non_bio ?? 0}</div>
+                <span>Non-Biodegradable:</span>
+                <span className="amount">{allTotals.non_bio ?? 0}</span>
               </div>
-              <div className="waste-stat-item">
-                <img src={unidentifiedIcon} alt="Unidentified Waste" />
-                <div className="waste-type">Unclassified Waste:</div>
-                <div className="waste-amount">{totals.unclassified ?? 0}</div>
+              <div className="waste-item">
+                <img src={unidentifiedIcon} alt="Unidentified" />
+                <span>Unidentified Waste:</span>
+                <span className="amount">{allTotals.unclassified ?? 0}</span>
               </div>
             </div>
-          </div>
 
-          {/* Add footer */}
-          <div className="footer white">
-            © 2025 Leyte Normal University, All rights reserved.
-          </div>
-        </div>
-
-  <div className="side-section">
-          <div className="total-waste-card">
-            <h3>Total Waste Collected</h3>
-            <div className="waste-item">
-              <img src={biodegradableIcon} alt="Biodegradable" />
-              <span>Biodegradable:</span>
-              <span className="amount">{allTotals.bio ?? 0}</span>
-            </div>
-            <div className="waste-item">
-              <img src={nonBiodegradableIcon} alt="Non-Biodegradable" />
-              <span>Non-Biodegradable:</span>
-              <span className="amount">{allTotals.non_bio ?? 0}</span>
-            </div>
-            <div className="waste-item">
-              <img src={unidentifiedIcon} alt="Unidentified" />
-              <span>Unidentified Waste:</span>
-              <span className="amount">{allTotals.unclassified ?? 0}</span>
-            </div>
-          </div>
-
-          <div className="legend-card">
-            <h3>LEGEND</h3>
-            <div className="legend-item">
-              <div className="legend-color biodegradable"></div>
-              <span>Biodegradable</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color non-biodegradable"></div>
-              <span>Non-Biodegradable</span>
-            </div>
-            <div className="legend-item">
-              <div className="legend-color unidentified"></div>
-              <span>Unidentified Waste</span>
+            <div className="legend-card">
+              <h3>LEGEND</h3>
+              <div className="legend-item">
+                <div className="legend-color biodegradable"></div>
+                <span>Biodegradable</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color non-biodegradable"></div>
+                <span>Non-Biodegradable</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color unidentified"></div>
+                <span>Unidentified Waste</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-  {/* Confirmation modal no longer required for filtering; kept for future use if needed */}
-    </div>
+      <div className="outer-monitoring-card bottom">
+        <div className="waste-info-container expanded-row">
+          <div className="waste-date">
+            Waste Collected: {formatDateRange()}
+          </div>
+          <div className="waste-stats-card">
+            <div className="waste-stat-item">
+              <img src={biodegradableIcon} alt="Biodegradable" />
+              <div className="waste-type">Biodegradable:</div>
+              <div className="waste-amount">{totals.bio ?? 0}</div>
+            </div>
+            <div className="waste-stat-item">
+              <img src={nonBiodegradableIcon} alt="Non-Biodegradable" />
+              <div className="waste-type">Non-Biodegradable:</div>
+              <div className="waste-amount">{totals.non_bio ?? 0}</div>
+            </div>
+            <div className="waste-stat-item">
+              <img src={unidentifiedIcon} alt="Unidentified Waste" />
+              <div className="waste-type">Unclassified Waste:</div>
+              <div className="waste-amount">{totals.unclassified ?? 0}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="footer white">
+        © 2025 Leyte Normal University, All rights reserved.
+      </div>
     </div>
   );
 };
