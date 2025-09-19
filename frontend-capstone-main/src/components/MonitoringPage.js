@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import * as XLSX from 'xlsx';
+// PDF export libs
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import autoTable from 'jspdf-autotable';
+// NOTE: These libraries are used to generate a PDF report containing the chart image,
+// a table for every visible daily data row (multi-page supported), and summary totals.
+// The PDF replaces the previous Excel export per user request.
 import { Line } from 'react-chartjs-2';
 import biodegradableIcon from '../assets/biodegradable.png';
 import nonBiodegradableIcon from '../assets/non-biodegradable.png';
@@ -251,55 +257,113 @@ const MonitoringPage = () => {
     </div>
   );
 
-  // (CSV export removed as per request)
-
-  const buildWorkbook = () => {
+  // PDF EXPORT
+  // Generates a PDF containing: header metadata, chart image, daily table (all visible rows),
+  // range totals and overall totals. Uses landscape A4 for width.
+  const handleExportPdf = async () => {
+    // Decide which dataset to export: if a range is chosen use current filtered `daily`,
+    // otherwise fall back to the initially loaded week (`initialDaily`). This ensures
+    // users always get data even if they didn't pick a custom range.
     const source = (startDate && endDate) ? daily : initialDaily;
-    if (!source || source.length === 0) return null;
-    const now = new Date();
-    const timestamp = now.toISOString();
-    // Header metadata rows
-    const meta = [
-      ['Waste Monitoring Report'],
-      [(startDate && endDate) ? `Range: ${startDate.toISOString().slice(0,10)} to ${endDate.toISOString().slice(0,10)}` : 'Range: Initial (current week)'],
-      [`Generated At: ${timestamp}`],
-      [],
-    ];
-    const header = ['Date', 'Biodegradable', 'Non Biodegradable', 'Unidentified'];
-    // Data rows
-    const dataRows = source.map(d => [
-      d.date,
-      Number(d.bio ?? 0),
-      Number(d.non_bio ?? 0),
-      Number(d.unclassified ?? 0)
-    ]);
-    // Totals row
-    const totalsRow = [
-      'TOTAL',
-      dataRows.reduce((a,r)=>a + (r[1]||0),0),
-      dataRows.reduce((a,r)=>a + (r[2]||0),0),
-      dataRows.reduce((a,r)=>a + (r[3]||0),0),
-    ];
-    const sheetData = [...meta, header, ...dataRows, totalsRow];
-    const ws = XLSX.utils.aoa_to_sheet(sheetData);
-    // Bold styling via cell comments not directly supported in plain SheetJS free version; minimal formatting
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Monitoring');
-    return wb;
-  };
-
-  const handleExportXlsx = () => {
-    const wb = buildWorkbook();
-    if (!wb) {
+    if (!source || source.length === 0) {
       alert('No data available to export.');
       return;
     }
     setExporting(true);
     try {
+      const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let cursorY = 40;
+
+      const title = 'Waste Monitoring Report';
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, pageWidth / 2, cursorY, { align: 'center' });
+      cursorY += 24;
+
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      const rangeLine = (startDate && endDate)
+        ? `Range: ${startDate.toISOString().slice(0,10)} to ${endDate.toISOString().slice(0,10)}`
+        : 'Range: Initial (current week)';
+      const generatedAt = `Generated At: ${new Date().toLocaleString()}`;
+      doc.text(rangeLine, 40, cursorY); cursorY += 16;
+      doc.text(generatedAt, 40, cursorY); cursorY += 16;
+
+      // Capture chart (best-effort). If chart not found continue without it.
+      const chartCanvas = document.querySelector('.chart-container canvas');
+      if (chartCanvas) {
+        try {
+          const canvas = await html2canvas(chartCanvas, { backgroundColor: '#ffffff', scale: 2 });
+          const imgData = canvas.toDataURL('image/png');
+          const imgWidth = pageWidth - 80; // 40pt margins left/right
+          const aspect = canvas.height / canvas.width;
+          const imgHeight = imgWidth * aspect;
+          doc.addImage(imgData, 'PNG', 40, cursorY, imgWidth, imgHeight, 'chart', 'FAST');
+          cursorY += imgHeight + 24;
+        } catch (e) {
+          // Ignore chart capture errors
+        }
+      }
+
+      // Prepare table data
+      const rows = source.map(d => {
+        const bio = Number(d.bio ?? 0) || 0;
+        const non = Number(d.non_bio ?? 0) || 0;
+        const un = Number(d.unclassified ?? 0) || 0;
+        return [d.date, bio, non, un, bio + non + un];
+      });
+
+      const filteredTotals = rows.reduce((acc, r) => {
+        acc.bio += r[1];
+        acc.non += r[2];
+        acc.un += r[3];
+        acc.sum += r[4];
+        return acc;
+      }, { bio: 0, non: 0, un: 0, sum: 0 });
+
+      // Daily data table
+      autoTable(doc, {
+        startY: cursorY,
+        head: [[ 'Date', 'Biodegradable', 'Non-Biodegradable', 'Unidentified', 'Daily Total' ]],
+        body: rows,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [57, 111, 176] },
+        theme: 'striped',
+        didDrawPage: (data) => {
+          // Add page footer with page numbers
+          const pageCount = doc.getNumberOfPages();
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          doc.text(`Page ${data.pageNumber} of ${pageCount}`, pageWidth - 60, doc.internal.pageSize.getHeight() - 20);
+        }
+      });
+      cursorY = doc.lastAutoTable.finalY + 20;
+
+      // Summary section (range vs overall)
+      const overallTotals = {
+        bio: Number(allTotals.bio ?? 0) || 0,
+        non: Number(allTotals.non_bio ?? 0) || 0,
+        un: Number(allTotals.unclassified ?? 0) || 0,
+      };
+      const overallSum = overallTotals.bio + overallTotals.non + overallTotals.un;
+
+      autoTable(doc, {
+        startY: cursorY,
+        head: [[ 'Summary Type', 'Biodegradable', 'Non-Biodegradable', 'Unidentified', 'Total' ]],
+        body: [
+          [ 'Selected Range', filteredTotals.bio, filteredTotals.non, filteredTotals.un, filteredTotals.sum ],
+          [ 'Overall Totals', overallTotals.bio, overallTotals.non, overallTotals.un, overallSum ],
+        ],
+        styles: { fontSize: 10 },
+        headStyles: { fillColor: [90, 90, 90] },
+        theme: 'grid'
+      });
+
       const filenameBase = (startDate && endDate)
         ? `waste-monitoring_${startDate.toISOString().slice(0,10)}_to_${endDate.toISOString().slice(0,10)}`
         : 'waste-monitoring_initial';
-      XLSX.writeFile(wb, `${filenameBase}.xlsx`);
+      doc.save(`${filenameBase}.pdf`);
     } finally {
       setExporting(false);
     }
@@ -363,8 +427,8 @@ const MonitoringPage = () => {
             )}
           </div>
           <div className="print-button-container d-flex gap-2">
-            <button type="button" onClick={handleExportXlsx} className="print-button" disabled={exporting}>
-              {exporting ? 'Exporting...' : 'Download Excel'}
+            <button type="button" onClick={handleExportPdf} className="print-button" disabled={exporting}>
+              {exporting ? 'Generating PDF...' : 'Download PDF'}
             </button>
           </div>
 
