@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Dropdown, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faExclamationTriangle, faGear } from '@fortawesome/free-solid-svg-icons';
 import binLogo from '../assets/bin-logo.png';
 import { wasteLevelAPI } from '../services/api';
 
@@ -147,11 +147,10 @@ const Navbar = ({ user, onLogout }) => {
               </div>
               
               {/* Settings dropdown */}
-              <Dropdown align="end" className="d-none d-md-inline">
-                <Dropdown.Toggle variant="primary" id="settings-dropdown">
-                  Settings
+              <Dropdown align="end" className="d-none d-md-inline settings-gear-dropdown">
+                <Dropdown.Toggle variant="primary" id="settings-dropdown" className="settings-gear-btn" aria-label="Settings">
+                  <FontAwesomeIcon icon={faGear} />
                 </Dropdown.Toggle>
-
                 <Dropdown.Menu>
                   <Dropdown.Item as={Link} to="/dashboard/change-password" onClick={() => setMenuOpen(false)}>Change Password</Dropdown.Item>
                   <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>

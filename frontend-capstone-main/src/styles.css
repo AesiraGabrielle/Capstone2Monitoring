@@ -117,6 +117,31 @@ body {
   padding: 15px 20px;
 }
 
+/* Center nav links: ensure container-fluid uses flex and nav links centered */
+.navbar .navbar-nav {
+  display: flex;
+  align-items: center;
+}
+.navbar .navbar-brand { margin-right: 2rem; }
+.navbar .navbar-nav.mx-auto { flex: 1; justify-content: center; }
+.navbar .d-flex.align-items-center { gap: 0.75rem; }
+
+/* Settings gear button */
+.settings-gear-btn.btn-primary, .settings-gear-btn.btn-primary:focus, .settings-gear-btn.btn-primary:active {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  font-size: 1.25rem;
+  padding: 0.35rem 0.55rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.settings-gear-btn.btn-primary:hover { background: rgba(255,255,255,0.15); }
+
+/* Remove default caret for dropdown toggle */
+.settings-gear-btn.dropdown-toggle::after { display: none; }
+
 .avatar {
   width: 40px;
   height: 40px;
@@ -805,16 +830,17 @@ body {
 
 /* Monitoring Page Specific Styles */
 .monitoring-page {
-  padding: 1rem;
-  max-width: 1900px; /* allow wider chart area on large screens */
+  padding: 1rem 1.5rem;
+  max-width: 2000px; /* slightly wider */
   margin: 0 auto;
   height: 100%;
 }
 
 .monitoring-content {
   display: flex;
-  gap: 0.75rem; /* give more width to chart */
+  gap: 1rem; /* a bit more breathing space */
   height: 100%;
+  align-items: stretch;
 }
 
 .main-section {
@@ -837,13 +863,24 @@ body {
 }
 
 .side-section {
-  width: 260px; /* narrower sidebar to expand chart area */
+  width: 300px; /* allow cards to breathe a little while main grows */
   flex-shrink: 0;
   margin-top: 0.5rem;
   margin-right: 0.25rem;
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+/* On very wide screens, stretch the chart and limit side width */
+@media (min-width: 1500px) {
+  .side-section { width: 320px; }
+  .chart-container { height: 500px; }
+}
+
+/* Expand waste stat items to use side space on wide screens in main section */
+@media (min-width: 1200px) {
+  .waste-stats-card .waste-stat-item { padding: 0.8rem 1rem; }
 }
 
 .waste-info-container {
