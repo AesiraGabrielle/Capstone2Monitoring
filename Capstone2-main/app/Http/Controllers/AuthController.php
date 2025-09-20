@@ -18,12 +18,13 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'full_name' => 'required|string|max:255',
+            'full_name' => 'required|string|max:255|regex:/^[A-Za-z ]+$/',
             'email' => 'required|email|regex:/^[a-zA-Z0-9._%+-]+@lnu\.edu\.ph$/i|unique:registrations,email',
             // Alphanumeric only, at least 8 chars
             // Must contain at least one letter, one digit, and one symbol
             'password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'],
         ], [
+            'full_name.regex' => 'Full name must contain only letters (A–Z, a–z) and spaces.',
             'email.regex' => 'Only emails ending in @lnu.edu.ph are allowed.',
             'password.confirmed' => 'Passwords do not match.',
             'password.regex' => 'Password must be at least 8 chars with a letter, a number, and an allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~).',
