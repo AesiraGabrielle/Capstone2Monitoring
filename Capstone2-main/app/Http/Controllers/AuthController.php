@@ -90,25 +90,33 @@ class AuthController extends Controller
         ]);
     }
 
-    // Change authenticated user's password
-    public function changePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'],
+
+public function changePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'new_password' => [
+            'required',
+            'confirmed',
+            'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'
+        ],
     ]);
 
-        $user = auth()->user();
+    $user = auth()->user();
 
-        if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Current password is incorrect.'], 400);
-        }
-
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        return response()->json(['message' => 'Password changed successfully!']);
+    if (!Hash::check($request->current_password, $user->password)) {
+        return response()->json(['message' => 'Current password is incorrect.'], 400);
     }
+
+    if (Hash::check($request->new_password, $user->password)) {
+        return response()->json(['message' => 'New password cannot be the same as the current password.'], 400);
+    }
+
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+
+    return response()->json(['message' => 'Password changed successfully!']);
+}
 
     
     public function forgotPassword(Request $request)
@@ -136,27 +144,38 @@ class AuthController extends Controller
         $request->validate([
             'token' => 'required',
             'email' => 'required|email|exists:registrations,email',
-            'password' => ['required','confirmed','regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'],
+            'password' => [
+                'required',
+                'confirmed',
+                'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"\'<>.,?\/`~]).{8,}$/'
+            ],
         ], [
             'password.regex' => 'Password must be at least 8 chars with a letter, a number, and an allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~).',
         ]);
 
-        $status = \Illuminate\Support\Facades\Password::broker('registrations')->reset(
+        $status = Password::broker('registrations')->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-                $user->password = \Illuminate\Support\Facades\Hash::make($password);
-                $user->setRememberToken(\Illuminate\Support\Str::random(60));
+                if (Hash::check($password, $user->password)) {
+                    throw new \Exception('New password cannot be the same as the old password.');
+                }
+
+                $user->password = Hash::make($password);
+                $user->setRememberToken(Str::random(60));
                 $user->save();
 
-                event(new \Illuminate\Auth\Events\PasswordReset($user));
+                event(new PasswordReset($user));
             }
         );
 
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Password reset successful. You can now log in with your new password.'])
-            : response()->json(['error' => 'Invalid or expired token.'], 400);
-    }
+        if ($status === Password::PASSWORD_RESET) {
+            return response()->json(['message' => 'Password reset successful. You can now log in with your new password.']);
+        } elseif ($status instanceof \Exception) {
+            return response()->json(['error' => $status->getMessage()], 400);
+        }
 
+        return response()->json(['error' => 'Invalid or expired token.'], 400);
+    }
     // Optional: Logout user by invalidating token
     public function logout()
     {
