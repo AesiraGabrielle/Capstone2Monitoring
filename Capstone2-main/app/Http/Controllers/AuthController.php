@@ -28,8 +28,15 @@ class AuthController extends Controller
             'email.regex' => 'Only emails ending in @lnu.edu.ph are allowed.',
             'password.confirmed' => 'Passwords do not match.',
             'password.regex' => 'Password must be at least 8 chars with a letter, a number, and an allowed symbol (!@#$%^&*()_+-={}[]|:;"\'<>.,?/`~).',
-            // regex message removed
         ]);
+
+        if (\App\Models\Registration::whereNull('is_hardware')
+                ->orWhere('is_hardware', false)
+                ->count() >= 3) {
+            return response()->json([
+                'error' => 'Maximum number of website users (3) has been reached. No more registrations allowed.'
+            ], 403);
+        }
 
         // Create user
         $user = Registration::create([
