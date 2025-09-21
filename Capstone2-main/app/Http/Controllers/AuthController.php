@@ -50,10 +50,8 @@ class AuthController extends Controller
     ]);
 
 
-        // Fire email verification event
         event(new Registered($user));
 
-        // Generate JWT token
         $jwtToken = JWTAuth::fromUser($user);
 
         return response()->json([

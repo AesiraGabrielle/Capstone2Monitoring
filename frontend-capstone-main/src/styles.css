@@ -43,16 +43,16 @@ body {
 .login-card,
 .register-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 760px; /* reduced from 900px */
   background-color: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 26px rgba(0, 0, 0, 0.28);
 }
 
 .logo-side {
   background-color: var(--white);
-  padding: 40px;
+  padding: 32px; /* reduced from 40px */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -61,7 +61,7 @@ body {
 
 .form-side {
   background-color: var(--form-bg-color);
-  padding: 40px;
+  padding: 32px; /* reduced from 40px */
   color: var(--text-dark); /* Changed from white to black */
 }
 
@@ -138,6 +138,11 @@ body {
   justify-content: center;
 }
 .settings-gear-btn.btn-primary:hover { background: rgba(255,255,255,0.15); }
+/* Match warning button hover style (gold darken) */
+.settings-gear-btn.btn-primary:hover, .settings-gear-btn.btn-primary:focus {
+  background-color: #e0a800 !important; /* same as .warning-btn:hover */
+  color: #212529;
+}
 
 /* Remove default caret for dropdown toggle */
 .settings-gear-btn.dropdown-toggle::after { display: none; }
@@ -282,7 +287,7 @@ body {
 }
 
 .bin-graphic {
-  width: 250px;
+  width: 220px; /* reduced from 250 */
   margin: 0 auto;
   position: relative;
 }
@@ -310,11 +315,11 @@ body {
 
 .bin-body {
   width: 100%;
-  height: 300px;
-  border: 4px solid #000;  /* Increased from 3px */
+  height: 260px; /* reduced from 300px */
+  border: 4px solid #000;
   border-top: none;
-  border-bottom-left-radius: 40px;  /* Increased from 30px */
-  border-bottom-right-radius: 40px;  /* Increased from 30px */
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
   position: relative;
   overflow: hidden;
 }
@@ -334,15 +339,24 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   font-weight: bold;
-  font-size: 36px;  /* Increased from 28px */
-  z-index: 2; /* ensure above filler */
+  font-size: 30px; /* reduced */
+  z-index: 2;
 }
 
 .bin-label {
   font-weight: bold;
-  font-size: 24px;  /* Increased from 20px */
-  margin-top: 20px;  /* Increased from 15px */
+  font-size: 20px; /* reduced */
+  margin-top: 14px; /* reduced */
 }
+
+/* Outer bins card similar to monitoring */
+.outer-bins-card {
+  background:#ffffff; border:1px solid #dbe1e8; border-radius:12px;
+  padding:1rem 1.25rem 1.25rem; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom:1rem;
+}
+.outer-bins-card .page-title { margin-left:0; text-align:left; margin-bottom:0.75rem; }
+.outer-bins-card .row { margin-top:0.25rem; }
 
 /* Monitoring Page */
 .summary-card {
