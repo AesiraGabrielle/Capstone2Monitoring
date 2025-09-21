@@ -50,6 +50,46 @@ body {
   box-shadow: 0 0 26px rgba(0, 0, 0, 0.28);
 }
 
+/* === Auth Slide Combined Card === */
+.auth-slide-card {
+  width:100%;
+  max-width:760px;
+  position:relative;
+  overflow:hidden;
+  border-radius:10px;
+  background:rgba(255,255,255,0.95);
+  box-shadow:0 0 26px rgba(0,0,0,0.28);
+  min-height:520px;
+  display:flex;
+}
+
+.auth-panels-track {
+  display:flex;
+  width:200%;
+  transition: transform 0.65s cubic-bezier(.65,.05,.36,1);
+}
+
+.auth-panel {
+  width:50%;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+}
+
+.auth-slide-wrapper.mode-register .auth-panels-track { transform: translateX(-50%); }
+.auth-slide-wrapper.mode-login .auth-panels-track { transform: translateX(0); }
+
+/* Reduce internal form spacing a bit for compactness */
+.auth-panel .login-form, .auth-panel .register-form { padding-top:4px; }
+
+@media (max-width: 768px) {
+  .auth-slide-card { max-width:95vw; min-height: auto; }
+  .auth-panel { width:100%; }
+  .auth-panels-track { width:200%; }
+  /* On mobile stack panels vertically by faking slide with height expansion */
+  .auth-slide-wrapper.mode-register .auth-panels-track { transform: translateX(-50%); }
+}
+
 .logo-side {
   background-color: var(--white);
   padding: 32px; /* reduced from 40px */

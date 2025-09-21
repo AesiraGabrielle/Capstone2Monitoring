@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { /* Link, */ useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
 import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
@@ -16,6 +16,18 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   const [verifiedMsg, setVerifiedMsg] = useState('');
   const [redirectCountdown, setRedirectCountdown] = useState(null);
   const [passwordResetMsg, setPasswordResetMsg] = useState('');
+  // Slide auth state
+  const [mode, setMode] = useState('login'); // 'login' | 'register'
+  // Register form fields
+  const [regFullName, setRegFullName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
+  const [regPassword, setRegPassword] = useState('');
+  const [regConfirm, setRegConfirm] = useState('');
+  const [regShowPassword, setRegShowPassword] = useState(false);
+  const [regShowConfirm, setRegShowConfirm] = useState(false);
+  const [regError, setRegError] = useState('');
+  const [regSubmitting, setRegSubmitting] = useState(false);
+  const [regSuccess, setRegSuccess] = useState('');
   const location = useLocation();
   const emailInputRef = useRef(null);
 
@@ -116,105 +128,139 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
     }
   };
 
+  const validateRegister = () => {
+    setRegError('');
+    if (!regFullName || !regEmail || !regPassword || !regConfirm) {
+      setRegError('All fields are required');
+      return false;
+    }
+    const domainPattern = /^[A-Za-z0-9._%+-]+@lnu\.edu\.ph$/i;
+    if (!domainPattern.test(regEmail)) { setRegError('Email must end with @lnu.edu.ph'); return false; }
+    if (regPassword !== regConfirm) { setRegError('Passwords do not match'); return false; }
+    const strongPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}\[\]|:;"'<>.,?/~`]).{8,}$/;
+    if (!strongPattern.test(regPassword)) { setRegError('Password must have letter, number, symbol, min 8 chars'); return false; }
+    return true;
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (!validateRegister()) return;
+    setRegSubmitting(true);
+    try {
+      const payload = { full_name: regFullName, email: regEmail, password: regPassword, password_confirmation: regConfirm };
+      const res = await authAPI.register(payload);
+      setRegSuccess('Registration successful. Please verify your email.');
+      // Clear fields and switch back after slight delay
+      setTimeout(() => { setMode('login'); setRegSubmitting(false); }, 1200);
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.response?.data?.error || 'Registration failed';
+      setRegError(msg);
+      setRegSubmitting(false);
+    }
+  };
+
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <div className="row g-0">
-          {/* Left Side - Logo and welcome text */}
-          <div className="col-md-6 logo-side">
-            <div className="logo-content">
-              <h2 className="mb-4">Welcome to Our Webpage!</h2>
-              <p className="text-center mb-4">
-                This is a Webpage for monitoring the waste throwout in 
-                Leyte Normal University
-              </p>
-              <div className="text-center">
-                <img src={binLogo} alt="Recycling Logo" className="logo-img" />
+    <div className={`login-container auth-slide-wrapper mode-${mode}`}>
+      <div className="auth-slide-card">
+        <div className="auth-panels-track">
+          {/* Panel 1: Login */}
+          <div className="auth-panel login-panel">
+            <div className="row g-0 h-100">
+              <div className="col-md-6 logo-side d-none d-md-flex">
+                <div className="logo-content">
+                  <h2 className="mb-4">Welcome to Our Webpage!</h2>
+                  <p className="text-center mb-4">This is a Webpage for monitoring the waste throwout in Leyte Normal University</p>
+                  <div className="text-center">
+                    <img src={binLogo} alt="Recycling Logo" className="logo-img" />
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6 form-side">
+                <div className="login-form">
+                  <h2 className="mb-3 text-center">Login</h2>
+                  <form onSubmit={handleSubmit}>
+                    {passwordResetMsg && <div className="alert alert-success" role="alert">{passwordResetMsg}</div>}
+                    {verifiedMsg && (
+                      <div className="alert alert-success" role="alert">{verifiedMsg}</div>
+                    )}
+                    {error && <div className="alert alert-danger" role="alert">{error}</div>}
+                    <div className="mb-3">
+                      <label htmlFor="loginEmail" className="form-label">Email</label>
+                      <input type="email" className="form-control" id="loginEmail" placeholder="Input Email" value={email} onChange={(e)=>setEmail(e.target.value)} ref={emailInputRef} required />
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="loginPassword" className="form-label">Password</label>
+                      <div className="input-group">
+                        <input type={showPassword ? 'text':'password'} className="form-control" id="loginPassword" placeholder="Input Password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
+                        <button type="button" className={`btn ${showPassword ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setShowPassword(v=>!v)} title={showPassword ? 'Hide password':'Show password'} style={{display:'flex',alignItems:'center'}}>
+                          <img src={`${process.env.PUBLIC_URL}/show-password.png`} alt="Show password" style={{ width:20, height:20, filter:'brightness(0) invert(1)' }} />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                      <button type="button" className="btn btn-warning register-btn" onClick={()=>setMode('register')}>REGISTER</button>
+                      <button type="submit" className="btn btn-primary login-btn" disabled={loading}>{loading ? (<><Spinner animation="border" size="sm" className="me-2" /> Logging in...</>) : 'LOG IN'}</button>
+                    </div>
+                    <div className="mt-3 text-center">
+                      <button type="button" className="btn btn-link p-0 forgot-password" onClick={openForgot}>Forgot Password?</button>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
-          
-          {/* Right Side - Login form */}
-          <div className="col-md-6 form-side">
-            <div className="login-form">
-              <h2 className="mb-4 text-center">Login</h2>
-              <form onSubmit={handleSubmit}>
-                {passwordResetMsg && (
-                  <div className="alert alert-success" role="alert">{passwordResetMsg}</div>
-                )}
-                {verifiedMsg && (
-                  <div className="alert alert-success" role="alert">
-                    {verifiedMsg}
-                    {redirectCountdown !== null && redirectCountdown > 0 && (
-                      <span className="ms-2 small text-muted">(Hides in {redirectCountdown}s)</span>
-                    )}
-                  </div>
-                )}
-                {error && (
-                  <div className="alert alert-danger" role="alert">{error}</div>
-                )}
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Email</label>
-                  <input 
-                    type="email" 
-                    className="form-control" 
-                    id="email" 
-                    placeholder="Input Email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    ref={emailInputRef}
-                    required
-                  />
+          {/* Panel 2: Register */}
+          <div className="auth-panel register-panel">
+            <div className="row g-0 h-100">
+              <div className="col-md-6 form-side order-md-1 order-2">
+                <div className="register-form">
+                  <h2 className="mb-3 text-center">Register</h2>
+                  <form onSubmit={handleRegister}>
+                    {regSuccess && <div className="alert alert-success" role="alert">{regSuccess}</div>}
+                    {regError && <div className="alert alert-danger" role="alert">{regError}</div>}
+                    <div className="mb-2">
+                      <label htmlFor="regFullName" className="form-label">Full Name</label>
+                      <input type="text" className="form-control" id="regFullName" value={regFullName} onChange={(e)=>setRegFullName(e.target.value)} required />
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="regEmail" className="form-label">Email (@lnu.edu.ph)</label>
+                      <input type="email" className="form-control" id="regEmail" value={regEmail} onChange={(e)=>setRegEmail(e.target.value)} placeholder="name@lnu.edu.ph" required />
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="regPassword" className="form-label">Password</label>
+                      <div className="input-group">
+                        <input type={regShowPassword ? 'text':'password'} className="form-control" id="regPassword" value={regPassword} onChange={(e)=>setRegPassword(e.target.value)} placeholder="8+ chars, letter, number, symbol" required />
+                        <button type="button" className={`btn ${regShowPassword ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setRegShowPassword(v=>!v)}>👁</button>
+                      </div>
+                    </div>
+                    <div className="mb-2">
+                      <label htmlFor="regConfirm" className="form-label">Re-Enter Password</label>
+                      <div className="input-group">
+                        <input type={regShowConfirm ? 'text':'password'} className="form-control" id="regConfirm" value={regConfirm} onChange={(e)=>setRegConfirm(e.target.value)} placeholder="Repeat Password" required />
+                        <button type="button" className={`btn ${regShowConfirm ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setRegShowConfirm(v=>!v)}>👁</button>
+                      </div>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                      <button type="button" className="btn btn-secondary" onClick={()=>setMode('login')}>BACK TO LOGIN</button>
+                      <button type="submit" className="btn btn-primary" disabled={regSubmitting}>{regSubmitting ? 'Creating…':'CREATE ACCOUNT'}</button>
+                    </div>
+                  </form>
                 </div>
-                
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Password</label>
-                  <div className="input-group">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      className="form-control"
-                      id="password"
-                      placeholder="Input Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className={`btn ${showPassword ? 'btn-primary' : 'btn-outline-secondary'}`}
-                      title={showPassword ? 'Hide password' : 'Show password'}
-                      onClick={() => setShowPassword((v) => !v)}
-                      style={{ display: 'flex', alignItems: 'center' }}
-                    >
-                      <img
-                        src={`${process.env.PUBLIC_URL}/show-password.png`}
-                        alt="Show password"
-                        style={{ width: 20, height: 20, filter: 'brightness(0) invert(1)' }}
-                      />
-                    </button>
+              </div>
+              <div className="col-md-6 logo-side order-md-2 order-1 d-none d-md-flex">
+                <div className="logo-content">
+                  <h2 className="mb-4">Join the Platform</h2>
+                  <p className="text-center mb-4">Create an account to start monitoring waste levels effectively.</p>
+                  <div className="text-center">
+                    <img src={binLogo} alt="Recycling Logo" className="logo-img" />
                   </div>
                 </div>
-                
-                <div className="d-flex justify-content-between mt-4">
-                  <Link to="/register" className="btn btn-warning register-btn">REGISTER</Link>
-                  <button type="submit" className="btn btn-primary login-btn" disabled={loading}>
-                    {loading ? (<><Spinner animation="border" size="sm" className="me-2" /> Logging in...</>) : 'LOG IN'}
-                  </button>
-                </div>
-                
-                <div className="mt-3 text-center">
-                  <button type="button" className="btn btn-link p-0 forgot-password" onClick={openForgot}>Forgot Password?</button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Add footer */}
-      <div className="footer white">
-        © 2025 Leyte Normal University, All rights reserved.
-      </div>
+      <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
 
       {/* Forgot Password Modal */}
       <Modal show={showForgot} onHide={() => setShowForgot(false)} centered>
