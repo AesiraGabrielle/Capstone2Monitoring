@@ -21,8 +21,8 @@ class WasteLevelController extends Controller
         $request->validate([
             'bin_type' => 'required|in:bio,non_bio,unclassified',
             'ultrasonic_connected' => 'required|boolean',
-            'distance_cm' => 'nullable|numeric|min:0', // raw ultrasonic reading
-            'bin_height_cm' => 'required|numeric|min:1', // fixed per bin (you can store per bin in DB too)
+            'distance_cm' => 'nullable|numeric|min:0',
+            'bin_height_cm' => 'required|numeric|min:1',
             'measured_at' => 'required|date',
         ]);
 
