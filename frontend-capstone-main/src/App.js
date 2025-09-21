@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
 import Dashboard from './components/Dashboard';
 import BinsPage from './components/BinsPage';
 import MonitoringPage from './components/MonitoringPage';
@@ -109,11 +108,7 @@ function App() {
             <LoginPage onLogin={handleLogin} verifiedStatus={verified} verifiedReason={params.get('reason')} />
         } />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route path="/register" element={
-            isAuthenticated ? 
-            <Navigate to="/dashboard/bins" /> : 
-            <RegisterPage />
-          } />
+          <Route path="/register" element={<Navigate to="/login" replace />} />
           <Route path="/dashboard" element={
             forceShowLogin ? (
               // Always bounce to login with same query so message appears there
