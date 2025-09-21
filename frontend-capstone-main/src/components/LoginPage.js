@@ -192,7 +192,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                       </button>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                  <div className="action-row d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
                     <button type="button" className="btn btn-warning register-btn" onClick={()=>setMode('register')}>REGISTER</button>
                     <button type="submit" className="btn btn-primary login-btn" disabled={loading}>{loading ? (<><Spinner animation="border" size="sm" className="me-2" /> Logging in...</>) : 'LOG IN'}</button>
                   </div>
@@ -225,17 +225,21 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                     <label htmlFor="regPassword" className="form-label">Password</label>
                     <div className="input-group">
                       <input type={regShowPassword ? 'text':'password'} className="form-control" id="regPassword" value={regPassword} onChange={(e)=>setRegPassword(e.target.value)} placeholder="8+ chars, letter, number, symbol" required />
-                      <button type="button" className={`btn ${regShowPassword ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setRegShowPassword(v=>!v)}>👁</button>
+                      <button type="button" className={`btn ${regShowPassword ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setRegShowPassword(v=>!v)} title={regShowPassword ? 'Hide password':'Show password'} style={{display:'flex',alignItems:'center'}}>
+                        <img src={`${process.env.PUBLIC_URL}/show-password.png`} alt="Show password" style={{ width:20, height:20, filter:'brightness(0) invert(1)' }} />
+                      </button>
                     </div>
                   </div>
                   <div className="mb-2">
                     <label htmlFor="regConfirm" className="form-label">Re-Enter Password</label>
                     <div className="input-group">
                       <input type={regShowConfirm ? 'text':'password'} className="form-control" id="regConfirm" value={regConfirm} onChange={(e)=>setRegConfirm(e.target.value)} placeholder="Repeat Password" required />
-                      <button type="button" className={`btn ${regShowConfirm ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setRegShowConfirm(v=>!v)}>👁</button>
+                      <button type="button" className={`btn ${regShowConfirm ? 'btn-primary':'btn-outline-secondary'}`} onClick={()=>setRegShowConfirm(v=>!v)} title={regShowConfirm ? 'Hide password':'Show password'} style={{display:'flex',alignItems:'center'}}>
+                        <img src={`${process.env.PUBLIC_URL}/show-password.png`} alt="Show password" style={{ width:20, height:20, filter:'brightness(0) invert(1)' }} />
+                      </button>
                     </div>
                   </div>
-                  <div className="d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                  <div className="action-row d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
                     <button type="button" className="btn btn-secondary" onClick={()=>setMode('login')}>BACK TO LOGIN</button>
                     <button type="submit" className="btn btn-primary" disabled={regSubmitting}>{regSubmitting ? 'Creating…':'CREATE ACCOUNT'}</button>
                   </div>
