@@ -1523,3 +1523,23 @@ body {
 .monitoring-page .legend-color { width: 20px; height: 20px; }
 .monitoring-page .legend-item span { font-size: 0.95rem; }
 .monitoring-page .print-button-container { margin: 0.2rem 0.2rem 0.3rem 0; }
+
+/* === Auth full-view slide (login/register) === */
+.auth-views-wrapper .auth-views { position:relative; width:100%; max-width:760px; background:rgba(255,255,255,0.95); border-radius:10px; box-shadow:0 0 26px rgba(0,0,0,0.28); overflow:hidden; }
+.auth-views { display:flex; height:560px; }
+.auth-view { flex:0 0 100%; width:100%; position:relative; transition: transform .6s cubic-bezier(.65,.05,.36,1), opacity .45s ease; }
+.auth-views-wrapper.mode-register .login-view { transform: translateX(-100%); opacity:0; pointer-events:none; }
+.auth-views-wrapper.mode-register .register-view { transform: translateX(-100%); opacity:1; }
+.auth-views-wrapper.mode-login .login-view { transform: translateX(0); opacity:1; }
+.auth-views-wrapper.mode-login .register-view { transform: translateX(0); opacity:0; pointer-events:none; }
+.auth-view .logo-side { background:#ffffff; }
+.auth-view .form-side { background: var(--form-bg-color); }
+
+@media (max-width: 768px) {
+  .auth-views { height:auto; flex-direction:column; }
+  .auth-views-wrapper .auth-views { max-width:95vw; }
+  .auth-views-wrapper.mode-register .login-view { display:none; }
+  .auth-views-wrapper.mode-login .register-view { display:none; }
+  .auth-view .logo-side { display:none !important; }
+  .auth-view { transform:none !important; opacity:1 !important; }
+}

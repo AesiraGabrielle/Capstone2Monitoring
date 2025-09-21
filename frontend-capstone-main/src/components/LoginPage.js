@@ -160,24 +160,20 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   };
 
   return (
-    <div className={`login-container auth-overlay-wrapper mode-${mode}`}>
-      <div className="auth-base-card">
-        <div className="row g-0 h-100">
-          {/* Static Left Info Section (always visible) */}
-          <div className="col-md-6 logo-side d-flex">
-            <div className="logo-content">
-              <h2 className="mb-4">Welcome to Our Webpage!</h2>
-              <p className="text-center mb-4">This is a Webpage for monitoring the waste throwout in Leyte Normal University</p>
-              <div className="text-center d-none d-md-block">
-                <img src={binLogo} alt="Recycling Logo" className="logo-img" />
+    <div className={`login-container auth-views-wrapper mode-${mode}`}>
+      <div className="auth-views">
+        {/* View: Login */}
+        <div className="auth-view login-view">
+          <div className="row g-0 h-100">
+            <div className="col-md-6 logo-side d-flex">
+              <div className="logo-content">
+                <h2 className="mb-4">Welcome to Our Webpage!</h2>
+                <p className="text-center mb-4">This is a Webpage for monitoring the waste throwout in Leyte Normal University</p>
+                <div className="text-center d-none d-md-block"><img src={binLogo} alt="Recycling Logo" className="logo-img" /></div>
               </div>
             </div>
-          </div>
-          {/* Right Auth Area (Login panel base) */}
-          <div className="col-md-6 position-relative auth-panels-container">
-            {/* Login Panel */}
-            <div className="auth-panel-overlay login-overlay-panel">
-              <div className="login-form">
+            <div className="col-md-6 form-side d-flex">
+              <div className="login-form w-100">
                 <h2 className="mb-3 text-center">Login</h2>
                 <form onSubmit={handleSubmit}>
                   {passwordResetMsg && <div className="alert alert-success" role="alert">{passwordResetMsg}</div>}
@@ -206,9 +202,13 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                 </form>
               </div>
             </div>
-            {/* Register Panel (slides over) */}
-            <div className="auth-panel-overlay register-overlay-panel">
-              <div className="register-form">
+          </div>
+        </div>
+        {/* View: Register */}
+        <div className="auth-view register-view">
+          <div className="row g-0 h-100">
+            <div className="col-md-6 form-side d-flex order-md-1 order-2">
+              <div className="register-form w-100">
                 <h2 className="mb-3 text-center">Register</h2>
                 <form onSubmit={handleRegister}>
                   {regSuccess && <div className="alert alert-success" role="alert">{regSuccess}</div>}
@@ -240,6 +240,13 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                     <button type="submit" className="btn btn-primary" disabled={regSubmitting}>{regSubmitting ? 'Creating…':'CREATE ACCOUNT'}</button>
                   </div>
                 </form>
+              </div>
+            </div>
+            <div className="col-md-6 logo-side d-flex order-md-2 order-1">
+              <div className="logo-content">
+                <h2 className="mb-4">Welcome to Our Webpage!</h2>
+                <p className="text-center mb-4">This is a Webpage for monitoring the waste throwout in Leyte Normal University</p>
+                <div className="text-center d-none d-md-block"><img src={binLogo} alt="Recycling Logo" className="logo-img" /></div>
               </div>
             </div>
           </div>
