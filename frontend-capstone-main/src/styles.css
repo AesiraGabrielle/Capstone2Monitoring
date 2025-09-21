@@ -79,6 +79,35 @@ body {
 .auth-slide-wrapper.mode-register .auth-panels-track { transform: translateX(-50%); }
 .auth-slide-wrapper.mode-login .auth-panels-track { transform: translateX(0); }
 
+/* === Overlay redesign === */
+.auth-overlay-wrapper .auth-base-card { width:100%; max-width:760px; background:rgba(255,255,255,0.95); border-radius:10px; box-shadow:0 0 26px rgba(0,0,0,0.28); overflow:hidden; position:relative; }
+.auth-overlay-wrapper .auth-base-card .logo-side { min-height:520px; }
+.auth-panels-container { min-height:520px; }
+.auth-panel-overlay { position:absolute; top:0; left:0; width:100%; height:100%; padding:32px; overflow-y:auto; transition: transform .55s cubic-bezier(.65,.05,.36,1), opacity .55s ease; }
+.login-overlay-panel { background: var(--form-bg-color); transform: translateX(0); z-index:2; }
+.register-overlay-panel { background: var(--form-bg-color); transform: translateX(100%); z-index:3; }
+.auth-overlay-wrapper.mode-register .register-overlay-panel { transform: translateX(0); }
+.auth-overlay-wrapper.mode-register .login-overlay-panel { transform: translateX(-100%); }
+.auth-overlay-wrapper.mode-login .register-overlay-panel { pointer-events:none; }
+.auth-overlay-wrapper.mode-register .register-overlay-panel { pointer-events:auto; }
+.auth-panel-overlay h2 { color:#000; }
+
+/* Scrollbar styling (optional subtle) */
+.auth-panel-overlay::-webkit-scrollbar { width:10px; }
+.auth-panel-overlay::-webkit-scrollbar-track { background:rgba(255,255,255,0.2); }
+.auth-panel-overlay::-webkit-scrollbar-thumb { background:#2c7bd9; border-radius:5px; }
+.auth-panel-overlay::-webkit-scrollbar-thumb:hover { background:#1e5ea8; }
+
+@media (max-width: 768px) {
+  .auth-overlay-wrapper .auth-base-card { max-width:95vw; }
+  .auth-overlay-wrapper .auth-base-card .logo-side { display:none !important; }
+  .auth-panels-container { min-height:auto; }
+  .auth-panel-overlay { position:relative; transform:none !important; padding:28px 22px; }
+  .login-overlay-panel, .register-overlay-panel { background:rgba(255,255,255,0.92); }
+  .auth-overlay-wrapper.mode-register .login-overlay-panel { display:none; }
+  .auth-overlay-wrapper.mode-login .register-overlay-panel { display:none; }
+}
+
 /* Reduce internal form spacing a bit for compactness */
 .auth-panel .login-form, .auth-panel .register-form { padding-top:4px; }
 
