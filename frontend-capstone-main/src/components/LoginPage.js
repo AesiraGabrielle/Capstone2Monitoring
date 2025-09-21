@@ -192,7 +192,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                       </button>
                     </div>
                   </div>
-                  <div className="action-row d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                  <div className="action-row d-flex justify-content-between align-items-center mt-4 gap-2">
                     <button type="button" className="btn btn-warning register-btn" onClick={()=>setMode('register')}>REGISTER</button>
                     <button type="submit" className="btn btn-primary login-btn" disabled={loading}>{loading ? (<><Spinner animation="border" size="sm" className="me-2" /> Logging in...</>) : 'LOG IN'}</button>
                   </div>
@@ -239,7 +239,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
                       </button>
                     </div>
                   </div>
-                  <div className="action-row d-flex justify-content-between align-items-center mt-4 flex-wrap gap-2">
+                  <div className="action-row d-flex justify-content-between align-items-center mt-4 gap-2">
                     <button type="button" className="btn btn-secondary" onClick={()=>setMode('login')}>BACK TO LOGIN</button>
                     <button type="submit" className="btn btn-primary" disabled={regSubmitting}>{regSubmitting ? 'Creating…':'CREATE ACCOUNT'}</button>
                   </div>

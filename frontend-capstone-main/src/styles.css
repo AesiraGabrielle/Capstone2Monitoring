@@ -1471,6 +1471,18 @@ body {
 /* Unified button sizing inside auth views */
 .auth-view .action-row .btn { min-width:120px; padding:0.55rem 1.4rem; }
 .auth-view .login-btn, .auth-view .register-btn, .auth-view .btn-primary, .auth-view .btn-secondary { border-radius:4px; }
+.auth-view .action-row { flex-wrap:nowrap; }
+
+@media (max-width: 420px){
+  .auth-view .action-row { gap:0.5rem; }
+  .auth-view .action-row .btn { flex:1 1 0; min-width:0; padding:0.5rem 0.65rem; }
+  .auth-view .action-row .btn-primary, .auth-view .action-row .btn-secondary, .auth-view .action-row .register-btn, .auth-view .action-row .login-btn { font-size:0.8rem; }
+}
+
+@media (max-width: 340px){
+  .auth-view .action-row { flex-direction:column; align-items:stretch; }
+  .auth-view .action-row .btn { width:100%; }
+}
 
 /* Register form button visual consistency */
 .register-form .btn.btn-secondary { background:#6c757d; border:none; }
