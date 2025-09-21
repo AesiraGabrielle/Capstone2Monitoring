@@ -32,10 +32,19 @@ class Handler extends ExceptionHandler
     /**
      * Customize the response for unauthenticated users (especially for APIs).
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        return response()->json([
-            'error' => 'Unauthenticated. Please log in.'
-        ], 401);
+    protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
+{
+    // Hardware routes should never redirect
+    if ($request->is('api/hardware/*')) {
+        return response()->json(['error' => 'Unauthenticated'], 401);
     }
+
+    // For everything else, keep normal Laravel behavior
+    if ($request->expectsJson()) {
+        return response()->json(['error' => 'Unauthenticated'], 401);
+    }
+
+    return redirect()->guest(route('login'));
+}
+
 }
