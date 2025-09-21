@@ -1490,3 +1490,45 @@ body {
   .auth-view .logo-side { display:none !important; }
   .auth-view { transform:none !important; opacity:1 !important; }
 }
+
+/* Handle short viewport heights so buttons/logo are never cut off */
+@media (max-height: 780px) {
+  .auth-views { height:auto; min-height:unset; }
+  .auth-views-wrapper .auth-views { max-height: calc(100vh - 40px); }
+  .auth-view .logo-side { padding:24px 18px; }
+  .auth-view .form-side { padding:24px 18px; }
+  .auth-view .login-form, .auth-view .register-form { padding-bottom:8px; }
+  .logo-img { max-width:60%; }
+}
+@media (max-height: 640px) {
+  .auth-view .logo-side { display:none !important; }
+  .auth-views { height:auto; }
+  .auth-views-wrapper .auth-views { max-height: calc(100vh - 30px); }
+  .auth-view .form-side { padding:18px 16px; }
+  .auth-view h2 { font-size:1.45rem; margin-bottom:0.75rem; }
+  .auth-view .form-label { margin-bottom:0.25rem; }
+  .auth-view .action-row { margin-top:1rem !important; }
+}
+@media (max-height: 560px) {
+  .auth-view .form-side { padding:14px 14px; }
+  .auth-view h2 { font-size:1.3rem; }
+  .auth-view .action-row .btn { padding:0.45rem 1.1rem; min-width:108px; }
+  .auth-view .login-form .input-group, .auth-view .register-form .input-group { flex-wrap:nowrap; }
+}
+@media (max-height: 500px) {
+  .auth-views-wrapper { padding-top:6px !important; padding-bottom:6px !important; }
+  .auth-view .form-side { padding:12px 12px; }
+  .auth-view h2 { font-size:1.15rem; }
+  .auth-view .action-row .btn { padding:0.4rem 1rem; min-width:100px; font-size:0.8rem; }
+  .auth-view .forgot-password { font-size:0.75rem; }
+}
+@media (max-height: 440px) {
+  .auth-views-wrapper .auth-views { max-height: calc(100vh - 16px); }
+  .auth-view .form-side { padding:10px 10px; }
+  .auth-view h2 { font-size:1rem; }
+  .auth-view .action-row { gap:6px; }
+  .auth-view .action-row .btn { min-width:92px; padding:0.35rem 0.75rem; }
+  .auth-view .form-control { padding:0.35rem 0.55rem; font-size:0.8rem; }
+  .auth-view label.form-label { font-size:0.75rem; }
+  .auth-view .footer { font-size:0.55rem; padding:4px 0; }
+}
