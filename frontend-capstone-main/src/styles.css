@@ -139,11 +139,10 @@ body {
   align-items: center;
   justify-content: center;
 }
-.settings-gear-btn.btn-primary:hover { background: rgba(255,255,255,0.15); }
-/* Match warning button hover style (gold darken) */
-.settings-gear-btn.btn-primary:hover, .settings-gear-btn.btn-primary:focus {
-  background-color: #e0a800 !important; /* same as .warning-btn:hover */
-  color: #212529;
+/* Gear hover -> black (override previous yellow) */
+.settings-gear-btn.btn-primary:hover, .settings-gear-btn.btn-primary:focus, .settings-gear-btn:hover, .settings-gear-btn:focus {
+  background:#000 !important;
+  color:#fff !important;
 }
 
 /* Remove default caret for dropdown toggle */

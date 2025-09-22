@@ -101,10 +101,10 @@ function App() {
     }, [forceShowLogin]);
     return (
       <Routes>
-        <Route path="/" element={ isAuthenticated ? <Navigate to="/dashboard/bins" /> : <Navigate to="/login" /> } />
+  <Route path="/" element={ isAuthenticated ? <Navigate to={localStorage.getItem('last_dashboard_route') || '/dashboard/bins'} /> : <Navigate to="/login" /> } />
         <Route path="/login" element={
           (isAuthenticated && !forceShowLogin) ?
-            <Navigate to="/dashboard/bins" /> :
+            <Navigate to={ localStorage.getItem('last_dashboard_route') || '/dashboard/bins' } /> :
             <LoginPage onLogin={handleLogin} verifiedStatus={verified} verifiedReason={params.get('reason')} />
         } />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
