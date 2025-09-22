@@ -32,6 +32,12 @@ class Handler extends ExceptionHandler
     /**
      * Customize the response for unauthenticated users (especially for APIs).
      */
+    // protected function unauthenticated($request, AuthenticationException $exception)
+    // {
+    //     return response()->json([
+    //         'error' => 'Unauthenticated. Please log in.'
+    //     ], 401);
+    // }
     protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception)
 {
     // Hardware routes should never redirect

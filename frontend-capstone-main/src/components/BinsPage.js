@@ -33,8 +33,8 @@ const BinsPage = () => {
   return (
       <div className="bins-page">
         <div className="container">
+          <h2 className="page-title mb-3">Bins</h2>
           <div className="outer-bins-card">
-            <h2 className="page-title mb-4">Bins</h2>
             {loading && <div>Loading bins...</div>}
             {error && <div className="alert alert-danger">{error}</div>}
             <div className="row justify-content-center gx-3 gy-4">

@@ -65,6 +65,11 @@ Route::post('/hardware/login', [AuthController::class, 'hardwareLogin'])->middle
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
+// Route::middleware(['jwt.auth'])->group(function () {
+//     Route::post('/hardware/waste-levels', [WasteLevelController::class, 'store']);
+//     Route::post('/hardware/waste-logs', [WasteLogController::class, 'store']);
+// });
+
 Route::middleware(['jwt.auth'])->prefix('hardware')->group(function () {
     Route::post('/waste-levels', [WasteLevelController::class, 'store']);
     Route::post('/waste-logs', [WasteLogController::class, 'store']);

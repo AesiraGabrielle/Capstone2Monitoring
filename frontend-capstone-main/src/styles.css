@@ -1494,6 +1494,17 @@ body {
 .register-form .input-group .btn.btn-primary { background-color:#4F9CF9; border-color:#4F9CF9; }
 .register-form .input-group .btn.btn-primary:hover { background-color:#2c7bd9; }
 
+/* Settings gear hover change to black */
+.settings-gear-btn:hover, .settings-gear-btn:focus {
+  background:#000 !important;
+  border-color:#000 !important;
+  color:#fff !important;
+}
+
+/* Page title outside bins card spacing */
+.page-title { font-size:1.9rem; font-weight:600; }
+.page-title + .outer-bins-card { margin-top:0.25rem; }
+
 @media (max-width: 768px) {
   .auth-views { height:auto; flex-direction:column; }
   .auth-views-wrapper .auth-views { max-width:95vw; }
