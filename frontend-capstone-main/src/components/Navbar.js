@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Dropdown, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +13,7 @@ const Navbar = ({ user, onLogout }) => {
   const [warnings, setWarnings] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false); // desktop collapse (md+)
   const [menuModalOpen, setMenuModalOpen] = useState(false); // mobile menu modal
+  const warningsRef = useRef(null);
 
   // Fetch latest bin levels and compute warnings
   useEffect(() => {
@@ -75,6 +76,25 @@ const Navbar = ({ user, onLogout }) => {
     return location.pathname.includes(path);
   };
 
+  // Close warnings on outside click or Escape
+  useEffect(() => {
+    if (!showWarnings) return;
+    const handleClick = (e) => {
+      if (warningsRef.current && !warningsRef.current.contains(e.target)) {
+        setShowWarnings(false);
+      }
+    };
+    const handleKey = (e) => {
+      if (e.key === 'Escape') setShowWarnings(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [showWarnings]);
+
   return (
     <>
       <nav className="navbar navbar-expand-md navbar-dark">
@@ -115,7 +135,7 @@ const Navbar = ({ user, onLogout }) => {
 
             <div className="d-flex align-items-center ms-md-auto mt-2 mt-md-0">
               {/* Warning button */}
-              <div className="me-3 position-relative">
+              <div className="me-3 position-relative" ref={warningsRef}>
                 <button 
                   className="btn btn-warning warning-btn"
                   onClick={() => setShowWarnings(!showWarnings)}

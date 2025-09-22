@@ -32,7 +32,7 @@ const BinsPage = () => {
 
   return (
       <div className="bins-page">
-        <div className="container">
+        <div className="container bins-container-centered">
           <h2 className="page-title mb-3">Bins</h2>
           <div className="outer-bins-card">
             {loading && <div>Loading bins...</div>}

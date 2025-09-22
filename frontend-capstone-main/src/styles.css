@@ -139,9 +139,9 @@ body {
   align-items: center;
   justify-content: center;
 }
-/* Gear hover -> black (override previous yellow) */
+/* Gear hover -> brand blue (#4F9CF9) */
 .settings-gear-btn.btn-primary:hover, .settings-gear-btn.btn-primary:focus, .settings-gear-btn:hover, .settings-gear-btn:focus {
-  background:#000 !important;
+  background:#4F9CF9 !important;
   color:#fff !important;
 }
 
@@ -1503,6 +1503,15 @@ body {
 /* Page title outside bins card spacing */
 .page-title { font-size:1.9rem; font-weight:600; }
 .page-title + .outer-bins-card { margin-top:0.25rem; }
+
+/* Center bins card a bit lower */
+.bins-container-centered { padding-top:5vh; }
+@media (min-height: 900px){
+  .bins-container-centered { padding-top:8vh; }
+}
+@media (max-height: 640px){
+  .bins-container-centered { padding-top:3vh; }
+}
 
 @media (max-width: 768px) {
   .auth-views { height:auto; flex-direction:column; }
