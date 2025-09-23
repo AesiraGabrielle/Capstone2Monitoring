@@ -1622,4 +1622,5 @@ body {
 @media (max-height: 560px) { .auth-view .form-side { max-height:calc(100vh - 90px); } }
 
 /* Minimal footer gap tweak: reduce extra bottom whitespace without altering layout proportions */
-.monitoring-page > .footer.white { margin-top:0.25rem; }
+.monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); }
+.monitoring-page > .footer.white { margin-top:auto; padding-top:0.4rem; }
