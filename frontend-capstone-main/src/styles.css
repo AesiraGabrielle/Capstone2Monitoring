@@ -1633,3 +1633,17 @@ body {
 .auth-view .register-form form .action-row, .auth-view .login-form form .action-row { margin-top:auto; }
 @media (max-height: 760px) { .auth-view .form-side { overflow-y:auto; } }
 @media (max-height: 560px) { .auth-view .form-side { max-height:calc(100vh - 90px); } }
+
+/* === Monitoring footer gap removal ===
+  Make the monitoring page fill at least viewport height, but let content determine height.
+  Remove unintended extra vertical space by resetting min-heights & margins, and pin footer via flex. */
+.monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); /* account navbar */ }
+.monitoring-page > .footer.white { margin-top:0 !important; }
+.monitoring-page .outer-monitoring-card.bottom { margin-bottom:0.35rem !important; }
+/* Reduce any residual bottom padding inside last stats card */
+.outer-monitoring-card.bottom { padding-bottom:0.3rem !important; }
+/* If blank space persists due to earlier flex:1 rules, limit chart flex growth */
+.monitoring-page .main-section { flex:0 0 auto !important; }
+.monitoring-page .chart-container.expanded, .monitoring-page .chart-container { flex:0 0 auto !important; }
+/* Tighten page bottom margin */
+.monitoring-page { padding-bottom:0.4rem !important; }
