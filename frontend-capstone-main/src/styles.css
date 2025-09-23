@@ -1623,7 +1623,7 @@ body {
 
 /* Minimal footer gap tweak: reduce extra bottom whitespace without altering layout proportions */
 .monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); }
-.monitoring-page > .footer.white { margin-top:0; padding-top:0.4rem; }
+.monitoring-page > .footer.white { margin-top:auto; padding-top:0.4rem; }
 
 /* Monitoring: lock page to viewport height (minus navbar), prevent whole-page scroll,
    allow internal scroll only if absolutely necessary inside cards */
