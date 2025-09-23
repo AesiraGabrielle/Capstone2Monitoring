@@ -1627,18 +1627,19 @@ body {
 
 /* Monitoring: lock page to viewport height (minus navbar), prevent whole-page scroll,
    allow internal scroll only if absolutely necessary inside cards */
-/* Revert to prior monitoring layout (user preferred) but ensure no page scroll & footer visible.
-   Slightly reduced chart height to eliminate tiny overflow causing scrollbar. */
-.monitoring-page { min-height:calc(100vh - 70px); height:calc(100vh - 70px); overflow:hidden; }
-.monitoring-page .outer-monitoring-card { max-width:100%; }
-.monitoring-page .outer-monitoring-card.top { /* no flex growth, keep natural layout */ }
-.monitoring-page .outer-monitoring-card.bottom { margin-bottom:0.15rem; }
-.monitoring-page .outer-monitoring-card.bottom + .footer.white { margin-top:0; }
-/* Reset content containers to block layout */
-.monitoring-page .monitoring-content { display:block; }
-.monitoring-page .main-section { display:block; }
-/* Fixed chart height (reduced from 320) to fit within viewport */
-.monitoring-page .chart-container.expanded { height:300px; min-height:300px; }
+/* Final: restore original monitoring two-column layout (chart + side panels) exactly as before.
+  Only adjustment: constrain overall page height so footer fits without scroll. */
+.monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); height:calc(100vh - 70px); overflow:hidden; padding-left:0.6rem; padding-right:0.6rem; }
+.monitoring-page .outer-monitoring-card { background:#ffffff; border:1px solid #dbe1e8; border-radius:12px; padding:0.9rem 1.1rem 1.1rem; margin-bottom:0.85rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+.monitoring-page .outer-monitoring-card.top { flex:1 1 auto; display:flex; flex-direction:column; }
+.monitoring-page .outer-monitoring-card.bottom { padding:0.6rem 1.1rem 0.5rem; }
+.monitoring-page .monitoring-content { flex:1 1 auto; display:flex; gap:0.75rem; overflow:hidden; }
+.monitoring-page .main-section { flex:1 1 auto; display:flex; flex-direction:column; padding-right:0.5rem; }
+.monitoring-page .chart-container.expanded { flex:0 0 300px; height:300px; min-height:300px; padding:0.7rem 0.9rem; margin:0 0 0.4rem 0; border-radius:10px; }
+.monitoring-page .side-section { width:240px; flex:0 0 auto; }
+.monitoring-page .total-waste-card, .monitoring-page .legend-card { border:1px solid #d5dbe2; border-radius:10px; margin-bottom:0.85rem; }
+.monitoring-page .print-button-container { margin:0.2rem 0.2rem 0.3rem 0; }
+.monitoring-page > .footer.white { margin-top:0; padding-top:0.4rem; }
 
 /* Provide internal scroll if content overflows unexpectedly */
 .monitoring-page .outer-monitoring-card.top { overflow:hidden; }
