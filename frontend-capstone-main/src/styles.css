@@ -1629,7 +1629,7 @@ body {
    allow internal scroll only if absolutely necessary inside cards */
 /* Final: restore original monitoring two-column layout (chart + side panels) exactly as before.
   Only adjustment: constrain overall page height so footer fits without scroll. */
-.monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); height:calc(100vh - 70px); overflow:hidden; padding-left:0.6rem; padding-right:0.6rem; }
+.monitoring-page { display:flex; flex-direction:column; height:auto; min-height:0; padding-left:0.6rem; padding-right:0.6rem; }
 .monitoring-page .outer-monitoring-card { background:#ffffff; border:1px solid #dbe1e8; border-radius:12px; padding:0.9rem 1.1rem 1.1rem; margin-bottom:0.85rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
 .monitoring-page .outer-monitoring-card.top { flex:0 0 auto; display:flex; flex-direction:column; padding-bottom:0.6rem; }
 .monitoring-page .outer-monitoring-card.bottom { padding:0.6rem 1.1rem 0.5rem; }
