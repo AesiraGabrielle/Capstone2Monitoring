@@ -1621,3 +1621,15 @@ body {
 .monitoring-page .page-title { margin:0.3rem 0 0.45rem !important; }
 .monitoring-page .date-selector { margin-bottom:0.4rem !important; }
 .monitoring-page .print-button-container { margin:0.15rem 0.15rem 0.3rem 0 !important; }
+
+/* === Register buttons hidden fix ===
+  Force auth container to size to content and allow internal scroll for the form side.
+  Earlier fixed height (460px) plus large vertical centering caused bottom buttons to be off-screen.
+*/
+.auth-views { height:auto !important; min-height:420px; }
+.auth-view .form-side { display:flex; flex-direction:column; }
+.auth-view .register-form, .auth-view .login-form { flex:1 1 auto; display:flex; flex-direction:column; }
+.auth-view .register-form form, .auth-view .login-form form { flex:1 1 auto; display:flex; flex-direction:column; }
+.auth-view .register-form form .action-row, .auth-view .login-form form .action-row { margin-top:auto; }
+@media (max-height: 760px) { .auth-view .form-side { overflow-y:auto; } }
+@media (max-height: 560px) { .auth-view .form-side { max-height:calc(100vh - 90px); } }
