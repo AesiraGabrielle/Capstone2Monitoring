@@ -1607,20 +1607,7 @@ body {
 .auth-view .form-side::-webkit-scrollbar-track { background:rgba(0,0,0,0.05); }
 .auth-view .form-side::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.25); border-radius:3px; }
 
-/* === Monitoring Page Compact Overrides (whitespace reduction) === */
-/* Placed at end to override earlier rules without risky inline edits */
-.monitoring-page .chart-container, .monitoring-page .main-section > .chart-container { flex:0 0 250px !important; height:250px !important; min-height:250px !important; padding:0.5rem 0.55rem !important; margin:0 0.45rem 0.25rem !important; }
-.monitoring-page .chart-container.expanded { height:250px !important; min-height:250px !important; margin:0 0 0.3rem 0 !important; padding:0.5rem 0.7rem !important; }
-.outer-monitoring-card { padding:0.6rem 0.75rem 0.65rem !important; margin-bottom:0.55rem !important; }
-.outer-monitoring-card.bottom { padding-top:0.45rem !important; padding-bottom:0.4rem !important; }
-.outer-monitoring-card.bottom .waste-stats-card { gap:0.45rem !important; }
-.outer-monitoring-card.bottom .waste-stat-item { padding:0.45rem 0.55rem !important; }
-.outer-monitoring-card.bottom .waste-date { margin-bottom:0.18rem !important; }
-.monitoring-page .waste-info-container { padding:0.45rem 0.6rem !important; margin-bottom:0.3rem !important; }
-.monitoring-page .waste-stats-card { margin-top:0.25rem !important; }
-.monitoring-page .page-title { margin:0.3rem 0 0.45rem !important; }
-.monitoring-page .date-selector { margin-bottom:0.4rem !important; }
-.monitoring-page .print-button-container { margin:0.15rem 0.15rem 0.3rem 0 !important; }
+/* (Reverted) previously added compact overrides removed to restore original Monitoring layout */
 
 /* === Register buttons hidden fix ===
   Force auth container to size to content and allow internal scroll for the form side.
@@ -1634,16 +1621,5 @@ body {
 @media (max-height: 760px) { .auth-view .form-side { overflow-y:auto; } }
 @media (max-height: 560px) { .auth-view .form-side { max-height:calc(100vh - 90px); } }
 
-/* === Monitoring footer gap removal ===
-  Make the monitoring page fill at least viewport height, but let content determine height.
-  Remove unintended extra vertical space by resetting min-heights & margins, and pin footer via flex. */
-.monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); /* account navbar */ }
-.monitoring-page > .footer.white { margin-top:0 !important; }
-.monitoring-page .outer-monitoring-card.bottom { margin-bottom:0.35rem !important; }
-/* Reduce any residual bottom padding inside last stats card */
-.outer-monitoring-card.bottom { padding-bottom:0.3rem !important; }
-/* If blank space persists due to earlier flex:1 rules, limit chart flex growth */
-.monitoring-page .main-section { flex:0 0 auto !important; }
-.monitoring-page .chart-container.expanded, .monitoring-page .chart-container { flex:0 0 auto !important; }
-/* Tighten page bottom margin */
-.monitoring-page { padding-bottom:0.4rem !important; }
+/* Minimal footer gap tweak: reduce extra bottom whitespace without altering layout proportions */
+.monitoring-page > .footer.white { margin-top:0.25rem; }
