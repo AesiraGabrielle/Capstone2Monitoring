@@ -359,6 +359,7 @@ const MonitoringPage = () => {
 
   return (
     <div className="monitoring-page">
+      <div className="container">
       <div className="outer-monitoring-card top">
         <h2 className="page-title text-center">Monitoring</h2>
         {loading && <div>Loading monitoring data...</div>}
@@ -466,9 +467,10 @@ const MonitoringPage = () => {
         </div>
       </div>
 
-      <div className="footer white">
-        © 2025 Leyte Normal University, All rights reserved.
-      </div>
+        <div className="footer white">
+          © 2025 Leyte Normal University, All rights reserved.
+        </div>
+      </div>{/* /.container */}
     </div>
   );
 };
