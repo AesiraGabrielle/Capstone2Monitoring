@@ -1631,9 +1631,9 @@ body {
   Only adjustment: constrain overall page height so footer fits without scroll. */
 .monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); height:calc(100vh - 70px); overflow:hidden; padding-left:0.6rem; padding-right:0.6rem; }
 .monitoring-page .outer-monitoring-card { background:#ffffff; border:1px solid #dbe1e8; border-radius:12px; padding:0.9rem 1.1rem 1.1rem; margin-bottom:0.85rem; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
-.monitoring-page .outer-monitoring-card.top { flex:1 1 auto; display:flex; flex-direction:column; }
+.monitoring-page .outer-monitoring-card.top { flex:0 0 auto; display:flex; flex-direction:column; padding-bottom:0.6rem; }
 .monitoring-page .outer-monitoring-card.bottom { padding:0.6rem 1.1rem 0.5rem; }
-.monitoring-page .monitoring-content { flex:1 1 auto; display:flex; gap:0.75rem; overflow:hidden; }
+.monitoring-page .monitoring-content { flex:0 0 auto; display:flex; gap:0.75rem; }
 .monitoring-page .main-section { flex:1 1 auto; display:flex; flex-direction:column; padding-right:0.5rem; }
 .monitoring-page .chart-container.expanded { flex:0 0 300px; height:300px; min-height:300px; padding:0.7rem 0.9rem; margin:0 0 0.4rem 0; border-radius:10px; }
 .monitoring-page .side-section { width:240px; flex:0 0 auto; }
