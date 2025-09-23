@@ -1627,23 +1627,18 @@ body {
 
 /* Monitoring: lock page to viewport height (minus navbar), prevent whole-page scroll,
    allow internal scroll only if absolutely necessary inside cards */
-/* Refined full-height layout: occupy viewport minus navbar (assumed 70px) with no body scroll */
+/* Revert to prior monitoring layout (user preferred) but ensure no page scroll & footer visible.
+   Slightly reduced chart height to eliminate tiny overflow causing scrollbar. */
 .monitoring-page { min-height:calc(100vh - 70px); height:calc(100vh - 70px); overflow:hidden; }
-.monitoring-page .outer-monitoring-card { max-width:100%; display:flex; flex-direction:column; }
-/* Top card (title + chart + legend) flexes; bottom stats card stays natural height; footer pushed by flex */
-.monitoring-page .outer-monitoring-card.top { flex:1 1 auto; }
-.monitoring-page .outer-monitoring-card.bottom { flex:0 0 auto; margin-bottom:0.15rem; }
+.monitoring-page .outer-monitoring-card { max-width:100%; }
+.monitoring-page .outer-monitoring-card.top { /* no flex growth, keep natural layout */ }
+.monitoring-page .outer-monitoring-card.bottom { margin-bottom:0.15rem; }
 .monitoring-page .outer-monitoring-card.bottom + .footer.white { margin-top:0; }
-/* Internal content layout so main-section & side-section fit without forcing page scroll */
-.monitoring-page .monitoring-content { display:flex; flex:1 1 auto; min-height:0; }
-.monitoring-page .main-section { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
-.monitoring-page .chart-container.expanded { flex:1 1 auto; min-height:0; height:auto; }
-/* Allow chart internal scroll only if extremely small screens cause overflow */
-.monitoring-page .chart-container.expanded canvas { max-height:100%; }
-@media (max-height: 700px) {
-  .monitoring-page .chart-container.expanded { flex:1 1 auto; }
-  .monitoring-page .side-section { overflow:auto; }
-}
+/* Reset content containers to block layout */
+.monitoring-page .monitoring-content { display:block; }
+.monitoring-page .main-section { display:block; }
+/* Fixed chart height (reduced from 320) to fit within viewport */
+.monitoring-page .chart-container.expanded { height:300px; min-height:300px; }
 
 /* Provide internal scroll if content overflows unexpectedly */
 .monitoring-page .outer-monitoring-card.top { overflow:hidden; }
