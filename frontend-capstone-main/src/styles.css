@@ -1398,6 +1398,27 @@ body {
 .monitoring-page .waste-stats-card { margin-top: 0.25rem; }
 .monitoring-page .waste-stat-item { padding: 0.45rem 0.6rem; }
 .monitoring-page .waste-stat-item img { width: 28px; height: 28px; }
+
+/* === Monitoring Page Footer Non-Sticky Override ===
+   User request: Footer on Monitoring page should only appear when scrolled to bottom,
+   not stay fixed. We override the global fixed styling (.footer.white) with a more
+   specific selector and allow the page to scroll vertically. */
+.monitoring-page { /* allow natural height & scrolling instead of forcing no scroll */
+  height: auto !important; /* override earlier height:100% */
+  min-height: 100vh;
+  overflow: visible !important; /* remove hidden overflow so page can extend */
+  display: flex; /* ensure footer can push to bottom if content is short */
+  flex-direction: column;
+}
+
+.monitoring-page > .footer.white {
+  position: static; /* remove fixed positioning */
+  width: 100%;
+  margin-top: auto; /* pushes footer to bottom when content shorter than viewport */
+  background-color: #ffffff; /* retain white background */
+  border-top: 1px solid #e0e0e0;
+  z-index: auto;
+}
 .monitoring-page .print-button-container { margin: 0.15rem 0.15rem 0.25rem 0; }
 .monitoring-page .page-title { margin: 0.35rem 0 0.5rem; }
 
@@ -1563,3 +1584,25 @@ body {
   .auth-view label.form-label { font-size:0.75rem; }
   .auth-view .footer { font-size:0.55rem; padding:4px 0; }
 }
+
+/* ================= Additional Auth Overflow / Button Visibility Fixes =================
+   Some users reported that on the Register view the bottom action buttons were not visible
+   on certain displays (reduced vertical space / browser UI). We convert the forms into
+   flex columns and push the action button row to the bottom. We allow the form side to
+   scroll internally for very short viewport heights so the buttons are always reachable. */
+.auth-view .login-form, .auth-view .register-form { display:flex; flex-direction:column; max-height:100%; }
+.auth-view .login-form form, .auth-view .register-form form { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; }
+.auth-view .login-form form .action-row, .auth-view .register-form form .action-row { margin-top:auto; }
+
+/* Provide internal scroll for the form side on constrained heights */
+@media (max-height: 820px) { .auth-view .form-side { overflow-y:auto; scrollbar-width:thin; } }
+@media (max-height: 640px) { .auth-view .form-side { overflow-y:auto; } }
+@media (max-height: 560px) { .auth-view .form-side { overflow-y:auto; } }
+@media (max-height: 500px) { .auth-view .form-side { overflow-y:auto; } }
+@media (max-height: 440px) { .auth-view .form-side { overflow-y:auto; } }
+@media (max-height: 400px) { .auth-view .form-side { overflow-y:auto; } }
+
+/* Thin custom scrollbar (WebKit) */
+.auth-view .form-side::-webkit-scrollbar { width:6px; }
+.auth-view .form-side::-webkit-scrollbar-track { background:rgba(0,0,0,0.05); }
+.auth-view .form-side::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.25); border-radius:3px; }
