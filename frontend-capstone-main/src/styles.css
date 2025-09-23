@@ -1624,8 +1624,8 @@ body {
 /* Minimal footer gap tweak: reduce extra bottom whitespace without altering layout proportions */
 .monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); }
 /* Final footer alignment: flex container fills viewport minus navbar, footer sits at end without gap */
-.monitoring-page { display:flex; flex-direction:column; min-height:calc(100vh - 70px); height:calc(100vh - 70px); }
-.monitoring-page > .footer.white { position:static; margin-top:auto; padding:0.35rem 0 0.45rem; }
+.monitoring-page { height:100%; display:flex; flex-direction:column; padding-top:0; padding-bottom:0; }
+.monitoring-page > .footer.white { margin-top:auto; padding:0.35rem 0 0.45rem; }
 .monitoring-page .outer-monitoring-card.bottom { margin-bottom:0.25rem; }
 /* Slightly reduce chart height to guarantee fit without scroll */
 .monitoring-page .chart-container.expanded { height:290px; min-height:290px; }
