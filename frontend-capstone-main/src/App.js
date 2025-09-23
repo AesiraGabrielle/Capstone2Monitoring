@@ -37,20 +37,6 @@ function App() {
     }
   }, []);
 
-  // Optional: validate token once (silent) by hitting a protected endpoint; if fails 401 interceptor will redirect
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return; // nothing to validate
-    (async () => {
-      try {
-        await fetch((process.env.REACT_APP_API_URL || 'http://localhost:8000/api') + '/waste-levels/latest', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-      } catch {
-        // Ignore; interceptor in axios handles 401; if network error keep current state
-      }
-    })();
-  }, [isAuthenticated]);
 
   const handleLogin = (userData) => {
     setUser(userData);

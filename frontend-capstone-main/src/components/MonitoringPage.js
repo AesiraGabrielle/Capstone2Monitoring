@@ -25,6 +25,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { Modal, Button } from 'react-bootstrap';
 import { monitoringAPI } from '../services/api';
+import { useDashboardData } from '../context/DashboardDataContext';
 
 // Register Chart.js components
 ChartJS.register(
@@ -52,12 +53,13 @@ const MonitoringPage = () => {
   const [dateRange, setDateRange] = useState([null, null]);
   const [startDate, endDate] = dateRange;
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { daily: ctxDaily, rangeTotals: ctxRangeTotals, allTotals: ctxAllTotals, loading: ctxLoading, error: ctxError, fetchRange } = useDashboardData() || {};
   const [daily, setDaily] = useState([]);
-  const [totals, setTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 }); // range totals
-  const [allTotals, setAllTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 }); // overall totals
+  const [totals, setTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
+  const [allTotals, setAllTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [initialDaily, setInitialDaily] = useState([]); // store initial (auto) dataset for printing when no range chosen
+  const [initialDaily, setInitialDaily] = useState([]);
   // Tracks whether a PDF is currently being generated to disable the button & show status
   const [pdfGenerating, setPdfGenerating] = useState(false);
 
@@ -81,73 +83,30 @@ const MonitoringPage = () => {
     return `${y}-${m}-${d}`;
   };
 
-  // Fetch daily breakdown for current week initially and overall totals
+  // Initialize from context when ready
   useEffect(() => {
-    let mounted = true;
-    const loadInitial = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const [dailyRes, allTotalsRes] = await Promise.all([
-          monitoringAPI.getDailyBreakdown(),
-          monitoringAPI.getTotals(),
-        ]);
-        if (!mounted) return;
-        const arr = Array.isArray(dailyRes.data) ? dailyRes.data : [];
-  setDaily(arr);
-  setInitialDaily(arr); // capture initial load
-        // compute totals for the returned period
-        const totalsRange = arr.reduce((acc, d) => {
-          acc.bio += Number(d.bio ?? 0) || 0;
-          acc.non_bio += Number(d.non_bio ?? 0) || 0;
-          acc.unclassified += Number(d.unclassified ?? 0) || 0;
-          return acc;
-        }, { bio: 0, non_bio: 0, unclassified: 0 });
-        setTotals(totalsRange);
-
-        const overall = allTotalsRes?.data || { bio: 0, non_bio: 0, unclassified: 0 };
-        setAllTotals({
-          bio: Number(overall.bio ?? 0) || 0,
-          non_bio: Number(overall.non_bio ?? 0) || 0,
-          unclassified: Number(overall.unclassified ?? 0) || 0,
-        });
-      } catch (err) {
-        if (!mounted) return;
-        setError(err?.response?.data?.message || 'Failed to load monitoring data');
-      } finally {
-        mounted && setLoading(false);
-      }
-    };
-    loadInitial();
-    return () => { mounted = false; };
-  }, []);
+    if (ctxDaily) {
+      setDaily(ctxDaily);
+      setInitialDaily(ctxDaily);
+      setTotals(ctxRangeTotals || { bio:0, non_bio:0, unclassified:0 });
+      setAllTotals(ctxAllTotals || { bio:0, non_bio:0, unclassified:0 });
+      setLoading(ctxLoading === undefined ? false : ctxLoading);
+      setError(ctxError || '');
+    }
+  }, [ctxDaily, ctxRangeTotals, ctxAllTotals, ctxLoading, ctxError]);
 
   // Fetch when both start and end are selected
   useEffect(() => {
     if (!startDate || !endDate) return;
     let mounted = true;
     const loadRange = async () => {
-      setLoading(true);
-      setError('');
+      setLoading(true); setError('');
       try {
-        const params = {
-          start: formatDateLocal(startDate),
-          end: formatDateLocal(endDate),
-        };
-        const dailyRes = await monitoringAPI.getDailyBreakdown(params);
+        await fetchRange(formatDateLocal(startDate), formatDateLocal(endDate));
         if (!mounted) return;
-        const arr = Array.isArray(dailyRes.data) ? dailyRes.data : [];
-        setDaily(arr);
-        const totalsRange = arr.reduce((acc, d) => {
-          acc.bio += Number(d.bio ?? 0) || 0;
-          acc.non_bio += Number(d.non_bio ?? 0) || 0;
-          acc.unclassified += Number(d.unclassified ?? 0) || 0;
-          return acc;
-        }, { bio: 0, non_bio: 0, unclassified: 0 });
-        setTotals(totalsRange);
-      } catch (err) {
+      } catch (e) {
         if (!mounted) return;
-        setError(err?.response?.data?.message || 'Failed to load monitoring data');
+        setError('Failed to load monitoring data');
       } finally {
         mounted && setLoading(false);
       }

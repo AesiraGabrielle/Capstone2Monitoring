@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { DashboardDataProvider } from '../context/DashboardDataContext';
 
 const Dashboard = ({ user, onLogout }) => {
   const location = useLocation();
@@ -23,13 +24,14 @@ const Dashboard = ({ user, onLogout }) => {
     }
   }, [location.pathname]);
   return (
-    <div className="dashboard-container">
-      <Navbar user={user} onLogout={onLogout} />
-      
-      <div className="dashboard-content">
-        <Outlet />
+    <DashboardDataProvider>
+      <div className="dashboard-container">
+        <Navbar user={user} onLogout={onLogout} />
+        <div className="dashboard-content">
+          <Outlet />
+        </div>
       </div>
-    </div>
+    </DashboardDataProvider>
   );
 };
 

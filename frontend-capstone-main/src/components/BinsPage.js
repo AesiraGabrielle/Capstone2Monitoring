@@ -1,28 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { wasteLevelAPI } from '../services/api';
+import React from 'react';
+import { useDashboardData } from '../context/DashboardDataContext';
 
 const BinsPage = () => {
-  const [levels, setLevels] = useState(null);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    wasteLevelAPI
-      .getLatestLevels()
-      .then((res) => {
-        if (!isMounted) return;
-        setLevels(res.data);
-      })
-      .catch((err) => {
-        if (!isMounted) return;
-        setError(err?.response?.data?.message || 'Failed to load bins');
-      })
-      .finally(() => isMounted && setLoading(false));
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { levels, loading, error } = useDashboardData() || {};
 
   const bins = [
     { id: 1, key: 'bio', type: 'Biodegradable', color: '#f0e68c' },

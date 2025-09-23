@@ -4,63 +4,16 @@ import { Dropdown, Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faGear } from '@fortawesome/free-solid-svg-icons';
 import binLogo from '../assets/bin-logo.png';
-import { wasteLevelAPI } from '../services/api';
+import { useDashboardData } from '../context/DashboardDataContext';
 
 const Navbar = ({ user, onLogout }) => {
   const location = useLocation();
   const [showWarnings, setShowWarnings] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [warnings, setWarnings] = useState([]);
+  const { levels, warnings, refresh, loading: dataLoading } = useDashboardData() || {};
   const [menuOpen, setMenuOpen] = useState(false); // desktop collapse (md+)
   const [menuModalOpen, setMenuModalOpen] = useState(false); // mobile menu modal
   const warningsRef = useRef(null);
-
-  // Fetch latest bin levels and compute warnings
-  useEffect(() => {
-    let mounted = true;
-
-    const computeWarnings = (levels) => {
-      if (!levels || typeof levels !== 'object') return [];
-      const msgs = [];
-
-      const entries = [
-        { key: 'bio', label: 'Biodegradable' },
-        { key: 'non_bio', label: 'Non Biodegradable' },
-        { key: 'unclassified', label: 'Unidentified Waste' },
-      ];
-
-      entries.forEach(({ key, label }) => {
-        const valRaw = levels[key];
-        const level = typeof valRaw === 'number' ? Math.round(valRaw) : null;
-        if (level === null) return;
-        if (level >= 100) {
-          msgs.push(`${label} Bin is Full! Please Clean Up the bin!`);
-        } else if (level >= 85) {
-          msgs.push(`${label} Bin is Almost Full! Clean up the Bin!`);
-        }
-      });
-
-      return msgs;
-    };
-
-    const load = async () => {
-      try {
-        const res = await wasteLevelAPI.getLatestLevels();
-        if (!mounted) return;
-        const newWarnings = computeWarnings(res?.data);
-        setWarnings(newWarnings);
-      } catch (e) {
-        // Silent fail: keep existing warnings
-      }
-    };
-
-    load();
-    const id = setInterval(load, 30000); // refresh every 30s
-    return () => {
-      mounted = false;
-      clearInterval(id);
-    };
-  }, []);
 
   const handleLogout = () => {
     setShowLogoutModal(true);

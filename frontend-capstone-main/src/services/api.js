@@ -85,4 +85,9 @@ export const wasteLevelAPI = {
   storeWasteLevel: (data) => api.post("/waste-levels", data),
 };
 
+// Aggregated single initial dashboard payload
+export const initialAPI = {
+  getInitialData: () => api.get('/initial-data')
+};
+
 export default api;

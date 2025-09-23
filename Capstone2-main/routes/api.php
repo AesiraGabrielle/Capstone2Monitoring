@@ -59,6 +59,7 @@ Route::middleware(['jwt.auth', 'verified'])->group(function () {
     Route::get('/waste-logs/weekly-summary', [WasteLogController::class, 'weeklySummary']);
     Route::get('/waste-logs/monthly-summary', [WasteLogController::class, 'monthlySummary']);
     Route::get('/waste-logs/total', [WasteLogController::class, 'totalGarbageAllTime']);
+    Route::get('/initial-data', [InitialDataController::class, 'index']);
 });
 
 Route::post('/hardware/login', [AuthController::class, 'hardwareLogin'])->middleware('throttle:5,1');
