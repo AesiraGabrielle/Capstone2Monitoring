@@ -1627,10 +1627,23 @@ body {
 
 /* Monitoring: lock page to viewport height (minus navbar), prevent whole-page scroll,
    allow internal scroll only if absolutely necessary inside cards */
-.monitoring-page { min-height:calc(100vh - 0px); height:calc(100vh - 0px); overflow:hidden; }
-.monitoring-page .outer-monitoring-card { max-width:100%; }
-.monitoring-page .outer-monitoring-card.bottom { margin-bottom:0.25rem; }
+/* Refined full-height layout: occupy viewport minus navbar (assumed 70px) with no body scroll */
+.monitoring-page { min-height:calc(100vh - 70px); height:calc(100vh - 70px); overflow:hidden; }
+.monitoring-page .outer-monitoring-card { max-width:100%; display:flex; flex-direction:column; }
+/* Top card (title + chart + legend) flexes; bottom stats card stays natural height; footer pushed by flex */
+.monitoring-page .outer-monitoring-card.top { flex:1 1 auto; }
+.monitoring-page .outer-monitoring-card.bottom { flex:0 0 auto; margin-bottom:0.15rem; }
 .monitoring-page .outer-monitoring-card.bottom + .footer.white { margin-top:0; }
+/* Internal content layout so main-section & side-section fit without forcing page scroll */
+.monitoring-page .monitoring-content { display:flex; flex:1 1 auto; min-height:0; }
+.monitoring-page .main-section { flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
+.monitoring-page .chart-container.expanded { flex:1 1 auto; min-height:0; height:auto; }
+/* Allow chart internal scroll only if extremely small screens cause overflow */
+.monitoring-page .chart-container.expanded canvas { max-height:100%; }
+@media (max-height: 700px) {
+  .monitoring-page .chart-container.expanded { flex:1 1 auto; }
+  .monitoring-page .side-section { overflow:auto; }
+}
 
 /* Provide internal scroll if content overflows unexpectedly */
 .monitoring-page .outer-monitoring-card.top { overflow:hidden; }
