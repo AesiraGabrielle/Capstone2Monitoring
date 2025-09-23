@@ -1606,3 +1606,18 @@ body {
 .auth-view .form-side::-webkit-scrollbar { width:6px; }
 .auth-view .form-side::-webkit-scrollbar-track { background:rgba(0,0,0,0.05); }
 .auth-view .form-side::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.25); border-radius:3px; }
+
+/* === Monitoring Page Compact Overrides (whitespace reduction) === */
+/* Placed at end to override earlier rules without risky inline edits */
+.monitoring-page .chart-container, .monitoring-page .main-section > .chart-container { flex:0 0 250px !important; height:250px !important; min-height:250px !important; padding:0.5rem 0.55rem !important; margin:0 0.45rem 0.25rem !important; }
+.monitoring-page .chart-container.expanded { height:250px !important; min-height:250px !important; margin:0 0 0.3rem 0 !important; padding:0.5rem 0.7rem !important; }
+.outer-monitoring-card { padding:0.6rem 0.75rem 0.65rem !important; margin-bottom:0.55rem !important; }
+.outer-monitoring-card.bottom { padding-top:0.45rem !important; padding-bottom:0.4rem !important; }
+.outer-monitoring-card.bottom .waste-stats-card { gap:0.45rem !important; }
+.outer-monitoring-card.bottom .waste-stat-item { padding:0.45rem 0.55rem !important; }
+.outer-monitoring-card.bottom .waste-date { margin-bottom:0.18rem !important; }
+.monitoring-page .waste-info-container { padding:0.45rem 0.6rem !important; margin-bottom:0.3rem !important; }
+.monitoring-page .waste-stats-card { margin-top:0.25rem !important; }
+.monitoring-page .page-title { margin:0.3rem 0 0.45rem !important; }
+.monitoring-page .date-selector { margin-bottom:0.4rem !important; }
+.monitoring-page .print-button-container { margin:0.15rem 0.15rem 0.3rem 0 !important; }
