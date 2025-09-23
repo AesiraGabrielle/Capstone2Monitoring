@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\WasteLogController;
 use App\Models\Registration;
 use App\Http\Controllers\WasteLevelController;
+use App\Http\Controllers\InitialDataController; // Added import for aggregated data endpoint
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
