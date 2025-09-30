@@ -418,7 +418,7 @@ const MonitoringPage = () => {
               </div>
               <div className="waste-item">
                 <img src={unidentifiedIcon} alt="Unidentified" />
-                <span>Unidentified Waste:</span>
+                <span>Unclassified Waste:</span>
                 <span className="amount">{allTotals.unclassified ?? 0}</span>
               </div>
             </div>
@@ -435,7 +435,7 @@ const MonitoringPage = () => {
               </div>
               <div className="legend-item">
                 <div className="legend-color unidentified"></div>
-                <span>Unidentified Waste</span>
+                <span>Unclassified Waste</span>
               </div>
             </div>
           </div>

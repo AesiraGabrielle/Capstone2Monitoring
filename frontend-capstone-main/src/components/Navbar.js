@@ -10,7 +10,10 @@ const Navbar = ({ user, onLogout }) => {
   const location = useLocation();
   const [showWarnings, setShowWarnings] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { levels, warnings, refresh, loading: dataLoading } = useDashboardData() || {};
+
+  // ✅ Default warnings to [] so .length and .map never break
+  const { levels, warnings = [], refresh, loading: dataLoading } = useDashboardData() || {};
+
   const [menuOpen, setMenuOpen] = useState(false); // desktop collapse (md+)
   const [menuModalOpen, setMenuModalOpen] = useState(false); // mobile menu modal
   const warningsRef = useRef(null);
@@ -24,7 +27,6 @@ const Navbar = ({ user, onLogout }) => {
     onLogout();
   };
 
-  // Check if the current path is the one specified
   const isActive = (path) => {
     return location.pathname.includes(path);
   };
@@ -61,6 +63,7 @@ const Navbar = ({ user, onLogout }) => {
               return <span>Welcome {displayName}!</span>;
             })()}
           </div>
+
           {/* Mobile toggler -> opens modal */}
           <button
             className="navbar-toggler mobile-menu-btn"
