@@ -9,5 +9,10 @@ Route::get('/test-verify', function () {
 });
 
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-    // ...your verification logic...
-})->middleware(['web', 'signed'])->name('verification.verify');
+    return response()->json([
+        'full_url' => $request->fullUrl(),
+        'host' => $request->getHost(),
+        'scheme' => $request->getScheme(),
+        'config_app_url' => config('app.url'),
+    ]);
+})->middleware(['web'])->name('verification.verify');
