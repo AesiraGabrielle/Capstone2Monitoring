@@ -9,10 +9,18 @@ Route::get('/test-verify', function () {
 });
 
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-    return response()->json([
-        'full_url' => $request->fullUrl(),
-        'host' => $request->getHost(),
-        'scheme' => $request->getScheme(),
-        'config_app_url' => config('app.url'),
-    ]);
+    // Your actual verification logic here
+    // Example:
+    $user = \App\Models\Registration::find($id);
+    if (!$user) {
+        return redirect('/login?verified=0&reason=not_found');
+    }
+    if (!hash_equals(sha1($user->email), $hash)) {
+        return redirect('/login?verified=0&reason=hash');
+    }
+    if (!$user->hasVerifiedEmail()) {
+        $user->email_verified_at = now();
+        $user->save();
+    }
+    return redirect('/login?verified=1');
 })->middleware(['web', 'signed'])->name('verification.verify');
