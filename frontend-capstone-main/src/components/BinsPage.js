@@ -17,6 +17,15 @@ const BinsPage = () => {
           <div className="outer-bins-card">
             {loading && <div>Loading bins...</div>}
             {error && <div className="alert alert-danger">{error}</div>}
+            {levels && levels.alerts && levels.alerts.length > 0 && (
+              <div>
+                {levels.alerts.map((alert, idx) => (
+                  <div key={idx} className="alert alert-warning">
+                    {alert}
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="row justify-content-center gx-3 gy-4">
         {bins.map((bin) => {
           const level = levels?.[bin.key];
