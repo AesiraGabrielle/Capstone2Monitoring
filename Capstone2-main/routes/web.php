@@ -22,5 +22,5 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
         $user->email_verified_at = now();
         $user->save();
     }
-    return redirect('/login?verified=1');
+    return redirect('https://lnuwastemonitoring.onrender.com/login?verified=1');
 })->middleware(['web', 'signed'])->name('verification.verify');
