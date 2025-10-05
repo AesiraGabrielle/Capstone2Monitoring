@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useDashboardData } from '../context/DashboardDataContext';
 
-const severityColor = (alert) => {
-  if (alert.toLowerCase().includes('locked')) return 'darkred';
-  if (alert.toLowerCase().includes('critical')) return 'red';
-  if (alert.toLowerCase().includes('warning')) return 'orange';
-  return 'goldenrod'; // Notice
-};
-
 const BinsPage = () => {
   const { levels, loading, error } = useDashboardData() || {};
   const [readAlerts, setReadAlerts] = useState({});
 
+  // Initialize read state whenever alerts change
   useEffect(() => {
-    // Initialize read state for new alerts
-    const newRead = {};
-    ['bio', 'non_bio', 'unclassified'].forEach((bin) => {
-      newRead[bin] = Array((levels?.[bin]?.alerts?.length) || 0).fill(false);
-    });
-    setReadAlerts(newRead);
-  }, [levels]);
+    if (levels?.alerts) {
+      const newRead = {};
+      levels.alerts.forEach((_, idx) => {
+        newRead[idx] = false;
+      });
+      setReadAlerts(newRead);
+    }
+  }, [levels?.alerts]);
 
-  const markAsRead = (binKey, idx) => {
+  const markAsRead = (idx) => {
     setReadAlerts((prev) => ({
       ...prev,
-      [binKey]: prev[binKey].map((r, i) => (i === idx ? true : r)),
+      [idx]: true,
     }));
   };
 
@@ -38,15 +33,38 @@ const BinsPage = () => {
     <div className="bins-page">
       <div className="container bins-container-centered">
         <h2 className="page-title mb-3">Bins</h2>
+
         <div className="outer-bins-card">
           {loading && <div>Loading bins...</div>}
           {error && <div className="alert alert-danger">{error}</div>}
 
+          {/* Global Alerts */}
+          {levels?.alerts && levels.alerts.length > 0 && (
+            <div className="mb-3">
+              {levels.alerts.map((alert, idx) => (
+                <div
+                  key={idx}
+                  className="alert"
+                  style={{
+                    backgroundColor: readAlerts[idx] ? '#e0e0e0' : '#ffc107', // yellow for notice/lock
+                    color: readAlerts[idx] ? '#555' : '#000',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    marginBottom: '0.5rem',
+                  }}
+                  onClick={() => markAsRead(idx)}
+                  title="Click to mark as read"
+                >
+                  {alert} {readAlerts[idx] ? '(Read)' : ''}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="row justify-content-center gx-3 gy-4">
             {bins.map((bin) => {
-              const level = levels?.[bin.key]?.level_percentage;
+              const level = levels?.[bin.key];
               const displayLevel = typeof level === 'number' ? Math.round(level) : null;
-
               const isCovered = (displayLevel ?? 0) >= 50;
               const textStyle = displayLevel === null
                 ? {}
@@ -74,29 +92,6 @@ const BinsPage = () => {
                       </div>
                     </div>
                     <div className="bin-label mt-3">{bin.type}</div>
-
-                    {/* Alerts per bin */}
-                    {levels?.[bin.key]?.alerts?.length > 0 && (
-                      <div className="mt-2">
-                        {levels[bin.key].alerts.map((alert, idx) => (
-                          <div
-                            key={bin.key + idx}
-                            className="alert"
-                            style={{
-                              backgroundColor: readAlerts[bin.key]?.[idx]
-                                ? '#e0e0e0'
-                                : severityColor(alert),
-                              color: readAlerts[bin.key]?.[idx] ? '#555' : '#000',
-                              cursor: 'pointer',
-                            }}
-                            onClick={() => markAsRead(bin.key, idx)}
-                            title="Click to mark as read"
-                          >
-                            {alert} {readAlerts[bin.key]?.[idx] ? '(Read)' : ''}
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               );
