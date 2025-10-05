@@ -33,11 +33,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
         'valid_signature' => \Illuminate\Support\Facades\URL::hasValidSignature($request),
         'host' => $request->getHost(),
         'scheme' => $request->getScheme(),
-        'expected_url' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
-            'verification.verify',
-            now()->addMinutes(60),
-            ['id' => $id, 'hash' => $hash]
-        ),
+        'config_app_url' => config('app.url'),
     ]);
 
     $frontend = rtrim(config('app.frontend_url') ?: env('FRONTEND_URL', 'https://lnuwastemonitoring.onrender.com'), '/');
@@ -59,7 +55,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
 
     // Redirect to frontend with success query params
     return redirect($frontend . '/login?verified=1');
-})->middleware(['signed'])->name('verification.verify');
+})->middleware(['web', 'signed'])->name('verification.verify');
 
 /**
  * ---------------------------------------------------------------
