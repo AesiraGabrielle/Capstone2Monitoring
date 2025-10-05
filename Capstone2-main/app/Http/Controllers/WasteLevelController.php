@@ -21,7 +21,7 @@ class WasteLevelController extends Controller
         $request->validate([
             'bin_type' => 'required|in:bio,non_bio,unclassified',
             'ultrasonic_connected' => 'required|boolean',
-            'distance_cm' => 'nullable|numeric|min:0',
+            'distance_cm' => 'required|numeric|min:0',
             'bin_height_cm' => 'required|numeric|min:1',
             'measured_at' => 'required|date',
         ]);
@@ -36,17 +36,17 @@ class WasteLevelController extends Controller
             ], 200);
         }
 
-        // 🔹 Convert distance → fill percentage
+        // 🔹 Convert distance → fill percentage using your min/max mapping
         $distance = $request->distance_cm;
-        $binHeight = $request->bin_height_cm;
 
-        // Optional: sensor might not be exactly at the top of the bin
-        $sensor_offset = 0; // Adjust if sensor is below top of bin
+        // Define min/max distances for mapping
+        $distance_max = 45; // empty bin → 0%
+        $distance_min = 7;  // full bin → 100%
 
-        // Calculate fill percentage
-        $level = (($binHeight - $distance + $sensor_offset) / $binHeight) * 100;
+        // Map distance to percentage (inverted)
+        $level = (($distance_max - $distance) / ($distance_max - $distance_min)) * 100;
 
-        // Clamp between 0 and 100, round to integer
+        // Clamp between 0 and 100 and round
         $level = round(max(0, min(100, $level)));
 
         // Alerts
