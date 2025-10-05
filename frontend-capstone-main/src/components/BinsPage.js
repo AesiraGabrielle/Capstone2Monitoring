@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDashboardData } from '../context/DashboardDataContext';
 
-const severityColor = (alert) => {
-  if (alert.toLowerCase().includes('locked')) return 'darkred';
-  if (alert.toLowerCase().includes('critical')) return 'red';
-  if (alert.toLowerCase().includes('warning')) return 'orange';
-  return 'goldenrod'; // Notice
+// Determine alert color and label based on text
+const getAlertProperties = (alert) => {
+  const lower = alert.toLowerCase();
+  if (lower.includes('locked')) return { color: 'darkred', label: 'Locked' };
+  if (lower.includes('critical')) return { color: 'red', label: 'Critical' };
+  if (lower.includes('warning')) return { color: 'orange', label: 'Warning' };
+  return { color: 'goldenrod', label: 'Notice' }; // default for Notice
 };
 
 const BinsPage = () => {
@@ -46,6 +48,7 @@ const BinsPage = () => {
             {bins.map((bin) => {
               const level = levels?.[bin.key]?.level_percentage;
               const displayLevel = typeof level === 'number' ? Math.round(level) : null;
+
               const isCovered = (displayLevel ?? 0) >= 50;
               const textStyle = displayLevel === null
                 ? {}
@@ -77,23 +80,29 @@ const BinsPage = () => {
                     {/* Alerts per bin */}
                     {levels?.[bin.key]?.alerts?.length > 0 && (
                       <div className="mt-2">
-                        {levels[bin.key].alerts.map((alert, idx) => (
-                          <div
-                            key={bin.key + idx}
-                            className="alert"
-                            style={{
-                              backgroundColor: readAlerts[bin.key]?.[idx]
-                                ? '#e0e0e0'
-                                : severityColor(alert),
-                              color: readAlerts[bin.key]?.[idx] ? '#555' : '#000',
-                              cursor: 'pointer',
-                            }}
-                            onClick={() => markAsRead(bin.key, idx)}
-                            title="Click to mark as read"
-                          >
-                            {alert} {readAlerts[bin.key]?.[idx] ? '(Read)' : ''}
-                          </div>
-                        ))}
+                        {levels[bin.key].alerts.map((alert, idx) => {
+                          const { color, label } = getAlertProperties(alert);
+                          const isRead = readAlerts[bin.key]?.[idx] ?? false;
+
+                          return (
+                            <div
+                              key={bin.key + idx}
+                              className="alert"
+                              style={{
+                                backgroundColor: isRead ? '#e0e0e0' : color,
+                                color: isRead ? '#555' : '#000',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                                marginBottom: '0.5rem',
+                              }}
+                              onClick={() => markAsRead(bin.key, idx)}
+                              title="Click to mark as read"
+                            >
+                              <span style={{ marginRight: '0.5rem' }}>[{label}]</span>
+                              {alert} {isRead ? '(Read)' : ''}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
