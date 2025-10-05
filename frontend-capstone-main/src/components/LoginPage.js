@@ -159,6 +159,18 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
     }
   };
 
+  // Add this state for the success message
+  const [showVerified, setShowVerified] = useState(false);
+
+  // Optionally show success message on verifiedStatus change
+  useEffect(() => {
+    if (verifiedStatus === '1') {
+      setShowVerified(true);
+      // Optionally clear after a few seconds:
+      // setTimeout(() => setShowVerified(false), 5000);
+    }
+  }, [verifiedStatus]);
+
   return (
     <div className={`login-container auth-views-wrapper mode-${mode}`}>
       <div className="auth-views">
