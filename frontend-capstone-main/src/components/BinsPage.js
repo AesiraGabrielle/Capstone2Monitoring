@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDashboardData } from '../context/DashboardDataContext';
 
+// Determine alert color based on severity
 const severityColor = (alert) => {
   const lower = alert.toLowerCase();
   if (lower.includes('locked')) return 'darkred';
@@ -12,6 +13,17 @@ const severityColor = (alert) => {
 const BinsPage = () => {
   const { levels, loading, error } = useDashboardData() || {};
   const [readAlerts, setReadAlerts] = useState({});
+
+  // Initialize read state whenever levels.alerts change
+  useEffect(() => {
+    if (levels?.alerts) {
+      const newRead = {};
+      levels.alerts.forEach((_, idx) => {
+        newRead[idx] = false;
+      });
+      setReadAlerts(newRead);
+    }
+  }, [levels?.alerts]);
 
   const markAsRead = (idx) => {
     setReadAlerts((prev) => ({
@@ -30,11 +42,12 @@ const BinsPage = () => {
     <div className="bins-page">
       <div className="container bins-container-centered">
         <h2 className="page-title mb-3">Bins</h2>
+
         <div className="outer-bins-card">
           {loading && <div>Loading bins...</div>}
           {error && <div className="alert alert-danger">{error}</div>}
 
-          {/* Global Alerts if present */}
+          {/* Global Alerts */}
           {levels?.alerts && levels.alerts.length > 0 && (
             <div className="mb-3">
               {levels.alerts.map((alert, idx) => (
@@ -57,9 +70,10 @@ const BinsPage = () => {
             </div>
           )}
 
+          {/* Bin graphics */}
           <div className="row justify-content-center gx-3 gy-4">
             {bins.map((bin) => {
-              const level = levels?.[bin.key];
+              const level = levels?.[bin.key]; // number 0-100
               const displayLevel = typeof level === 'number' ? Math.round(level) : null;
 
               const isCovered = (displayLevel ?? 0) >= 50;
