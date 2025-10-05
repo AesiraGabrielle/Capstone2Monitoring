@@ -45,14 +45,17 @@ class WasteLevelController extends Controller
 
         // Alerts
         $alerts = [];
+        if ($level >= 80) {
+            $alerts[] = 'Notice: ' . ucfirst($binType) . ' bin is 80% full.';
+        }
+        if ($level >= 90) {
+            $alerts[] = 'Warning: ' . ucfirst($binType) . ' bin is 90% full.';
+        }
+        if ($level >= 95) {
+            $alerts[] = 'Critical: ' . ucfirst($binType) . ' bin is 95% full.';
+        }
         if ($level >= 98) {
             $alerts[] = ucfirst($binType) . ' bin is full and has been locked.';
-        } elseif ($level >= 95) {
-            $alerts[] = 'Critical: ' . ucfirst($binType) . ' bin is 95% full.';
-        } elseif ($level >= 90) {
-            $alerts[] = 'Warning: ' . ucfirst($binType) . ' bin is 90% full.';
-        } elseif ($level >= 80) {
-            $alerts[] = 'Notice: ' . ucfirst($binType) . ' bin is 80% full.';
         }
 
         $is_full = $level >= 90;
