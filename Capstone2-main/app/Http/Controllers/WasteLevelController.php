@@ -28,7 +28,7 @@ class WasteLevelController extends Controller
 
         $binType = $request->bin_type;
 
-        // if ultrasonic not connected, skip update
+        // If ultrasonic not connected, skip update
         if (!$request->ultrasonic_connected) {
             return response()->json([
                 'message' => 'Ultrasonic not connected. Keeping last known value for ' . $binType,
@@ -37,11 +37,17 @@ class WasteLevelController extends Controller
         }
 
         // 🔹 Convert distance → fill percentage
-        // Formula: (bin_height - distance) / bin_height * 100
         $distance = $request->distance_cm;
         $binHeight = $request->bin_height_cm;
 
-        $level = max(0, min(100, round((($binHeight - $distance) / $binHeight) * 100)));
+        // Optional: sensor might not be exactly at the top of the bin
+        $sensor_offset = 0; // Adjust if sensor is below top of bin
+
+        // Calculate fill percentage
+        $level = (($binHeight - $distance + $sensor_offset) / $binHeight) * 100;
+
+        // Clamp between 0 and 100, round to integer
+        $level = round(max(0, min(100, $level)));
 
         // Alerts
         $alerts = [];
