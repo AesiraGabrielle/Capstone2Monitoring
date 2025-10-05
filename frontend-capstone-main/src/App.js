@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import LoginPage from './components/LoginPage';
@@ -119,11 +119,11 @@ function App() {
   };
 
   return (
-    <Router>
+    <BrowserRouter>
       <div className="app-container">
         <AppRoutes />
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 
