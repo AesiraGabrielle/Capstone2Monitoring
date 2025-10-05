@@ -15,4 +15,4 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
         'scheme' => $request->getScheme(),
         'config_app_url' => config('app.url'),
     ]);
-})->middleware(['web'])->name('verification.verify');
+})->middleware(['web', 'signed'])->name('verification.verify');
