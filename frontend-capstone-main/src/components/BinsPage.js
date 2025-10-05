@@ -66,6 +66,17 @@ const BinsPage = () => {
           );
         })}
             </div>
+            {bins.map(bin => (
+  levels?.[bin.key]?.alerts?.length > 0 && (
+    <div key={bin.key + '-alerts'}>
+      {levels[bin.key].alerts.map((alert, idx) => (
+        <div key={bin.key + idx} className="alert alert-warning">
+          {alert}
+        </div>
+      ))}
+    </div>
+  )
+))}
           </div>
           {/* Add footer */}
           <div className="footer white">
