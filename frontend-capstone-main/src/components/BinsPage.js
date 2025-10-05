@@ -10,16 +10,10 @@ const BinsPage = () => {
     { id: 3, key: 'unclassified', type: 'Unidentified Waste', color: '#90EE90' },
   ];
 
-  // Generate system-wide alerts if any bin is full
-  const systemAlerts = [];
-  if (levels) {
-    bins.forEach(bin => {
-      const lvlObj = levels[bin.key];
-      if (lvlObj && lvlObj.level_percentage >= 98) {
-        systemAlerts.push("System locked! One or more bins are full.");
-      }
-    });
-  }
+  // Check if any bin is locked (≥ 98%)
+  const systemLocked = Object.values(levels || {}).some(
+    (lvlObj) => lvlObj?.level_percentage >= 98
+  );
 
   return (
     <div className="bins-page">
@@ -30,31 +24,19 @@ const BinsPage = () => {
           {loading && <div>Loading bins...</div>}
           {error && <div className="alert alert-danger">{error}</div>}
 
-          {/* Display system-wide alerts */}
-          {systemAlerts.length > 0 &&
-            systemAlerts.map((alert, idx) => (
-              <div key={idx} className="alert alert-danger">
-                {alert}
-              </div>
-            ))
-          }
-
-          {/* Display per-bin alerts */}
-          {levels &&
-            bins.map(bin => {
-              const lvlObj = levels[bin.key];
-              return lvlObj?.alerts?.map((alert, idx) => (
-                <div key={bin.key + idx} className="alert alert-warning">
-                  {alert}
-                </div>
-              ));
-            })
-          }
+          {/* System-wide lock notice */}
+          {systemLocked && (
+            <div className="alert alert-danger">
+              ⚠️ System is locked! One or more bins are full (≥ 98%).
+            </div>
+          )}
 
           <div className="row justify-content-center gx-3 gy-4">
             {bins.map((bin) => {
-              const lvlObj = levels?.[bin.key];
+              const lvlObj = levels?.[bin.key]; // { level_percentage, alerts }
               const displayLevel = lvlObj?.level_percentage ?? null;
+              const binAlerts = lvlObj?.alerts ?? [];
+
               const isCovered = (displayLevel ?? 0) >= 50;
               const textStyle =
                 displayLevel === null
@@ -66,6 +48,7 @@ const BinsPage = () => {
               return (
                 <div key={bin.id} className="col-12 col-sm-10 col-md-4 text-center mb-4">
                   <div className="bin-container">
+                    {/* Bin graphic */}
                     <div className="bin-graphic">
                       <div className="bin-lid"></div>
                       <div className="bin-rim"></div>
@@ -79,10 +62,18 @@ const BinsPage = () => {
                             height: `${displayLevel ?? 0}%`,
                             backgroundColor: bin.color,
                           }}
-                        ></div>
+                        />
                       </div>
                     </div>
+
                     <div className="bin-label mt-3">{bin.type}</div>
+
+                    {/* Bin-specific alerts */}
+                    {binAlerts.map((alert, idx) => (
+                      <div key={bin.key + idx} className="alert alert-warning mt-2">
+                        {alert}
+                      </div>
+                    ))}
                   </div>
                 </div>
               );
@@ -90,6 +81,7 @@ const BinsPage = () => {
           </div>
         </div>
 
+        {/* Footer */}
         <div className="footer white">
           © 2025 Leyte Normal University, All rights reserved.
         </div>
