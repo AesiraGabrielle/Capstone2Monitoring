@@ -36,9 +36,10 @@ class WasteLevelController extends Controller
             ], 200);
         }
 
-        // 🔹 Convert distance → fill percentage using min/max mapping
+        // 🔹 Convert distance → fill percentage using your min/max mapping
         $distance = $request->distance_cm;
 
+        // Define min/max distances for mapping
         $distance_max = 45; // empty bin → 0%
         $distance_min = 7;  // full bin → 100%
 
@@ -48,28 +49,21 @@ class WasteLevelController extends Controller
         // Clamp between 0 and 100 and round
         $level = round(max(0, min(100, $level)));
 
-        // 🔹 Alerts (stacked)
+        // Alerts
         $alerts = [];
-
-        if ($level >= 80) {
-            $alerts[] = ucfirst($binType) . " bin is reaching high capacity.";
-        }
-
-        if ($level >= 90) {
-            $alerts[] = "Warning: " . ucfirst($binType) . " bin is 90%+ full.";
-        }
-
-        if ($level >= 95) {
-            $alerts[] = "Critical: " . ucfirst($binType) . " bin is 95%+ full.";
-        }
-
         if ($level >= 98) {
-            $alerts[] = ucfirst($binType) . " bin is full and has been locked.";
+            $alerts[] = ucfirst($binType) . ' bin is full and has been locked.';
+        } elseif ($level >= 95) {
+            $alerts[] = 'Critical: ' . ucfirst($binType) . ' bin is 95% full.';
+        } elseif ($level >= 90) {
+            $alerts[] = 'Warning: ' . ucfirst($binType) . ' bin is 90% full.';
+        } elseif ($level >= 80) {
+            $alerts[] = 'Notice: ' . ucfirst($binType) . ' bin is 80% full.';
         }
 
         $is_full = $level >= 90;
 
-        // 🔹 Update or insert latest data for the bin
+        // 🔹 Update or insert only that bin's latest data
         WasteLevel::updateOrCreate(
             ['bin_type' => $binType],
             [
@@ -99,46 +93,12 @@ class WasteLevelController extends Controller
             $level = WasteLevel::where('bin_type', $bin)->first();
 
             if ($level) {
-                $levels[$bin] = [
-                    'level_percentage' => $level->level_percentage,
-                    'alerts' => $level->level_percentage >= 80
-                        ? $this->generateAlerts($level->level_percentage, $bin)
-                        : []
-                ];
+                $levels[$bin] = $level->level_percentage;
             } else {
-                $levels[$bin] = [
-                    'level_percentage' => null,
-                    'alerts' => []
-                ];
+                $levels[$bin] = 'No Data Yet';
             }
         }
 
         return response()->json($levels);
-    }
-
-    /**
-     * Generate stacked alerts based on level percentage
-     */
-    private function generateAlerts(int $level, string $binType): array
-    {
-        $alerts = [];
-
-        if ($level >= 80) {
-            $alerts[] = ucfirst($binType) . " bin is reaching high capacity.";
-        }
-
-        if ($level >= 90) {
-            $alerts[] = "Warning: " . ucfirst($binType) . " bin is 90%+ full.";
-        }
-
-        if ($level >= 95) {
-            $alerts[] = "Critical: " . ucfirst($binType) . " bin is 95%+ full.";
-        }
-
-        if ($level >= 98) {
-            $alerts[] = ucfirst($binType) . " bin is full and has been locked.";
-        }
-
-        return $alerts;
     }
 }
