@@ -1,32 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDashboardData } from '../context/DashboardDataContext';
 
-// Determine alert color and label based on text
-const getAlertProperties = (alert) => {
+const severityColor = (alert) => {
   const lower = alert.toLowerCase();
-  if (lower.includes('locked')) return { color: 'darkred', label: 'Locked' };
-  if (lower.includes('critical')) return { color: 'red', label: 'Critical' };
-  if (lower.includes('warning')) return { color: 'orange', label: 'Warning' };
-  return { color: 'goldenrod', label: 'Notice' }; // default for Notice
+  if (lower.includes('locked')) return 'darkred';
+  if (lower.includes('critical')) return 'red';
+  if (lower.includes('warning')) return 'orange';
+  return 'goldenrod'; // Notice
 };
 
 const BinsPage = () => {
   const { levels, loading, error } = useDashboardData() || {};
   const [readAlerts, setReadAlerts] = useState({});
 
-  useEffect(() => {
-    // Initialize read state for new alerts
-    const newRead = {};
-    ['bio', 'non_bio', 'unclassified'].forEach((bin) => {
-      newRead[bin] = Array((levels?.[bin]?.alerts?.length) || 0).fill(false);
-    });
-    setReadAlerts(newRead);
-  }, [levels]);
-
-  const markAsRead = (binKey, idx) => {
+  const markAsRead = (idx) => {
     setReadAlerts((prev) => ({
       ...prev,
-      [binKey]: prev[binKey].map((r, i) => (i === idx ? true : r)),
+      [idx]: true,
     }));
   };
 
@@ -44,9 +34,32 @@ const BinsPage = () => {
           {loading && <div>Loading bins...</div>}
           {error && <div className="alert alert-danger">{error}</div>}
 
+          {/* Global Alerts if present */}
+          {levels?.alerts && levels.alerts.length > 0 && (
+            <div className="mb-3">
+              {levels.alerts.map((alert, idx) => (
+                <div
+                  key={idx}
+                  className="alert"
+                  style={{
+                    backgroundColor: readAlerts[idx] ? '#e0e0e0' : severityColor(alert),
+                    color: readAlerts[idx] ? '#555' : '#000',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    marginBottom: '0.5rem',
+                  }}
+                  onClick={() => markAsRead(idx)}
+                  title="Click to mark as read"
+                >
+                  {alert} {readAlerts[idx] ? '(Read)' : ''}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="row justify-content-center gx-3 gy-4">
             {bins.map((bin) => {
-              const level = levels?.[bin.key]?.level_percentage;
+              const level = levels?.[bin.key];
               const displayLevel = typeof level === 'number' ? Math.round(level) : null;
 
               const isCovered = (displayLevel ?? 0) >= 50;
@@ -76,35 +89,6 @@ const BinsPage = () => {
                       </div>
                     </div>
                     <div className="bin-label mt-3">{bin.type}</div>
-
-                    {/* Alerts per bin */}
-                    {levels?.[bin.key]?.alerts?.length > 0 && (
-                      <div className="mt-2">
-                        {levels[bin.key].alerts.map((alert, idx) => {
-                          const { color, label } = getAlertProperties(alert);
-                          const isRead = readAlerts[bin.key]?.[idx] ?? false;
-
-                          return (
-                            <div
-                              key={bin.key + idx}
-                              className="alert"
-                              style={{
-                                backgroundColor: isRead ? '#e0e0e0' : color,
-                                color: isRead ? '#555' : '#000',
-                                cursor: 'pointer',
-                                fontWeight: 'bold',
-                                marginBottom: '0.5rem',
-                              }}
-                              onClick={() => markAsRead(bin.key, idx)}
-                              title="Click to mark as read"
-                            >
-                              <span style={{ marginRight: '0.5rem' }}>[{label}]</span>
-                              {alert} {isRead ? '(Read)' : ''}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
                 </div>
               );
