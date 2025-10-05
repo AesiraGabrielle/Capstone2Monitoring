@@ -45,17 +45,14 @@ class WasteLevelController extends Controller
 
         // Alerts
         $alerts = [];
-        if ($level >= 80) {
-            $alerts[] = 'Notice: ' . ucfirst($binType) . ' bin is 80% full.';
-        }
-        if ($level >= 90) {
-            $alerts[] = 'Warning: ' . ucfirst($binType) . ' bin is 90% full.';
-        }
-        if ($level >= 95) {
-            $alerts[] = 'Critical: ' . ucfirst($binType) . ' bin is 95% full.';
-        }
         if ($level >= 98) {
             $alerts[] = ucfirst($binType) . ' bin is full and has been locked.';
+        } elseif ($level >= 95) {
+            $alerts[] = 'Critical: ' . ucfirst($binType) . ' bin is 95% full.';
+        } elseif ($level >= 90) {
+            $alerts[] = 'Warning: ' . ucfirst($binType) . ' bin is 90% full.';
+        } elseif ($level >= 80) {
+            $alerts[] = 'Notice: ' . ucfirst($binType) . ' bin is 80% full.';
         }
 
         $is_full = $level >= 90;
@@ -89,30 +86,10 @@ class WasteLevelController extends Controller
         foreach ($bins as $bin) {
             $level = WasteLevel::where('bin_type', $bin)->first();
 
-            $alerts = [];
             if ($level) {
-                $levelValue = $level->level_percentage;
-                if ($levelValue >= 80) {
-                    $alerts[] = 'Notice: ' . ucfirst($bin) . ' bin is 80% full.';
-                }
-                if ($levelValue >= 90) {
-                    $alerts[] = 'Warning: ' . ucfirst($bin) . ' bin is 90% full.';
-                }
-                if ($levelValue >= 95) {
-                    $alerts[] = 'Critical: ' . ucfirst($bin) . ' bin is 95% full.';
-                }
-                if ($levelValue >= 98) {
-                    $alerts[] = ucfirst($bin) . ' bin is full and has been locked.';
-                }
-                $levels[$bin] = [
-                    'level' => $levelValue,
-                    'alerts' => $alerts,
-                ];
+                $levels[$bin] = $level->level_percentage;
             } else {
-                $levels[$bin] = [
-                    'level' => null,
-                    'alerts' => [],
-                ];
+                $levels[$bin] = 'No Data Yet';
             }
         }
 
