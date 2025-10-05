@@ -8,36 +8,76 @@ use App\Models\Registration;
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-| These routes handle email verification for SPA frontends like yours.
-|--------------------------------------------------------------------------
+|
+| These routes handle redirects for email verification and password reset.
+| They connect Laravel’s backend authentication logic with your React
+| frontend (e.g., http://localhost:3000 or your deployed domain).
+|
 */
 
-// ✅ Email Verification Handler
+Route::get('/', function () {
+    return view('welcome');
+});
+
+/**
+ * ---------------------------------------------------------------
+ * EMAIL VERIFICATION REDIRECT (Frontend Integration)
+ * ---------------------------------------------------------------
+ * This route is the entry point for verifying emails via signed URLs.
+ * It ensures signature validity, marks the email as verified if valid,
+ * and redirects to your React frontend with status info.
+ */
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-    $frontend = config('app.frontend_url') ?: 'http://localhost:3000';
+    \Log::info('Signature debug', [
+        'full_url' => $request->fullUrl(),
+        'valid_signature' => \Illuminate\Support\Facades\URL::hasValidSignature($request),
+        'host' => $request->getHost(),
+        'scheme' => $request->getScheme(),
+        'expected_url' => \Illuminate\Support\Facades\URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $id, 'hash' => $hash]
+        ),
+    ]);
+
+    $frontend = rtrim(config('app.frontend_url') ?: env('FRONTEND_URL', 'https://lnuwastemonitoring.onrender.com'), '/');
     $user = Registration::find($id);
 
-    // 🧩 1. Check if user exists
     if (!$user) {
         return redirect($frontend . '/login?verified=0&reason=not_found');
     }
 
-    // 🧩 2. Validate hash
+    // Verify the hash matches the user's email hash
     if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
-        return redirect($frontend . '/login?verified=0&reason=hash');
+        return redirect($frontend . '/login?verified=0&reason=invalid_hash');
     }
 
-    // ✅ 3. Mark as verified
+    // Mark email as verified if not already done
     if (!$user->hasVerifiedEmail()) {
         $user->markEmailAsVerified();
     }
 
-    // 🔁 4. Redirect to frontend login
+    // Redirect to frontend with success query params
     return redirect($frontend . '/login?verified=1');
 })->middleware(['signed'])->name('verification.verify');
 
+/**
+ * ---------------------------------------------------------------
+ * PASSWORD RESET REDIRECT (SPA Compatibility)
+ * ---------------------------------------------------------------
+ * Converts the default Laravel password reset link to a frontend route.
+ * Example:
+ *  Laravel sends -> https://api.example.com/password/reset/{token}?email=foo@mail.com
+ *  Redirects to -> https://frontend.example.com/reset-password?token={token}&email={email}
+ */
+Route::get('/password/reset/{token}', function ($token, Request $request) {
+    $frontend = rtrim(config('app.frontend_url') ?: env('FRONTEND_URL', 'http://localhost:3000'), '/');
+    $email = $request->query('email');
 
-// Optional: backend root test route
-Route::get('/', function () {
-    return response()->json(['message' => 'Backend is running.']);
-});
+    $url = $frontend . '/reset-password?token=' . urlencode($token);
+    if ($email) {
+        $url .= '&email=' . urlencode($email);
+    }
+
+    return redirect($url);
+})->name('password.reset.redirect');

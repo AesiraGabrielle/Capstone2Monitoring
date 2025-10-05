@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -89,21 +88,8 @@ class Registration extends Authenticatable implements JWTSubject, MustVerifyEmai
     return !is_null($this->email_verified_at);
 }
 
-public function sendEmailVerificationNotification()
+    public function getEmailForVerification()
 {
-    $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
-        now()->addMinutes(60),
-        [
-            'id' => $this->getKey(),
-            'hash' => sha1($this->getEmailForVerification()),
-        ]
-    );
-
-    // Ensure scheme + route path are consistent
-    $verificationUrl = str_replace('/api/', '/', $verificationUrl);
-
-    \Mail::to($this->email)->send(new \App\Mail\VerifyEmail($verificationUrl));
+    return $this->email;
 }
-
 }

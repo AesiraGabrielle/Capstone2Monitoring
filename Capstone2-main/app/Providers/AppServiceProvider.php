@@ -18,10 +18,10 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-       public function boot(): void
+    public function boot(): void
     {
-        // ✅ Force Laravel to sign and validate URLs using HTTPS on production
-        if (config('app.env') === 'production' || config('app.env') === 'staging') {
+        // ✅ Force HTTPS for all generated URLs in production
+        if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
     }
