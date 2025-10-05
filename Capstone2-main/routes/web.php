@@ -28,7 +28,7 @@ Route::get('/', function () {
  * and redirects to your React frontend with status info.
  */
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
-    $frontend = rtrim(config('app.frontend_url') ?: env('FRONTEND_URL', 'http://localhost:3000'), '/');
+    $frontend = rtrim(config('app.frontend_url') ?: env('FRONTEND_URL', 'https://lnuwastemonitoring.onrender.com'), '/');
     $user = Registration::find($id);
 
     if (!$user) {
