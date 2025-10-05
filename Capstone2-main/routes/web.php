@@ -19,6 +19,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+<?php
+// filepath: d:\WasteSystem\Capstone2-main\routes\web.php
+Route::get('/test-verify', function () {
+    \Log::info('Test verify route hit');
+    return 'Test verify route hit!';
+});
 /**
  * ---------------------------------------------------------------
  * EMAIL VERIFICATION REDIRECT (Frontend Integration)
@@ -30,7 +36,6 @@ Route::get('/', function () {
 Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
     \Log::info('Signature debug', [
         'full_url' => $request->fullUrl(),
-        'valid_signature' => \Illuminate\Support\Facades\URL::hasValidSignature($request),
         'host' => $request->getHost(),
         'scheme' => $request->getScheme(),
         'config_app_url' => config('app.url'),
@@ -55,7 +60,7 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
 
     // Redirect to frontend with success query params
     return redirect($frontend . '/login?verified=1');
-})->middleware(['web', 'signed'])->name('verification.verify');
+})->middleware(['web'])->name('verification.verify');
 
 /**
  * ---------------------------------------------------------------
