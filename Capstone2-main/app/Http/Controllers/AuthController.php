@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Registered;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Database\QueryException;
 
 class AuthController extends Controller
 {
@@ -42,12 +43,20 @@ class AuthController extends Controller
         }
 
         // Create user
-        $user = Registration::create([
-        'full_name' => $request->full_name,
-        'email' => $request->email,
-        'password' => $request->password, // plain here, model mutator hashes it
-        'token' => Str::random(60),
-    ]);
+        try {
+            $user = Registration::create([
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'password' => $request->password, // plain here, model mutator hashes it
+                'token' => Str::random(60),
+            ]);
+        } catch (QueryException $e) {
+            if ($e->getCode() == 23000) { // Duplicate entry error code for MySQL
+                return response()->json(['message' => 'User already exists.'], 409);
+            }
+            // Optionally rethrow or handle other DB errors
+            throw $e;
+        }
 
 
         event(new Registered($user));
