@@ -89,10 +89,30 @@ class WasteLevelController extends Controller
         foreach ($bins as $bin) {
             $level = WasteLevel::where('bin_type', $bin)->first();
 
+            $alerts = [];
             if ($level) {
-                $levels[$bin] = $level->level_percentage;
+                $levelValue = $level->level_percentage;
+                if ($levelValue >= 80) {
+                    $alerts[] = 'Notice: ' . ucfirst($bin) . ' bin is 80% full.';
+                }
+                if ($levelValue >= 90) {
+                    $alerts[] = 'Warning: ' . ucfirst($bin) . ' bin is 90% full.';
+                }
+                if ($levelValue >= 95) {
+                    $alerts[] = 'Critical: ' . ucfirst($bin) . ' bin is 95% full.';
+                }
+                if ($levelValue >= 98) {
+                    $alerts[] = ucfirst($bin) . ' bin is full and has been locked.';
+                }
+                $levels[$bin] = [
+                    'level' => $levelValue,
+                    'alerts' => $alerts,
+                ];
             } else {
-                $levels[$bin] = 'No Data Yet';
+                $levels[$bin] = [
+                    'level' => null,
+                    'alerts' => [],
+                ];
             }
         }
 
