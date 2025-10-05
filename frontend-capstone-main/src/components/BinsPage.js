@@ -11,69 +11,73 @@ const BinsPage = () => {
   ];
 
   return (
-      <div className="bins-page">
-        <div className="container bins-container-centered">
-          <h2 className="page-title mb-3">Bins</h2>
-          <div className="outer-bins-card">
-            {loading && <div>Loading bins...</div>}
-            {error && <div className="alert alert-danger">{error}</div>}
-            <div className="row justify-content-center gx-3 gy-4">
-        {bins.map((bin) => {
-          const levelObj = levels?.[bin.key];
-          const displayLevel = typeof levelObj?.level_percentage === 'number' ? Math.round(levelObj.level_percentage) : null;
-          const isCovered = (displayLevel ?? 0) >= 50;
-          const textStyle = displayLevel === null
-            ? {}
-            : isCovered
-              ? { color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.6)' }
-              : { color: bin.color, textShadow: '0 1px 1px rgba(0,0,0,0.15)' };
-          return (
-            <div key={bin.id} className="col-12 col-sm-10 col-md-4 text-center mb-4">
-              <div className="bin-container">
-                {/* Bin graphic */}
-                <div className="bin-graphic">
-                  {/* Lid/handle outline */}
-                  <div className="bin-lid"></div>
-                  {/* Thin rim line across the top opening */}
-                  <div className="bin-rim"></div>
-                  <div className="bin-body">
-                    <div className="bin-level-text" style={textStyle}>
-                      {displayLevel !== null ? `${displayLevel}%` : 'No data'}
-                    </div>
-                    <div 
-                      className="bin-level" 
-                      style={{ 
-                        height: `${displayLevel ?? 0}%`,
-                        backgroundColor: bin.color,
-                      }}
-                    ></div>
-                  </div>
+    <div className="bins-page">
+      <div className="container bins-container-centered">
+        <h2 className="page-title mb-3">Bins</h2>
+
+        <div className="outer-bins-card">
+          {loading && <div>Loading bins...</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          {/* Alerts */}
+          {levels && levels.alerts && levels.alerts.length > 0 && (
+            <div>
+              {levels.alerts.map((alert, idx) => (
+                <div key={idx} className="alert alert-warning">
+                  {alert}
                 </div>
-                <div className="bin-label mt-3">
-                  {bin.type}
-                </div>
-                {/* Show alerts if any */}
-                {levelObj?.alerts?.length > 0 && (
-                  <div className="mt-2">
-                    {levelObj.alerts.map((alert, idx) => (
-                      <div key={idx} className="alert alert-warning py-1 my-1">
-                        {alert}
+              ))}
+            </div>
+          )}
+
+          <div className="row justify-content-center gx-3 gy-4">
+            {bins.map((bin) => {
+              const level = levels?.[bin.key];
+              const displayLevel = typeof level === 'number' ? Math.round(level) : null;
+              const isCovered = (displayLevel ?? 0) >= 50; // if filler likely behind text
+              const textStyle =
+                displayLevel === null
+                  ? {}
+                  : isCovered
+                  ? { color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.6)' }
+                  : { color: bin.color, textShadow: '0 1px 1px rgba(0,0,0,0.15)' };
+
+              return (
+                <div key={bin.id} className="col-12 col-sm-10 col-md-4 text-center mb-4">
+                  <div className="bin-container">
+                    {/* Bin graphic */}
+                    <div className="bin-graphic">
+                      {/* Lid/handle outline */}
+                      <div className="bin-lid"></div>
+                      {/* Thin rim line across the top opening */}
+                      <div className="bin-rim"></div>
+                      <div className="bin-body">
+                        <div className="bin-level-text" style={textStyle}>
+                          {displayLevel !== null ? `${displayLevel}%` : 'No data'}
+                        </div>
+                        <div
+                          className="bin-level"
+                          style={{
+                            height: `${displayLevel ?? 0}%`,
+                            backgroundColor: bin.color,
+                          }}
+                        ></div>
                       </div>
-                    ))}
+                    </div>
+                    <div className="bin-label mt-3">{bin.type}</div>
                   </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-            </div>
-          </div>
-          {/* Add footer */}
-          <div className="footer white">
-            © 2025 Leyte Normal University, All rights reserved.
+                </div>
+              );
+            })}
           </div>
         </div>
+
+        {/* Footer */}
+        <div className="footer white">
+          © 2025 Leyte Normal University, All rights reserved.
+        </div>
       </div>
+    </div>
   );
 };
 
