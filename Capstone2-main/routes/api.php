@@ -76,3 +76,7 @@ Route::middleware(['jwt.auth'])->prefix('hardware')->group(function () {
     Route::post('/waste-levels', [WasteLevelController::class, 'store']);
     Route::post('/waste-logs', [WasteLogController::class, 'store']);
 });
+
+Route::middleware(['jwt.auth'])->group(function () {
+    Route::get('/waste-level/latest-levels', [WasteLevelController::class, 'latestLevels']);
+});
