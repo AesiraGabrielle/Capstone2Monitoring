@@ -3,6 +3,7 @@ import { useDashboardData } from '../context/DashboardDataContext';
 
 const BinsPage = () => {
   const { levels, loading, error } = useDashboardData() || {};
+  console.log('BinsPage levels:', levels, 'loading:', loading, 'error:', error); // <-- Add this line
 
   const bins = [
     { id: 1, key: 'bio', type: 'Biodegradable', color: '#f0e68c' },
