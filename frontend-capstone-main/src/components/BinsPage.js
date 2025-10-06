@@ -15,66 +15,65 @@ const BinsPage = () => {
       <div className="container bins-container-centered">
         <h2 className="page-title mb-3">Bins</h2>
 
-        {/* Loading / Error */}
-        {loading && <div>Loading bins...</div>}
-        {error && <div className="alert alert-danger">{error}</div>}
+        <div className="outer-bins-card">
+          {loading && <div>Loading bins...</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="row justify-content-center gx-3 gy-4">
-          {bins.map((bin) => {
-            const binData = levels?.[bin.key] || {};
-            const displayLevel = typeof binData.level_percentage === 'number'
-              ? Math.round(binData.level_percentage)
-              : null;
-
-            const isCovered = (displayLevel ?? 0) >= 50;
-            const textStyle =
-              displayLevel === null
-                ? {}
-                : isCovered
-                ? { color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.6)' }
-                : { color: bin.color, textShadow: '0 1px 1px rgba(0,0,0,0.15)' };
-
-            return (
-              <div key={bin.id} className="col-12 col-sm-10 col-md-4 text-center mb-4">
-                <div className="bin-container">
-
-                  {/* Per-bin alerts */}
-                  {binData.alerts && binData.alerts.length > 0 && (
-                    <div>
-                      {binData.alerts.map((alert, idx) => (
-                        <div key={idx} className="alert alert-warning">
-                          {alert}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Bin graphic */}
-                  <div className="bin-graphic">
-                    <div className="bin-lid"></div>
-                    <div className="bin-rim"></div>
-                    <div className="bin-body">
-                      <div className="bin-level-text" style={textStyle}>
-                        {displayLevel !== null ? `${displayLevel}%` : 'No data'}
-                      </div>
-                      <div
-                        className="bin-level"
-                        style={{
-                          height: `${displayLevel ?? 0}%`,
-                          backgroundColor: bin.color,
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <div className="bin-label mt-3">{bin.type}</div>
+          {/* Show alerts for all bins */}
+          {levels &&
+            bins.map((bin) => {
+              const binData = levels[bin.key];
+              if (!binData || !binData.alerts) return null;
+              return binData.alerts.map((alert, idx) => (
+                <div key={`${bin.key}-alert-${idx}`} className="alert alert-warning">
+                  {alert}
                 </div>
-              </div>
-            );
-          })}
+              ));
+            })}
+
+          <div className="row justify-content-center gx-3 gy-4">
+            {bins.map((bin) => {
+              const binData = levels?.[bin.key];
+              const displayLevel =
+                binData && typeof binData.level_percentage === 'number'
+                  ? Math.round(binData.level_percentage)
+                  : null;
+
+              const isCovered = (displayLevel ?? 0) >= 50;
+              const textStyle =
+                displayLevel === null
+                  ? {}
+                  : isCovered
+                  ? { color: '#000', textShadow: '0 1px 2px rgba(255,255,255,0.6)' }
+                  : { color: bin.color, textShadow: '0 1px 1px rgba(0,0,0,0.15)' };
+
+              return (
+                <div key={bin.id} className="col-12 col-sm-10 col-md-4 text-center mb-4">
+                  <div className="bin-container">
+                    <div className="bin-graphic">
+                      <div className="bin-lid"></div>
+                      <div className="bin-rim"></div>
+                      <div className="bin-body">
+                        <div className="bin-level-text" style={textStyle}>
+                          {displayLevel !== null ? `${displayLevel}%` : 'No data'}
+                        </div>
+                        <div
+                          className="bin-level"
+                          style={{
+                            height: `${displayLevel ?? 0}%`,
+                            backgroundColor: bin.color,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="bin-label mt-3">{bin.type}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Footer */}
         <div className="footer white">
           © 2025 Leyte Normal University, All rights reserved.
         </div>
