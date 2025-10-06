@@ -1,11 +1,5 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from 'react';
-import { wasteLevelAPI, monitoringAPI } from '../services/api';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { initialAPI, monitoringAPI } from '../services/api';
 
 const DashboardDataContext = createContext(null);
 
@@ -15,67 +9,42 @@ export const DashboardDataProvider = ({ children }) => {
   const [levels, setLevels] = useState(null);
   const [warnings, setWarnings] = useState([]);
   const [daily, setDaily] = useState([]);
-  const [rangeTotals, setRangeTotals] = useState({
-    bio: 0,
-    non_bio: 0,
-    unclassified: 0,
-  });
-  const [allTotals, setAllTotals] = useState({
-    bio: 0,
-    non_bio: 0,
-    unclassified: 0,
-  });
+  const [rangeTotals, setRangeTotals] = useState({ bio:0, non_bio:0, unclassified:0 });
+  const [allTotals, setAllTotals] = useState({ bio:0, non_bio:0, unclassified:0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  const computeRangeTotals = (arr) =>
-    arr.reduce(
-      (acc, d) => {
-        acc.bio += Number(d.bio ?? 0) || 0;
-        acc.non_bio += Number(d.non_bio ?? 0) || 0;
-        acc.unclassified += Number(d.unclassified ?? 0) || 0;
-        return acc;
-      },
-      { bio: 0, non_bio: 0, unclassified: 0 }
-    );
+  const computeRangeTotals = (arr) => arr.reduce((acc,d)=>{
+    acc.bio += Number(d.bio ?? 0) || 0;
+    acc.non_bio += Number(d.non_bio ?? 0) || 0;
+    acc.unclassified += Number(d.unclassified ?? 0) || 0;
+    return acc;
+  }, { bio:0, non_bio:0, unclassified:0 });
 
-  // 🔹 Load waste levels + optional monitoring data
   const load = useCallback(async () => {
-    setLoading(true);
-    setError('');
+    setLoading(true); setError('');
     try {
-      const res = await wasteLevelAPI.getLatestLevels();
+      const res = await initialAPI.getInitialData();
       const data = res.data || {};
-
-      // ✅ Direct mapping from backend response
-      setLevels(data || null);
-
-      // ✅ Collect warnings from all bins
-      const allAlerts = Object.values(data)
-        .flatMap((bin) => (bin.alerts ? bin.alerts : []))
-        .filter(Boolean);
-
-      setWarnings(allAlerts);
-      setDaily([]);
-      setRangeTotals({ bio: 0, non_bio: 0, unclassified: 0 });
-      setAllTotals({ bio: 0, non_bio: 0, unclassified: 0 });
+      setLevels(data.levels || null);
+      setWarnings(Array.isArray(data.warnings) ? data.warnings : []);
+      const mon = data.monitoring || {};
+      const dailyArr = Array.isArray(mon.daily) ? mon.daily : [];
+      setDaily(dailyArr);
+      setRangeTotals(mon.rangeTotals || computeRangeTotals(dailyArr));
+      setAllTotals(mon.allTotals || { bio:0, non_bio:0, unclassified:0 });
       setLastUpdated(Date.now());
     } catch (e) {
-      console.error('Load error:', e);
-      setError(
-        e?.response?.data?.message || 'Failed to load waste level data'
-      );
+      setError(e?.response?.data?.message || 'Failed to load initial data');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
-  // 🔹 Date range refetch for monitoring consumers (charts)
+  // Date range refetch for monitoring page consumers
   const fetchRange = async (start, end) => {
     try {
       const params = {};
@@ -90,11 +59,6 @@ export const DashboardDataProvider = ({ children }) => {
     }
   };
 
-  // ✅ New: Mark warning as read
-  const markWarningAsRead = (index) => {
-    setWarnings((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const value = {
     levels,
     warnings,
@@ -106,7 +70,6 @@ export const DashboardDataProvider = ({ children }) => {
     lastUpdated,
     refresh: load,
     fetchRange,
-    markWarningAsRead, // ✅ added
   };
 
   return (
