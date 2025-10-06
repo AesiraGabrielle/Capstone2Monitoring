@@ -98,12 +98,12 @@ class WasteLevelController extends Controller
             if ($record) {
                 $levels[$bin] = [
                     'level_percentage' => $record->level_percentage,
-                    'alerts' => $this->generateAlerts($record->level_percentage, $bin)
+                    'alerts' => $this->generateAlerts($record->level_percentage, $bin),
                 ];
             } else {
                 $levels[$bin] = [
                     'level_percentage' => null,
-                    'alerts' => []
+                    'alerts' => [],
                 ];
             }
         }
