@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
 import { wasteLevelAPI, monitoringAPI } from '../services/api';
 
 const DashboardDataContext = createContext(null);
@@ -9,8 +15,16 @@ export const DashboardDataProvider = ({ children }) => {
   const [levels, setLevels] = useState(null);
   const [warnings, setWarnings] = useState([]);
   const [daily, setDaily] = useState([]);
-  const [rangeTotals, setRangeTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
-  const [allTotals, setAllTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
+  const [rangeTotals, setRangeTotals] = useState({
+    bio: 0,
+    non_bio: 0,
+    unclassified: 0,
+  });
+  const [allTotals, setAllTotals] = useState({
+    bio: 0,
+    non_bio: 0,
+    unclassified: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -37,7 +51,7 @@ export const DashboardDataProvider = ({ children }) => {
       // ✅ Direct mapping from backend response
       setLevels(data || null);
 
-      // Extract alerts from each bin
+      // ✅ Collect warnings from all bins
       const allAlerts = Object.values(data)
         .flatMap((bin) => (bin.alerts ? bin.alerts : []))
         .filter(Boolean);
@@ -49,7 +63,9 @@ export const DashboardDataProvider = ({ children }) => {
       setLastUpdated(Date.now());
     } catch (e) {
       console.error('Load error:', e);
-      setError(e?.response?.data?.message || 'Failed to load waste level data');
+      setError(
+        e?.response?.data?.message || 'Failed to load waste level data'
+      );
     } finally {
       setLoading(false);
     }
@@ -74,6 +90,11 @@ export const DashboardDataProvider = ({ children }) => {
     }
   };
 
+  // ✅ New: Mark warning as read
+  const markWarningAsRead = (index) => {
+    setWarnings((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const value = {
     levels,
     warnings,
@@ -85,6 +106,7 @@ export const DashboardDataProvider = ({ children }) => {
     lastUpdated,
     refresh: load,
     fetchRange,
+    markWarningAsRead, // ✅ added
   };
 
   return (
