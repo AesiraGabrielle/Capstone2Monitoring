@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDashboardData } from '../context/DashboardDataContext';
 
 const BinsPage = () => {
-  const { levels, loading, error } = useDashboardData() || {};
-  console.log('BinsPage levels:', levels, 'loading:', loading, 'error:', error); // <-- Add this line
+  const { levels, warnings, loading, error } = useDashboardData() || {};
+  const [showWarnings, setShowWarnings] = useState(false);
+  const [readAlerts, setReadAlerts] = useState({});
 
   const bins = [
     { id: 1, key: 'bio', type: 'Biodegradable', color: '#f0e68c' },
     { id: 2, key: 'non_bio', type: 'Non-Biodegradable', color: '#add8e6' },
     { id: 3, key: 'unclassified', type: 'Unidentified Waste', color: '#90EE90' },
   ];
+
+  const toggleRead = (alertText) => {
+    setReadAlerts((prev) => ({
+      ...prev,
+      [alertText]: !prev[alertText],
+    }));
+  };
 
   return (
     <div className="bins-page">
@@ -20,18 +28,43 @@ const BinsPage = () => {
           {loading && <div>Loading bins...</div>}
           {error && <div className="alert alert-danger">{error}</div>}
 
-          {/* Show alerts for all bins */}
-          {levels &&
-            bins.map((bin) => {
-              const binData = levels[bin.key];
-              if (!binData || !binData.alerts) return null;
-              return binData.alerts.map((alert, idx) => (
-                <div key={`${bin.key}-alert-${idx}`} className="alert alert-warning">
-                  {alert}
-                </div>
-              ));
-            })}
+          {/* ✅ Warning Section */}
+          <div className="d-flex justify-content-end mb-3">
+            <button
+              className="btn btn-warning btn-sm"
+              onClick={() => setShowWarnings((prev) => !prev)}
+            >
+              ⚠️ {showWarnings ? 'Hide Warnings' : 'Show Warnings'}{' '}
+              {warnings?.length ? `(${warnings.length})` : ''}
+            </button>
+          </div>
 
+          {showWarnings && (
+            <div className="warnings-section mb-4">
+              {warnings && warnings.length > 0 ? (
+                warnings.map((alert, idx) => (
+                  <div
+                    key={`alert-${idx}`}
+                    className={`alert alert-warning d-flex justify-content-between align-items-center ${
+                      readAlerts[alert] ? 'opacity-50' : ''
+                    }`}
+                  >
+                    <span>{alert}</span>
+                    <button
+                      className="btn btn-sm btn-outline-dark"
+                      onClick={() => toggleRead(alert)}
+                    >
+                      {readAlerts[alert] ? 'Unread' : 'Mark as read'}
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="text-muted">No current warnings</div>
+              )}
+            </div>
+          )}
+
+          {/* ✅ Bin Display */}
           <div className="row justify-content-center gx-3 gy-4">
             {bins.map((bin) => {
               const binData = levels?.[bin.key];
