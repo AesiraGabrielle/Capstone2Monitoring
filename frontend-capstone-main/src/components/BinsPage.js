@@ -7,7 +7,7 @@ const BinsPage = () => {
   const bins = [
     { id: 1, key: 'bio', type: 'Biodegradable', color: '#f0e68c' },
     { id: 2, key: 'non_bio', type: 'Non-Biodegradable', color: '#add8e6' },
-    { id: 3, key: 'unclassified', type: 'Unidentified Waste', color: '#90EE90' },
+    { id: 3, key: 'unclassified', type: 'Unclassified Waste', color: '#90EE90' },
   ];
 
   return (

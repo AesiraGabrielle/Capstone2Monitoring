@@ -27,7 +27,7 @@ export const DashboardDataProvider = ({ children }) => {
     try {
       const res = await initialAPI.getInitialData();
       const data = res.data || {};
-      setLevels(data.levels || null);
+      setLevels(data.levels || data || null);
       setWarnings(Array.isArray(data.warnings) ? data.warnings : []);
       const mon = data.monitoring || {};
       const dailyArr = Array.isArray(mon.daily) ? mon.daily : [];
