@@ -12,7 +12,6 @@ const api = axios.create({
 });
 
 // --- Interceptors ---
-// Attach JWT automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -21,7 +20,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -85,9 +83,9 @@ export const wasteLevelAPI = {
   storeWasteLevel: (data) => api.post("/waste-levels", data),
 };
 
-// Aggregated single initial dashboard payload
+// Aggregated initial data (for dashboard)
 export const initialAPI = {
-  getInitialData: () => api.get('/initial-data')
+  getInitialData: () => api.get('/waste-levels/latest'),
 };
 
 export default api;
