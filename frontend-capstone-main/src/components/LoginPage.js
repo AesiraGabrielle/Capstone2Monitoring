@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { resendVerification } from '../services/api';
 import { /* Link, */ useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
@@ -28,6 +29,9 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   const [regError, setRegError] = useState('');
   const [regSubmitting, setRegSubmitting] = useState(false);
   const [regSuccess, setRegSuccess] = useState('');
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [resendStatus, setResendStatus] = useState('');
+  const [resendLoading, setResendLoading] = useState(false);
   const location = useLocation();
   const emailInputRef = useRef(null);
 
@@ -150,12 +154,25 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
       const payload = { full_name: regFullName, email: regEmail, password: regPassword, password_confirmation: regConfirm };
       const res = await authAPI.register(payload);
       setRegSuccess('Registration successful. Please verify your email.');
+      setShowVerifyModal(true);
       // Clear fields and switch back after slight delay
       setTimeout(() => { setMode('login'); setRegSubmitting(false); }, 1200);
     } catch (err) {
       const msg = err?.response?.data?.message || err?.response?.data?.error || 'Registration failed';
       setRegError(msg);
       setRegSubmitting(false);
+    }
+  };
+  const handleResend = async () => {
+    setResendLoading(true);
+    setResendStatus('');
+    try {
+      await resendVerification();
+      setResendStatus('Verification email resent. Please check your inbox.');
+    } catch (err) {
+      setResendStatus('Failed to resend verification email.');
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -269,6 +286,23 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
         </div>
       </div>
       <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
+
+      {/* Verify Email Modal */}
+      <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Email Verification Required</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-3">Your account was created successfully. Please check your email and click the verification link to activate your account.</p>
+          <Button variant="primary" onClick={handleResend} disabled={resendLoading}>
+            {resendLoading ? 'Resending...' : 'Resend Verification Email'}
+          </Button>
+          {resendStatus && <div className="mt-2 text-success">{resendStatus}</div>}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowVerifyModal(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* Forgot Password Modal */}
       <Modal show={showForgot} onHide={() => setShowForgot(false)} centered>
