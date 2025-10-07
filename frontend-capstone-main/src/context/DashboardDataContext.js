@@ -7,7 +7,16 @@ export const useDashboardData = () => useContext(DashboardDataContext);
 
 export const DashboardDataProvider = ({ children }) => {
   const [levels, setLevels] = useState(null);
+  // warnings: array of alert objects { id, binType, message, severity, createdAt, read }
   const [warnings, setWarnings] = useState([]);
+  const [readIds, setReadIds] = useState(() => {
+    try {
+      const raw = localStorage.getItem('waste_alert_read_ids');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
   const [daily, setDaily] = useState([]);
   const [rangeTotals, setRangeTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
   const [allTotals, setAllTotals] = useState({ bio: 0, non_bio: 0, unclassified: 0 });
@@ -37,12 +46,34 @@ export const DashboardDataProvider = ({ children }) => {
       // ✅ Direct mapping from backend response
       setLevels(data || null);
 
-      // Extract alerts from each bin
-      const allAlerts = Object.values(data)
-        .flatMap((bin) => (bin.alerts ? bin.alerts : []))
-        .filter(Boolean);
+      // Extract & normalize alerts from each bin
+      // Expecting backend shape: { bio: { level_percentage, alerts: ["Warning: ..."] }, ... }
+      const now = Date.now();
+      const allAlerts = Object.entries(data)
+        .flatMap(([binType, bin]) => {
+          if (!bin || !Array.isArray(bin.alerts)) return [];
+            return bin.alerts.filter(Boolean).map((msg) => {
+              // Derive severity keyword if present
+              const severityMatch = msg.match(/(Notice|Warning|Critical|Full)/i);
+              const severity = severityMatch ? severityMatch[1].toLowerCase() : 'info';
+              const id = `${binType}_${severity}_${msg.replace(/\s+/g,'_').toLowerCase()}`.slice(0,160);
+              return {
+                id,
+                binType,
+                message: msg,
+                severity,
+                createdAt: now,
+                read: false,
+              };
+            });
+        });
 
-      setWarnings(allAlerts);
+      // Merge with existing to preserve read flags
+      setWarnings((prev) => {
+        const prevMap = Object.fromEntries(prev.map(a => [a.id, a]));
+        const merged = allAlerts.map(a => ({ ...a, read: prevMap[a.id]?.read || readIds.includes(a.id) }));
+        return merged;
+      });
       setDaily([]);
       setRangeTotals({ bio: 0, non_bio: 0, unclassified: 0 });
       setAllTotals({ bio: 0, non_bio: 0, unclassified: 0 });
@@ -58,6 +89,30 @@ export const DashboardDataProvider = ({ children }) => {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Persist read ids
+  useEffect(() => {
+    try {
+      localStorage.setItem('waste_alert_read_ids', JSON.stringify(readIds));
+    } catch {}
+  }, [readIds]);
+
+  const markAlertRead = (id) => {
+    setWarnings((prev) => prev.map(a => a.id === id ? { ...a, read: true } : a));
+    setReadIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+  };
+
+  const dismissAlert = (id) => {
+    // Remove from list (or alternatively mark read); chosen removal to match "removed and warnings deducted"
+    setWarnings((prev) => prev.filter(a => a.id !== id));
+    setReadIds((prev) => prev.includes(id) ? prev : [...prev, id]);
+  };
+
+  const markAllRead = () => {
+    const ids = warnings.map(w => w.id);
+    setWarnings((prev) => prev.map(a => ({ ...a, read: true })));
+    setReadIds((prev) => Array.from(new Set([...prev, ...ids])));
+  };
 
   // 🔹 Date range refetch for monitoring consumers (charts)
   const fetchRange = async (start, end) => {
@@ -76,7 +131,12 @@ export const DashboardDataProvider = ({ children }) => {
 
   const value = {
     levels,
-    warnings,
+  // unreadWarnings derived for convenience
+  warnings,
+  unreadWarnings: warnings.filter(w => !w.read),
+  markAlertRead,
+  dismissAlert,
+  markAllRead,
     daily,
     rangeTotals,
     allTotals,

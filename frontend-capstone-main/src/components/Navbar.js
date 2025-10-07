@@ -12,7 +12,7 @@ const Navbar = ({ user, onLogout }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // ✅ Default warnings to [] so .length and .map never break
-  const { levels, warnings = [], refresh, loading: dataLoading } = useDashboardData() || {};
+  const { levels, warnings = [], unreadWarnings = [], dismissAlert, markAlertRead, markAllRead } = useDashboardData() || {};
 
   const [menuOpen, setMenuOpen] = useState(false); // desktop collapse (md+)
   const [menuModalOpen, setMenuModalOpen] = useState(false); // mobile menu modal
@@ -98,24 +98,33 @@ const Navbar = ({ user, onLogout }) => {
                   aria-label="Warnings"
                 >
                   <FontAwesomeIcon icon={faExclamationTriangle} />
-                  {warnings.length > 0 && (
-                    <span className="notification-badge">{warnings.length}</span>
+                  {unreadWarnings.length > 0 && (
+                    <span className="notification-badge">{unreadWarnings.length}</span>
                   )}
                 </button>
                 
                 {/* Warning dropdown */}
                 {showWarnings && (
                   <div className="warning-dropdown">
-                    <div className="warning-header">Warnings</div>
+                    <div className="warning-header d-flex justify-content-between align-items-center">
+                      <span>Warnings</span>
+                      {unreadWarnings.length > 0 && (
+                        <button className="btn btn-sm btn-link p-0 text-decoration-none" onClick={markAllRead}>Mark all read</button>
+                      )}
+                    </div>
                     <div className="warning-body">
                       {warnings.length === 0 ? (
                         <div className="warning-item text-muted">No warnings</div>
                       ) : (
-                        warnings.map((warning, index) => (
-                          <div key={index} className="warning-item">
-                            {warning}
-                          </div>
-                        ))
+                        warnings.map((w) => {
+                          const cls = `warning-item ${w.severity}` + (w.read ? ' read' : '');
+                          return (
+                            <div key={w.id} className={cls} onClick={() => dismissAlert(w.id)} title="Click to dismiss">
+                              <strong className="text-capitalize">{w.severity}</strong> <span className="text-muted">[{w.binType}]</span>: {w.message}
+                              {w.read && <span className="ms-2 badge bg-secondary">read</span>}
+                            </div>
+                          );
+                        })
                       )}
                     </div>
                   </div>
