@@ -293,16 +293,20 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
           <Modal.Title>Registration Successful!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="mb-3">Your account has been created with email:<br /><b>{regEmail}</b><br />
-          Please check your email and click the verification link to activate your account.<br />
-          If you did not receive the email, you can resend it below.</p>
+          <div className="mb-3" style={{ fontSize: '1rem' }}>
+            <span>Your account has been created with email: </span>
+            <span style={{ fontWeight: 'bold', verticalAlign: 'middle' }}>{regEmail}</span>
+            <br />
+            Please check your email and click the verification link to activate your account.<br />
+            If you did not receive the email, you can resend it below.
+          </div>
           {resendStatus && <div className="mt-2 text-success">{resendStatus}</div>}
         </Modal.Body>
-        <Modal.Footer className="flex-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
-          <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ width: '100%' }}>Close</Button>
-          <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ width: '100%' }}>
+        <Modal.Footer style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+          <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ minWidth: '160px', fontSize: '0.95rem', padding: '6px 12px' }}>
             {resendLoading ? 'Resending...' : 'Resend Verification Email'}
           </Button>
+          <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ minWidth: '100px', fontSize: '0.95rem', padding: '6px 12px' }}>Close</Button>
         </Modal.Footer>
       </Modal>
 
