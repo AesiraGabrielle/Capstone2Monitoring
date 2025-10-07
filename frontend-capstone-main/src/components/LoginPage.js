@@ -288,21 +288,22 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
       <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
 
       {/* Verify Email Modal */}
-      <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Registration Successful!</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p className="mb-3">Your account has been created. Please check your email and click the verification link to activate your account.<br />
-          If you did not receive the email, click the button below to resend the verification email.</p>
-          <Button variant="primary" onClick={handleResend} disabled={resendLoading}>
-            {resendLoading ? 'Resending...' : 'Resend Verification Email'}
-          </Button>
-          {resendStatus && <div className="mt-2 text-success">{resendStatus}</div>}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowVerifyModal(false)}>Close</Button>
-        </Modal.Footer>
+      <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered dialogClassName="verify-modal-lg">
+        <div style={{ width: '420px', minHeight: '260px', padding: '24px 24px 0 24px', borderRadius: '12px', background: '#fff', margin: '0 auto' }}>
+          <div style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '18px', textAlign: 'center' }}>Registration Successful!</div>
+          <div style={{ fontSize: '1.08rem', marginBottom: '24px', textAlign: 'center' }}>
+            Your account has been created.<br />
+            Please check your email and click the verification link to activate your account.<br />
+            If you did not receive the email, you can resend it below.
+          </div>
+          {resendStatus && <div className="mt-2 text-success text-center">{resendStatus}</div>}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '32px', marginBottom: '18px' }}>
+            <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ minWidth: '180px' }}>
+              {resendLoading ? 'Resending...' : 'Resend Verification Email'}
+            </Button>
+            <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ minWidth: '100px' }}>Close</Button>
+          </div>
+        </div>
       </Modal>
 
       {/* Forgot Password Modal */}
