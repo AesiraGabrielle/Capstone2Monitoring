@@ -105,23 +105,22 @@ const Navbar = ({ user, onLogout }) => {
                 
                 {/* Warning dropdown */}
                 {showWarnings && (
-                  <div className="warning-dropdown">
-                    <div className="warning-header d-flex justify-content-between align-items-center">
+                  <div className="warning-dropdown" style={{ position: 'absolute', top: '40px', right: 0, zIndex: 9999, minWidth: '260px', maxHeight: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.12)' }}>
+                    <div className="warning-header d-flex justify-content-between align-items-center" style={{ background: '#ffc107', padding: '8px 12px', borderTopLeftRadius: '6px', borderTopRightRadius: '6px' }}>
                       <span>Warnings</span>
                       {unreadWarnings.length > 0 && (
                         <button className="btn btn-sm btn-link p-0 text-decoration-none" onClick={markAllRead}>Mark all read</button>
                       )}
                     </div>
-                    <div className="warning-body">
+                    <div className="warning-body" style={{ background: '#fff', padding: '10px 12px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px' }}>
                       {warnings.length === 0 ? (
                         <div className="warning-item text-muted">No warnings</div>
                       ) : (
                         warnings.map((w) => {
                           const cls = `warning-item ${w.severity}` + (w.read ? ' read' : '');
                           return (
-                            <div key={w.id} className={cls} onClick={() => dismissAlert(w.id)} title="Click to dismiss">
-                              <strong className="text-capitalize">{w.severity}</strong> <span className="text-muted">[{w.binType}]</span>: {w.message}
-                              {w.read && <span className="ms-2 badge bg-secondary">read</span>}
+                            <div key={w.id} className={cls} onClick={() => dismissAlert(w.id)} title="Click to dismiss" style={{ cursor: 'pointer', marginBottom: '6px', padding: '6px 0' }}>
+                              <span>{w.message}</span>
                             </div>
                           );
                         })

@@ -20,17 +20,7 @@ const BinsPage = () => {
           {loading && <div>Loading bins...</div>}
           {error && <div className="alert alert-danger">{error}</div>}
 
-          {/* Show alerts for all bins */}
-          {levels &&
-            bins.map((bin) => {
-              const binData = levels[bin.key];
-              if (!binData || !binData.alerts) return null;
-              return binData.alerts.map((alert, idx) => (
-                <div key={`${bin.key}-alert-${idx}`} className="alert alert-warning">
-                  {alert}
-                </div>
-              ));
-            })}
+          {/* Bin alerts removed; now only shown in NavBar */}
 
           <div className="row justify-content-center gx-3 gy-4">
             {bins.map((bin) => {

@@ -72,12 +72,9 @@ export const DashboardDataProvider = ({ children }) => {
             });
         });
 
-      // Merge with existing to preserve read flags
-      setWarnings((prev) => {
-        const prevMap = Object.fromEntries(prev.map(a => [a.id, a]));
-        const merged = allAlerts.map(a => ({ ...a, read: prevMap[a.id]?.read || readIds.includes(a.id) }));
-        return merged;
-      });
+      // Filter out alerts that have been dismissed (readIds)
+      const filteredAlerts = allAlerts.filter(a => !readIds.includes(a.id));
+      setWarnings(filteredAlerts);
       setDaily([]);
       setRangeTotals({ bio: 0, non_bio: 0, unclassified: 0 });
       setAllTotals({ bio: 0, non_bio: 0, unclassified: 0 });
