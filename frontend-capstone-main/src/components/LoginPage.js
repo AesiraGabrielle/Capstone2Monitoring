@@ -288,22 +288,22 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
       <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
 
       {/* Verify Email Modal */}
-      <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered dialogClassName="verify-modal-lg">
-        <div style={{ width: '420px', minHeight: '260px', padding: '24px 24px 0 24px', borderRadius: '12px', background: '#fff', margin: '0 auto' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '18px', textAlign: 'center' }}>Registration Successful!</div>
-          <div style={{ fontSize: '1.08rem', marginBottom: '24px', textAlign: 'center' }}>
-            Your account has been created.<br />
-            Please check your email and click the verification link to activate your account.<br />
-            If you did not receive the email, you can resend it below.
-          </div>
-            {resendStatus && <div className="mt-2 text-success text-center">{resendStatus}</div>}
-            <Modal.Footer className="flex-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
-              <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ width: '100%' }}>Close</Button>
-              <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ width: '100%' }}>
-                {resendLoading ? 'Resending...' : 'Resend Verification Email'}
-              </Button>
-            </Modal.Footer>
-        </div>
+      <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered>
+        <Modal.Header>
+          <Modal.Title>Registration Successful!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-3">Your account has been created with email:<br /><b>{regEmail}</b><br />
+          Please check your email and click the verification link to activate your account.<br />
+          If you did not receive the email, you can resend it below.</p>
+          {resendStatus && <div className="mt-2 text-success">{resendStatus}</div>}
+        </Modal.Body>
+        <Modal.Footer className="flex-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
+          <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ width: '100%' }}>Close</Button>
+          <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ width: '100%' }}>
+            {resendLoading ? 'Resending...' : 'Resend Verification Email'}
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       {/* Forgot Password Modal */}
