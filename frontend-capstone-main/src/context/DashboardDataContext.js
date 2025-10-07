@@ -54,9 +54,10 @@ export const DashboardDataProvider = ({ children }) => {
           if (!bin || !Array.isArray(bin.alerts)) return [];
             return bin.alerts.filter(Boolean).map((msg) => {
               // Remove unwanted prefixes
-              let mainMsg = msg.replace(/^(Info: Classified,?\s*|Biodegradable:?\s*|Non Biodegradable:?\s*)/i, '');
-              // Also remove any leading severity prefix (e.g., 'Notice: ...')
-              mainMsg = mainMsg.replace(/^(Notice|Warning|Critical|Full):\s*/i, '');
+              let mainMsg = msg
+                .replace(/^(Info: (Classified|Unclassified|Biodegradable|Non Biodegradable),?\s*)/i, '')
+                .replace(/^(Biodegradable:?\s*|Non Biodegradable:?\s*)/i, '')
+                .replace(/^(Notice|Warning|Critical|Full):\s*/i, '');
               const severityMatch = msg.match(/(Notice|Warning|Critical|Full)/i);
               const severity = severityMatch ? severityMatch[1].toLowerCase() : 'info';
               const id = `${binType}_${severity}_${mainMsg.replace(/\s+/g,'_').toLowerCase()}`.slice(0,160);
@@ -101,15 +102,12 @@ export const DashboardDataProvider = ({ children }) => {
   }, [readIds]);
 
   const markAlertRead = (id) => {
-    setWarnings((prev) => prev.map(a => a.id === id ? { ...a, read: true } : a));
-    setReadIds((prev) => prev.includes(id) ? prev : [...prev, id]);
-  };
-
-  const dismissAlert = (id) => {
-    // Remove from list (or alternatively mark read); chosen removal to match "removed and warnings deducted"
     setWarnings((prev) => prev.filter(a => a.id !== id));
     setReadIds((prev) => prev.includes(id) ? prev : [...prev, id]);
   };
+
+  // dismissAlert is now an alias for markAlertRead
+  const dismissAlert = markAlertRead;
 
   const markAllRead = () => {
     const ids = warnings.map(w => w.id);
