@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { resendVerification } from '../services/api';
+// ...existing code...
 import { /* Link, */ useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
@@ -167,7 +167,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
     setResendLoading(true);
     setResendStatus('');
     try {
-      await resendVerification();
+      await authAPI.resendVerification();
       setResendStatus('Verification email resent. Please check your inbox.');
     } catch (err) {
       setResendStatus('Failed to resend verification email.');
@@ -290,10 +290,11 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
       {/* Verify Email Modal */}
       <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Email Verification Required</Modal.Title>
+          <Modal.Title>Registration Successful!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className="mb-3">Your account was created successfully. Please check your email and click the verification link to activate your account.</p>
+          <p className="mb-3">Your account has been created. Please check your email and click the verification link to activate your account.<br />
+          If you did not receive the email, click the button below to resend the verification email.</p>
           <Button variant="primary" onClick={handleResend} disabled={resendLoading}>
             {resendLoading ? 'Resending...' : 'Resend Verification Email'}
           </Button>
