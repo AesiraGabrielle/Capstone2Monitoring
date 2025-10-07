@@ -296,13 +296,13 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
             Please check your email and click the verification link to activate your account.<br />
             If you did not receive the email, you can resend it below.
           </div>
-          {resendStatus && <div className="mt-2 text-success text-center">{resendStatus}</div>}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '32px', marginBottom: '18px' }}>
-            <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ minWidth: '180px' }}>
-              {resendLoading ? 'Resending...' : 'Resend Verification Email'}
-            </Button>
-            <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ minWidth: '100px' }}>Close</Button>
-          </div>
+            {resendStatus && <div className="mt-2 text-success text-center">{resendStatus}</div>}
+            <Modal.Footer className="flex-column" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: '8px' }}>
+              <Button variant="secondary" onClick={() => setShowVerifyModal(false)} style={{ width: '100%' }}>Close</Button>
+              <Button variant="primary" onClick={handleResend} disabled={resendLoading} style={{ width: '100%' }}>
+                {resendLoading ? 'Resending...' : 'Resend Verification Email'}
+              </Button>
+            </Modal.Footer>
         </div>
       </Modal>
 
