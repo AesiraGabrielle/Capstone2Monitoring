@@ -9,9 +9,17 @@ export const DashboardDataProvider = ({ children }) => {
   const [levels, setLevels] = useState(null);
   // warnings: array of alert objects { id, binType, message, severity, createdAt, read }
   const [warnings, setWarnings] = useState([]);
+  // Get current user (assume from localStorage or context)
+  let currentUser = null;
+  try {
+    const rawUser = localStorage.getItem('user');
+    currentUser = rawUser ? JSON.parse(rawUser) : null;
+  } catch {}
+  const userKey = currentUser?.email || currentUser?.id || 'guest';
+
   const [readIds, setReadIds] = useState(() => {
     try {
-      const raw = localStorage.getItem('waste_alert_read_ids');
+      const raw = localStorage.getItem(`waste_alert_read_ids_${userKey}`);
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];
@@ -94,9 +102,9 @@ export const DashboardDataProvider = ({ children }) => {
   // Persist read ids
   useEffect(() => {
     try {
-      localStorage.setItem('waste_alert_read_ids', JSON.stringify(readIds));
+      localStorage.setItem(`waste_alert_read_ids_${userKey}`, JSON.stringify(readIds));
     } catch {}
-  }, [readIds]);
+  }, [readIds, userKey]);
 
   const markAlertRead = (id) => {
     setWarnings((prev) => prev.filter(a => a.id !== id));
