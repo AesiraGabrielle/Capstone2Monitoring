@@ -53,14 +53,17 @@ export const DashboardDataProvider = ({ children }) => {
         .flatMap(([binType, bin]) => {
           if (!bin || !Array.isArray(bin.alerts)) return [];
             return bin.alerts.filter(Boolean).map((msg) => {
-              // Derive severity keyword if present
+              // Remove unwanted prefixes
+              let mainMsg = msg.replace(/^(Info: Classified,?\s*|Biodegradable:?\s*|Non Biodegradable:?\s*)/i, '');
+              // Also remove any leading severity prefix (e.g., 'Notice: ...')
+              mainMsg = mainMsg.replace(/^(Notice|Warning|Critical|Full):\s*/i, '');
               const severityMatch = msg.match(/(Notice|Warning|Critical|Full)/i);
               const severity = severityMatch ? severityMatch[1].toLowerCase() : 'info';
-              const id = `${binType}_${severity}_${msg.replace(/\s+/g,'_').toLowerCase()}`.slice(0,160);
+              const id = `${binType}_${severity}_${mainMsg.replace(/\s+/g,'_').toLowerCase()}`.slice(0,160);
               return {
                 id,
                 binType,
-                message: msg,
+                message: mainMsg.trim(),
                 severity,
                 createdAt: now,
                 read: false,
