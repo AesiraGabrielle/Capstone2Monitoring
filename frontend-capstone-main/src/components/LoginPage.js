@@ -303,7 +303,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
           </div>
         </div>
         </div>
-        <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
+        <div className="footer">© 2025 Leyte Normal University, All rights reserved.</div>
       </div>
 
   {/* Confirm Registration Modal */}

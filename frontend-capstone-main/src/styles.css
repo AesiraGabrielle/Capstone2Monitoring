@@ -1311,28 +1311,22 @@ html.no-scroll, body.no-scroll { height: 100vh !important; overflow: hidden !imp
   z-index: 1;
 }
 
-/* Login and Register pages footer */
+/* Login and Register pages footer (inside container, without page scroll) */
 .login-container .footer,
 .register-container .footer {
   background-color: transparent;
   color: white;
   text-align: center;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   position: absolute;
+  left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
   z-index: 1;
 }
 
 /* Ensure full height containers for proper footer positioning */
-.login-container,
-.register-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding-bottom: 60px; /* Add space for footer */
-}
+/* Previous global full-height for login/register replaced by viewport-based at top of file */
 
 .dashboard-container {
   min-height: 100vh;
