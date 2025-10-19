@@ -6,7 +6,7 @@ import { faExclamationTriangle, faGear } from '@fortawesome/free-solid-svg-icons
 import binLogo from '../assets/bin-logo.png';
 import { useDashboardData } from '../context/DashboardDataContext';
 
-const Navbar = ({ user, onLogout }) => {
+const Navbar = ({ user, onLogout, publicMode = false, titleOverride, disableLogoLink = false }) => {
   const location = useLocation();
   const [showWarnings, setShowWarnings] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -55,16 +55,27 @@ const Navbar = ({ user, onLogout }) => {
       <nav className="navbar navbar-expand-md navbar-dark">
         <div className="container-fluid">
           <div className="navbar-brand d-flex align-items-center">
-            <Link to="/dashboard/bins" className="d-flex align-items-center text-decoration-none">
-              <img src={binLogo} alt="Logo" className="avatar me-2" style={{ cursor: 'pointer' }} />
-            </Link>
-            {(() => {
-              const displayName = (user && (user.full_name || user.name || user.email)) || 'User';
-              return <span>Welcome {displayName}!</span>;
-            })()}
+            {disableLogoLink || publicMode ? (
+              <div className="d-flex align-items-center">
+                <img src={binLogo} alt="Logo" className="avatar me-2" style={{ cursor: 'default' }} />
+              </div>
+            ) : (
+              <Link to="/dashboard/bins" className="d-flex align-items-center text-decoration-none">
+                <img src={binLogo} alt="Logo" className="avatar me-2" style={{ cursor: 'pointer' }} />
+              </Link>
+            )}
+            {publicMode ? (
+              <span className="fw-bold">{titleOverride || 'LNU Waste Monitoring System'}</span>
+            ) : (
+              (() => {
+                const displayName = (user && (user.full_name || user.name || user.email)) || 'User';
+                return <span>Welcome {displayName}!</span>;
+              })()
+            )}
           </div>
 
           {/* Mobile toggler -> opens modal */}
+          {!publicMode && (
           <button
             className="navbar-toggler mobile-menu-btn"
             type="button"
@@ -77,75 +88,81 @@ const Navbar = ({ user, onLogout }) => {
             <span className="bar"></span>
             <span className="bar"></span>
           </button>
+          )}
 
           {/* Desktop navigation (hidden on mobile) */}
           <div className={`collapse navbar-collapse ${menuOpen ? 'show' : ''}`} id="navbarContent">
-            <div className="navbar-nav mx-auto">
-              <Link to="/dashboard/bins" className={`nav-link ${isActive('bins') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
-                Bins
-              </Link>
-              <Link to="/dashboard/monitoring" className={`nav-link ${isActive('monitoring') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
-                Monitoring
-              </Link>
-            </div>
+            {!publicMode && (
+              <>
+                <div className="navbar-nav mx-auto">
+                  <Link to="/dashboard/bins" className={`nav-link ${isActive('bins') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
+                    Bins
+                  </Link>
+                  <Link to="/dashboard/monitoring" className={`nav-link ${isActive('monitoring') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>
+                    Monitoring
+                  </Link>
+                </div>
 
-            <div className="d-flex align-items-center ms-md-auto mt-2 mt-md-0">
-              {/* Warning button */}
-              <div className="me-3 position-relative" ref={warningsRef}>
-                <button 
-                  className="btn btn-warning warning-btn"
-                  onClick={() => setShowWarnings(!showWarnings)}
-                  aria-label="Warnings"
-                >
-                  <FontAwesomeIcon icon={faExclamationTriangle} />
-                  {unreadWarnings.length > 0 && (
-                    <span className="notification-badge">{unreadWarnings.length}</span>
-                  )}
-                </button>
-                
-                {/* Warning dropdown */}
-                {showWarnings && (
-                  <div className="warning-dropdown" style={{ position: 'absolute', top: '40px', right: 0, zIndex: 9999, minWidth: '260px', maxHeight: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.12)' }}>
-                    <div className="warning-header d-flex justify-content-between align-items-center" style={{ background: '#ffc107', padding: '8px 12px', borderTopLeftRadius: '6px', borderTopRightRadius: '6px' }}>
-                      <span>Warnings</span>
+                <div className="d-flex align-items-center ms-md-auto mt-2 mt-md-0">
+                  {/* Warning button */}
+                  <div className="me-3 position-relative" ref={warningsRef}>
+                    <button 
+                      className="btn btn-warning warning-btn"
+                      onClick={() => setShowWarnings(!showWarnings)}
+                      aria-label="Warnings"
+                    >
+                      <FontAwesomeIcon icon={faExclamationTriangle} />
                       {unreadWarnings.length > 0 && (
-                        <button className="btn btn-sm btn-link p-0 text-decoration-none" onClick={markAllRead}>Mark all read</button>
+                        <span className="notification-badge">{unreadWarnings.length}</span>
                       )}
-                    </div>
-                    <div className="warning-body" style={{ background: '#fff', padding: '10px 12px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px' }}>
-                      {warnings.length === 0 ? (
-                        <div className="warning-item text-muted">No warnings</div>
-                      ) : (
-                        warnings.map((w) => {
-                          const cls = `warning-item ${w.severity}` + (w.read ? ' read' : '');
-                          return (
-                            <div key={w.id} className={cls} onClick={() => dismissAlert(w.id)} title="Click to dismiss" style={{ cursor: 'pointer', marginBottom: '6px', padding: '6px 0' }}>
-                              <span>{w.message}</span>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
+                    </button>
+                    
+                    {/* Warning dropdown */}
+                    {showWarnings && (
+                      <div className="warning-dropdown" style={{ position: 'absolute', top: '40px', right: 0, zIndex: 9999, minWidth: '260px', maxHeight: 'none', boxShadow: '0 2px 12px rgba(0,0,0,0.12)' }}>
+                        <div className="warning-header d-flex justify-content-between align-items-center" style={{ background: '#ffc107', padding: '8px 12px', borderTopLeftRadius: '6px', borderTopRightRadius: '6px' }}>
+                          <span>Warnings</span>
+                          {unreadWarnings.length > 0 && (
+                            <button className="btn btn-sm btn-link p-0 text-decoration-none" onClick={markAllRead}>Mark all read</button>
+                          )}
+                        </div>
+                        <div className="warning-body" style={{ background: '#fff', padding: '10px 12px', borderBottomLeftRadius: '6px', borderBottomRightRadius: '6px' }}>
+                          {warnings.length === 0 ? (
+                            <div className="warning-item text-muted">No warnings</div>
+                          ) : (
+                            warnings.map((w) => {
+                              const cls = `warning-item ${w.severity}` + (w.read ? ' read' : '');
+                              return (
+                                <div key={w.id} className={cls} onClick={() => dismissAlert(w.id)} title="Click to dismiss" style={{ cursor: 'pointer', marginBottom: '6px', padding: '6px 0' }}>
+                                  <span>{w.message}</span>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              
-              {/* Settings dropdown */}
-              <Dropdown align="end" className="d-none d-md-inline settings-gear-dropdown">
-                <Dropdown.Toggle variant="primary" id="settings-dropdown" className="settings-gear-btn" aria-label="Settings">
-                  <FontAwesomeIcon icon={faGear} />
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item as={Link} to="/dashboard/change-password" onClick={() => setMenuOpen(false)}>Change Password</Dropdown.Item>
-                  <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
+                  
+                  {/* Settings dropdown */}
+                  <Dropdown align="end" className="d-none d-md-inline settings-gear-dropdown">
+                    <Dropdown.Toggle variant="primary" id="settings-dropdown" className="settings-gear-btn" aria-label="Settings">
+                      <FontAwesomeIcon icon={faGear} />
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item as={Link} to="/dashboard/change-password" onClick={() => setMenuOpen(false)}>Change Password</Dropdown.Item>
+                      <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Mobile menu modal */}
+      {!publicMode && (
       <Modal show={menuModalOpen} onHide={() => setMenuModalOpen(false)} centered className="mobile-menu-modal">
         <Modal.Header closeButton>
           <Modal.Title>Menu</Modal.Title>
@@ -167,8 +184,10 @@ const Navbar = ({ user, onLogout }) => {
           </div>
         </Modal.Body>
       </Modal>
+      )}
 
       {/* Logout Confirmation Modal */}
+      {!publicMode && (
       <Modal show={showLogoutModal} onHide={() => setShowLogoutModal(false)} centered>
         <Modal.Header className="confirmation-modal-header">
           <Modal.Title>Confirm Logout</Modal.Title>
@@ -192,6 +211,7 @@ const Navbar = ({ user, onLogout }) => {
           </Button>
         </Modal.Footer>
       </Modal>
+      )}
     </>
   );
 };

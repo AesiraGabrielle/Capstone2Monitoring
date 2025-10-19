@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { /* Link, */ useNavigate, useLocation } from 'react-router-dom';
 import { authAPI } from '../services/api';
 import binLogo from '../assets/bin-logo.png'; // You'll need to add this image to your assets folder
+import Navbar from './Navbar';
 import { Modal, Button, Form, Alert, Spinner } from 'react-bootstrap';
 
 const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
@@ -199,6 +200,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
 
   return (
     <div className={`login-container auth-views-wrapper mode-${mode}`}>
+      <Navbar publicMode={true} titleOverride="LNU Waste Monitoring System" disableLogoLink={true} />
       <div className="auth-views">
         {/* View: Login */}
         <div className="auth-view login-view">
