@@ -65,7 +65,7 @@ const Navbar = ({ user, onLogout, publicMode = false, titleOverride, disableLogo
               </Link>
             )}
             {publicMode ? (
-              <span className="fw-bold">{titleOverride || 'LNU Waste Monitoring System'}</span>
+              <span>{titleOverride || 'LNU Waste Monitoring System'}</span>
             ) : (
               (() => {
                 const displayName = (user && (user.full_name || user.name || user.email)) || 'User';
