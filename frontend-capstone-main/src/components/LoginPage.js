@@ -199,9 +199,10 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   }, [verifiedStatus]);
 
   return (
-    <div className={`login-container auth-views-wrapper mode-${mode}`}>
+    <>
       <Navbar publicMode={true} titleOverride="LNU Waste Monitoring System" disableLogoLink={true} />
-      <div className="auth-views">
+      <div className={`login-container auth-views-wrapper mode-${mode}`}>
+        <div className="auth-views">
         {/* View: Login */}
         <div className="auth-view login-view">
           <div className="row g-0 h-100">
@@ -295,10 +296,11 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
             </div>
           </div>
         </div>
+        </div>
+        <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
       </div>
-      <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
 
-      {/* Confirm Registration Modal */}
+  {/* Confirm Registration Modal */}
       <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
         <Modal.Header>
           <Modal.Title>Confirm Registration</Modal.Title>
@@ -314,7 +316,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
         </Modal.Footer>
       </Modal>
 
-      {/* Verify Email Modal */}
+  {/* Verify Email Modal */}
       <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered>
         <Modal.Header>
           <Modal.Title>Registration Successful!</Modal.Title>
@@ -337,8 +339,8 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
         </Modal.Footer>
       </Modal>
 
-      {/* Forgot Password Modal */}
-      <Modal show={showForgot} onHide={() => setShowForgot(false)} centered>
+  {/* Forgot Password Modal */}
+  <Modal show={showForgot} onHide={() => setShowForgot(false)} centered>
         <Form onSubmit={handleForgotSubmit}>
           <Modal.Header closeButton>
             <Modal.Title>Forgot Password</Modal.Title>
@@ -367,7 +369,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
           </Modal.Footer>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 
