@@ -37,6 +37,12 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   const location = useLocation();
   const emailInputRef = useRef(null);
 
+  // Disable page scroll while on login/register view
+  useEffect(() => {
+    try { document.body.classList.add('no-scroll', 'login-page'); } catch {}
+    return () => { try { document.body.classList.remove('no-scroll', 'login-page'); } catch {} };
+  }, []);
+
   // Show success message when redirected after email verification
   useEffect(() => {
     // Derive final status from props or sessionStorage fallback
@@ -201,7 +207,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   return (
     <>
       <Navbar publicMode={true} titleOverride="LNU Waste Monitoring System" disableLogoLink={true} />
-      <div className={`login-container auth-views-wrapper login-screen mode-${mode}`}>
+      <div className={`login-container auth-views-wrapper mode-${mode}`}>
         <div className="auth-views">
         {/* View: Login */}
         <div className="auth-view login-view">

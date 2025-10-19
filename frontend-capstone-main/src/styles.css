@@ -21,6 +21,12 @@ body {
   overflow-x: hidden; /* prevent accidental horizontal scroll */
 }
 
+/* When on login page, prevent vertical scrolling */
+.no-scroll { overflow: hidden !important; }
+html.no-scroll, body.no-scroll { height: 100vh !important; overflow: hidden !important; }
+
+.login-page .app-container { min-height: auto; height: auto; }
+
 .app-container {
   min-height: 100vh;
 }
@@ -43,14 +49,7 @@ body {
   padding: 15px;
 }
 
-/* Ensure login wrapper is pinned to viewport area below navbar to avoid extra page scroll */
-.login-screen {
-  position: fixed;
-  top: var(--navbar-height);
-  left: 0;
-  right: 0;
-  height: calc(100vh - var(--navbar-height));
-}
+/* App container size for login page: keep navbar normal and background not scrollable */
 
 .login-card,
 .register-card {
