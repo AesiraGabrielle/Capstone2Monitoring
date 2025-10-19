@@ -201,7 +201,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   return (
     <>
       <Navbar publicMode={true} titleOverride="LNU Waste Monitoring System" disableLogoLink={true} />
-      <div className={`login-container auth-views-wrapper mode-${mode}`}>
+      <div className={`login-container auth-views-wrapper login-screen mode-${mode}`}>
         <div className="auth-views">
         {/* View: Login */}
         <div className="auth-view login-view">

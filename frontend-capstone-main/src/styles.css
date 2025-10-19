@@ -43,6 +43,15 @@ body {
   padding: 15px;
 }
 
+/* Ensure login wrapper is pinned to viewport area below navbar to avoid extra page scroll */
+.login-screen {
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  right: 0;
+  height: calc(100vh - var(--navbar-height));
+}
+
 .login-card,
 .register-card {
   width: 100%;
