@@ -32,6 +32,7 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
   const [showVerifyModal, setShowVerifyModal] = useState(false);
   const [resendStatus, setResendStatus] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const location = useLocation();
   const emailInputRef = useRef(null);
 
@@ -146,20 +147,28 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
     return true;
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
     if (!validateRegister()) return;
+    // Show confirmation modal first
+    setShowConfirmModal(true);
+  };
+
+  const confirmAndRegister = async () => {
     setRegSubmitting(true);
+    setRegError('');
     try {
       const payload = { full_name: regFullName, email: regEmail, password: regPassword, password_confirmation: regConfirm };
-      const res = await authAPI.register(payload);
+      await authAPI.register(payload);
+      setShowConfirmModal(false);
       setRegSuccess('Registration successful. Please verify your email.');
       setShowVerifyModal(true);
-      // Clear fields and switch back after slight delay
-      setTimeout(() => { setMode('login'); setRegSubmitting(false); }, 1200);
+      // Switch back to login view but keep modal visible
+      setMode('login');
     } catch (err) {
       const msg = err?.response?.data?.message || err?.response?.data?.error || 'Registration failed';
       setRegError(msg);
+    } finally {
       setRegSubmitting(false);
     }
   };
@@ -286,6 +295,22 @@ const LoginPage = ({ onLogin, verifiedStatus, verifiedReason }) => {
         </div>
       </div>
       <div className="footer white">© 2025 Leyte Normal University, All rights reserved.</div>
+
+      {/* Confirm Registration Modal */}
+      <Modal show={showConfirmModal} onHide={() => setShowConfirmModal(false)} centered>
+        <Modal.Header>
+          <Modal.Title>Confirm Registration</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p className="mb-2">You're about to create an account using:</p>
+          <div><strong>Email:</strong> {regEmail || '(no email entered)'}</div>
+          <p className="mt-3 mb-0">Do you want to proceed?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowConfirmModal(false)} disabled={regSubmitting}>Cancel</Button>
+          <Button variant="primary" onClick={confirmAndRegister} disabled={regSubmitting}>{regSubmitting ? 'Creating…' : 'Accept'}</Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* Verify Email Modal */}
       <Modal show={showVerifyModal} onHide={() => setShowVerifyModal(false)} centered>
