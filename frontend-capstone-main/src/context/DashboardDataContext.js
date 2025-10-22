@@ -85,7 +85,20 @@ export const DashboardDataProvider = ({ children }) => {
       setWarnings(filteredAlerts);
       setDaily([]);
       setRangeTotals({ bio: 0, non_bio: 0, unclassified: 0 });
-      setAllTotals({ bio: 0, non_bio: 0, unclassified: 0 });
+      // Fetch and set overall totals (from start of data)
+      try {
+        const totalsRes = await monitoringAPI.getTotals();
+        const t = totalsRes?.data || {};
+        const normalized = {
+          bio: Number(t.bio ?? t.biodegradable ?? t.total_bio ?? 0) || 0,
+          non_bio: Number(t.non_bio ?? t.non_biodegradable ?? t.total_non_bio ?? 0) || 0,
+          unclassified: Number(t.unclassified ?? t.unidentified ?? t.total_unclassified ?? 0) || 0,
+        };
+        setAllTotals(normalized);
+      } catch (e) {
+        // ignore totals error but keep the rest working
+        setAllTotals({ bio: 0, non_bio: 0, unclassified: 0 });
+      }
       setLastUpdated(Date.now());
     } catch (e) {
       console.error('Load error:', e);

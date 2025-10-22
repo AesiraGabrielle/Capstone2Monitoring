@@ -122,7 +122,7 @@ const MonitoringPage = () => {
         datasets: [
           { label: 'Biodegradable', data: [0], borderColor: 'rgb(102, 176, 50)', backgroundColor: 'rgb(102, 176, 50)', tension: 0.4, pointRadius: 5 },
           { label: 'Non-Biodegradable', data: [0], borderColor: 'rgb(255, 192, 0)', backgroundColor: 'rgb(255, 192, 0)', tension: 0.4, pointRadius: 5 },
-          { label: 'Unidentified Waste', data: [0], borderColor: 'rgb(237, 125, 49)', backgroundColor: 'rgb(237, 125, 49)', tension: 0.4, pointRadius: 5 },
+          { label: 'Unclassified Waste', data: [0], borderColor: 'rgb(237, 125, 49)', backgroundColor: 'rgb(237, 125, 49)', tension: 0.4, pointRadius: 5 },
         ],
       };
     }
@@ -146,7 +146,7 @@ const MonitoringPage = () => {
           pointRadius: 5,
         },
         {
-          label: 'Unidentified Waste',
+          label: 'Unclassified Waste',
           data: daily.map((d) => Number(d.unclassified ?? 0) || 0),
           borderColor: 'rgb(237, 125, 49)',
           backgroundColor: 'rgb(237, 125, 49)',
@@ -211,17 +211,17 @@ const MonitoringPage = () => {
       <div className="waste-item">
         <img src={biodegradableIcon} alt="Biodegradable" />
         <span>Biodegradable:</span>
-        <span className="amount">{totals.bio ?? 0}</span>
+        <span className="amount">{allTotals.bio ?? 0}</span>
       </div>
       <div className="waste-item">
         <img src={nonBiodegradableIcon} alt="Non-Biodegradable" />
         <span>Non-Biodegradable:</span>
-        <span className="amount">{totals.non_bio ?? 0}</span>
+        <span className="amount">{allTotals.non_bio ?? 0}</span>
       </div>
       <div className="waste-item">
-        <img src={unidentifiedIcon} alt="Unidentified" />
-        <span>Unidentified Waste:</span>
-        <span className="amount">{totals.unclassified ?? 0}</span>
+        <img src={unidentifiedIcon} alt="Unclassified Waste" />
+        <span>Unclassified Waste:</span>
+        <span className="amount">{allTotals.unclassified ?? 0}</span>
       </div>
     </div>
   );
@@ -294,7 +294,7 @@ const MonitoringPage = () => {
       // Daily data table
       autoTable(doc, {
         startY: cursorY,
-        head: [[ 'Date', 'Biodegradable', 'Non-Biodegradable', 'Unidentified', 'Daily Total' ]],
+  head: [[ 'Date', 'Biodegradable', 'Non-Biodegradable', 'Unclassified', 'Daily Total' ]],
         body: rows,
         styles: { fontSize: 9 },
         headStyles: { fillColor: [57, 111, 176] },
@@ -319,7 +319,7 @@ const MonitoringPage = () => {
 
       autoTable(doc, {
         startY: cursorY,
-        head: [[ 'Summary Type', 'Biodegradable', 'Non-Biodegradable', 'Unidentified', 'Total' ]],
+  head: [[ 'Summary Type', 'Biodegradable', 'Non-Biodegradable', 'Unclassified', 'Total' ]],
         body: [
           [ 'Selected Range', filteredTotals.bio, filteredTotals.non, filteredTotals.un, filteredTotals.sum ],
           [ 'Overall Totals', overallTotals.bio, overallTotals.non, overallTotals.un, overallSum ],
